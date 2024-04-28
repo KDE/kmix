@@ -38,7 +38,7 @@ int main(int argc, char *argv[])
     KLocalizedString::setApplicationDomain("kmix");
 
     KAboutData aboutData("kmixctrl", i18n("KMixCtrl"),
-                         KMIX_VERSION, i18n("kmixctrl - kmix volume save/restore utility"),
+                         KMIX_VERSION, i18n("kmixctrl - KMix volume save/restore utility"),
 			 KAboutLicense::GPL,
 			 i18n("(c) 2000 by Stefan Schimanski"));
 

@@ -30,7 +30,6 @@
 
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
-#include <QDesktopWidget>
 #include <QAction>
 #include <QGuiApplication>
 #include <QMenu>
@@ -382,8 +381,12 @@ void KMixDockWidget::activate(const QPoint &pos)
 		qCDebug(KMIX_LOG) << "Multihead: (case 4) moving to" << x << "," << y;
 	}
 
-	KWindowSystem::setType(_dockPopupWrapper->winId(), NET::Dock);
-	KWindowSystem::setState(_dockPopupWrapper->winId(), NET::KeepAbove | NET::SkipTaskbar | NET::SkipPager);
+	_dockPopupWrapper->setAttribute(Qt::WA_X11NetWmWindowTypeDock);
+	_dockPopupWrapper->setWindowFlag(Qt::WindowStaysOnTopHint);
+	// TODO KF6: Does this work to skip the taskbar and pager?
+	// See https://stackoverflow.com/questions/4055506/qt-hide-taskbar-item
+	_dockPopupWrapper->setWindowFlag(Qt::SubWindow);
+
 	_dockPopupWrapper->show();
 	_dockPopupWrapper->move(x, y);
 }

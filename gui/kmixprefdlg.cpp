@@ -273,7 +273,7 @@ void KMixPrefDlg::createGeneralTab()
 #endif
 	// Volume Step layout
 	QHBoxLayout *horizontalGrid = new QHBoxLayout();
-	horizontalGrid->setMargin(0);
+	horizontalGrid->setContentsMargins(0, 0, 0, 0);
 
 	// Volume Step spin box
 	m_volumeStep = new QSpinBox(grp);

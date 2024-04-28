@@ -22,6 +22,8 @@
 
 #include "core/mixer.h"
 
+#include <qregularexpression.h>
+
 #include <klocalizedstring.h>
 #include <kconfig.h>
 
@@ -110,7 +112,7 @@ const QString Mixer::dbusPath()
 
 	// mixerName may contain arbitrary characters, so replace all that are not allowed to be be part of a DBUS path
 	QString cardPath = _id;
-	cardPath.replace(QRegExp("[^a-zA-Z0-9_]"), "_");
+	cardPath.replace(QRegularExpression("[^a-zA-Z0-9_]"), "_");
 	cardPath.replace(QLatin1String("//"), QLatin1String("/"));
 
     return QString("/Mixers/" + cardPath);

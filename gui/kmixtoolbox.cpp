@@ -73,7 +73,7 @@ void KMixToolBox::notification(const char *notificationName, const QString &text
     KNotification *notification = new KNotification(notificationName);
     notification->setText(text);
     notification->setIconName(QLatin1String("kmix"));
-    notification->addContext(QLatin1String("Application"), QCoreApplication::applicationName());
+    //notification->addContext(QLatin1String("Application"), QCoreApplication::applicationName());
     notification->sendEvent();
     // There is no need to delete the notification here, it will delete
     // itself when it is closed or the timeout expires.

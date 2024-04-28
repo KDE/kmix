@@ -59,7 +59,7 @@ public:
         return m_icon.actualSize(size, mode, state);
     }
 
-    QList<QSize> availableSizes(QIcon::Mode mode, QIcon::State state) const override
+    QList<QSize> availableSizes(QIcon::Mode mode, QIcon::State state) override
     {
         return m_icon.availableSizes(mode, state);
     }

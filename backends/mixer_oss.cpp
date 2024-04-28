@@ -25,12 +25,10 @@
 
 #include <errno.h>
 #include <fcntl.h>
-#include <qplatformdefs.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <KLazyLocalizedString>
 
 #ifdef HAVE_SOUNDCARD_H
 #include <soundcard.h>
@@ -40,7 +38,11 @@
 #endif
 #endif
 
-#include <QTimer>
+#include <klazylocalizedstring.h>
+
+#include <qplatformdefs.h>
+#include <qtimer.h>
+#include <qregularexpression.h>
 
 /*
   I am using a fixed MAX_MIXDEVS #define here.
@@ -470,9 +472,10 @@ int OSS_acceptsHotplugId(const QString &id)
     // The "mixer" one of these is taken as the canonical form.  The "card" and
     // "mixer" numbers are assumed to be the same, but this is not checked.
 
-    QRegExp rx("/card(\\d+)/mixer(\\d+)$");		// match sound card mixer device
-    if (!id.contains(rx)) return (-1);			// UDI not recognised
-    return (rx.cap(2).toInt());				// assume conversion succeeds
+    const QRegularExpression rx("/card(\\d+)/mixer(\\d+)$");
+    const QRegularExpressionMatch match = rx.match(id);	// match sound card mixer device
+    if (!match.hasCaptured(2)) return (-1);		// UDI not recognised
+    return (match.captured(2).toInt());			// assume conversion succeeds
 }
 
 

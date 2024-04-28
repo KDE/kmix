@@ -21,7 +21,7 @@
 
 #include "core/mixdevice.h"
 
-#include <qregexp.h>
+#include <qregularexpression.h>
 
 #include <klocalizedstring.h>
 
@@ -270,7 +270,7 @@ void MixDevice::setEnumId(int enumId)
 const QString MixDevice::dbusPath() const
 {
    QString controlPath = _id;
-   controlPath.replace(QRegExp("[^a-zA-Z0-9_]"), "_");
+   controlPath.replace(QRegularExpression("[^a-zA-Z0-9_]"), "_");
    controlPath.replace(QLatin1String("//"), QLatin1String("/"));
 
    if ( controlPath.endsWith( '/' ) )

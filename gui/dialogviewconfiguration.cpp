@@ -26,6 +26,7 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QVBoxLayout>
+#include <qregularexpression.h>
 
 #include <klocalizedstring.h>
 
@@ -353,7 +354,8 @@ void DialogViewConfiguration::prepareControls(QAbstractItemModel* model, bool is
         for (const ProfControl *control : std::as_const(oldCtlSet))
         {
             //qCDebug(KMIX_LOG) << " checking " << control->id;
-            QRegExp idRegexp(control->id());
+            // TODO: does this really need to be a regexp match?
+            const QRegularExpression idRegexp(control->id());
             if ( ctlId.contains(idRegexp) ) {
                 // found. Create a copy
                 ProfControl* newCtl = new ProfControl(*control);

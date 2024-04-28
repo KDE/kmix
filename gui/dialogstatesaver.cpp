@@ -21,7 +21,6 @@
 #include "dialogstatesaver.h"
 
 #include <qdialog.h>
-#include <qdesktopwidget.h>
 #include <qevent.h>
 #include <qapplication.h>
 #include <qabstractbutton.h>

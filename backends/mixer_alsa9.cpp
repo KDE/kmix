@@ -36,6 +36,7 @@
 
 // Qt
 #include <qsocketnotifier.h>
+#include <qregularexpression.h>
 
 // #define if you want MUCH debugging output
 //#define ALSA_SWITCH_DEBUG
@@ -990,9 +991,10 @@ int ALSA_acceptsHotplugId(const QString &id)
     // The "control" one of these is taken as the canonical form.  The "card" and
     // "control" numbers are assumed to be the same, but this is not checked.
 
-    QRegExp rx("/card(\\d+)/controlC(\\d+)$");		// match sound card control device
-    if (!id.contains(rx)) return (-1);			// UDI not recognised
-    return (rx.cap(2).toInt());				// assume conversion succeeds
+    const QRegularExpression rx("/card(\\d+)/controlC(\\d+)$");
+    const QRegularExpressionMatch match = rx.match(id);	// match sound card control device
+    if (!match.hasCaptured(2)) return (-1);		// UDI not recognised
+    return (match.captured(2).toInt());			// assume conversion succeeds
 }
 
 

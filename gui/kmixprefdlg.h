@@ -62,7 +62,7 @@ public:
 		ChangedGui = 0x04,
 		ChangedMaster = 0x08
 	};
-	Q_DECLARE_FLAGS(PrefChanges, PrefChanged);
+	Q_DECLARE_FLAGS(PrefChanges, PrefChanged)
 
 	static KMixPrefDlg *instance(QWidget *parent = nullptr);
 	void showAtPage(KMixPrefDlg::PrefPage page);

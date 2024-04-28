@@ -61,7 +61,7 @@
  */
 
 KMixWindow::KMixWindow(bool invisible, bool reset) :
-		KXmlGuiWindow(nullptr, Qt::WindowFlags(KDE_DEFAULT_WINDOWFLAGS|Qt::WindowContextHelpButtonHint)),
+		KXmlGuiWindow(nullptr),
 		m_autouseMultimediaKeys(true),
 		m_dockWidget(), m_dsm(0), m_dontSetDefaultCardOnStart(false)
 {
@@ -182,42 +182,42 @@ void KMixWindow::initActions()
 	connect(action, SIGNAL(triggered(bool)), SLOT(slotSelectMaster()));
 
 	action = actionCollection()->addAction(QStringLiteral("save_1"));
-	actionCollection()->setDefaultShortcut(action, Qt::CTRL + Qt::SHIFT + Qt::Key_1);
+	actionCollection()->setDefaultShortcut(action, Qt::CTRL|Qt::SHIFT|Qt::Key_1);
 	action->setText(i18n("Save volume profile 1"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes1()));
 
 	action = actionCollection()->addAction(QStringLiteral("save_2"));
-	actionCollection()->setDefaultShortcut(action, Qt::CTRL + Qt::SHIFT + Qt::Key_2);
+	actionCollection()->setDefaultShortcut(action, Qt::CTRL|Qt::SHIFT|Qt::Key_2);
 	action->setText(i18n("Save volume profile 2"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes2()));
 
 	action = actionCollection()->addAction(QStringLiteral("save_3"));
-	actionCollection()->setDefaultShortcut(action, Qt::CTRL + Qt::SHIFT + Qt::Key_3);
+	actionCollection()->setDefaultShortcut(action, Qt::CTRL|Qt::SHIFT|Qt::Key_3);
 	action->setText(i18n("Save volume profile 3"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes3()));
 
 	action = actionCollection()->addAction(QStringLiteral("save_4"));
-	actionCollection()->setDefaultShortcut(action, Qt::CTRL + Qt::SHIFT + Qt::Key_4);
+	actionCollection()->setDefaultShortcut(action, Qt::CTRL|Qt::SHIFT|Qt::Key_4);
 	action->setText(i18n("Save volume profile 4"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(saveVolumes4()));
 
 	action = actionCollection()->addAction(QStringLiteral("load_1"));
-	actionCollection()->setDefaultShortcut(action, Qt::CTRL + Qt::Key_1);
+	actionCollection()->setDefaultShortcut(action, Qt::CTRL|Qt::Key_1);
 	action->setText(i18n("Load volume profile 1"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes1()));
 
 	action = actionCollection()->addAction(QStringLiteral("load_2"));
-	actionCollection()->setDefaultShortcut(action, Qt::CTRL + Qt::Key_2);
+	actionCollection()->setDefaultShortcut(action, Qt::CTRL|Qt::Key_2);
 	action->setText(i18n("Load volume profile 2"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes2()));
 
 	action = actionCollection()->addAction(QStringLiteral("load_3"));
-	actionCollection()->setDefaultShortcut(action, Qt::CTRL + Qt::Key_3);
+	actionCollection()->setDefaultShortcut(action, Qt::CTRL|Qt::Key_3);
 	action->setText(i18n("Load volume profile 3"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes3()));
 
 	action = actionCollection()->addAction(QStringLiteral("load_4"));
-	actionCollection()->setDefaultShortcut(action, Qt::CTRL + Qt::Key_4);
+	actionCollection()->setDefaultShortcut(action, Qt::CTRL|Qt::Key_4);
 	action->setText(i18n("Load volume profile 4"));
 	connect(action, SIGNAL(triggered(bool)), SLOT(loadVolumes4()));
 

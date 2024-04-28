@@ -21,7 +21,6 @@
 #include "dialogbase.h"
 
 #include <qlayout.h>
-#include <qdesktopwidget.h>
 #include <qdebug.h>
 #include <qstyle.h>
 #include <qpushbutton.h>

@@ -21,7 +21,7 @@
 
 #include "core/mixertoolbox.h"
 
-#include <QStringBuilder>
+#include <qregularexpression.h>
 
 #include "core/mixer.h"
 #include "core/kmixdevicemanager.h"
@@ -31,7 +31,7 @@
 #include <solid/block.h>
 
 
-static QRegExp s_ignoreMixerExpression(QStringLiteral("Modem"));
+static QRegularExpression s_ignoreMixerExpression(QStringLiteral("Modem"));
 
 static QStringList s_allowedBackends;			// filter for enabled backends
 static QString s_hotplugBackend;			// backend for hotplug events
@@ -508,7 +508,7 @@ bool MixerToolBox::possiblyAddMixer(Mixer *mixer)
 
     // Only try to open the mixer if it is not to be ignored.
     // The default ignore expression is "Modem".
-    if (s_ignoreMixerExpression.isEmpty() || !mixer->id().contains(s_ignoreMixerExpression))
+    if (s_ignoreMixerExpression.pattern().isEmpty() || !mixer->id().contains(s_ignoreMixerExpression))
     {
         if (mixer->openIfValid())
         {

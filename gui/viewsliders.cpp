@@ -51,6 +51,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QGridLayout>
+#include <qregularexpression.h>
 
 /**
  * Generic View implementation. This can hold now all kinds of controls (not just Sliders, as
@@ -226,7 +227,11 @@ void ViewSliders::initLayout()
 			for (ProfControl *control : std::as_const(guiprof->getControls()))
 			{
 				// The TabName of the control matches this View name (!! attention: Better use some ID, due to i18n() )
-				QRegExp idRegexp(control->id());
+
+				// TODO: is the control->id() really a regular expression?
+				// If not then this is just a simple string match.
+				// See also ViewBase::findMdw()
+				const QRegularExpression idRegexp(control->id());
 				// The following for-loop could be simplified by using a std::find_if
 				for (int i = 0; i<mixset.count(); ++i)
 				{

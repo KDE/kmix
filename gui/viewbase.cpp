@@ -25,6 +25,7 @@
 #include <qcursor.h>
 #include <QMenu>
 #include <QMouseEvent>
+#include <qregularexpression.h>
 
 // KDE
 #include <klocalizedstring.h>
@@ -458,8 +459,12 @@ ProfControl *ViewBase::findMdw(const QString& mdwId, GuiVisibility visibility) c
 {
     for (ProfControl *pControl : std::as_const(guiProfile()->getControls()))
 	{
-		QRegExp idRegExp(pControl->id());
-		if ( mdwId.contains(idRegExp) )
+		// TODO: is the pControl->id() really a regular expression?
+		// If not then this is just a simple string match.
+		// See also ViewSliders::initLayout()
+
+		const QRegularExpression idRegExp(pControl->id());
+		if (mdwId.contains(idRegExp))
 		{
 			if (pControl->satisfiesVisibility(visibility))
 			{
