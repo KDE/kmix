@@ -424,27 +424,6 @@ install(FILES desktop/kmix_autostart.desktop DESTINATION ${KDE_INSTALL_AUTOSTART
 install(FILES desktop/kmix.notifyrc DESTINATION ${KDE_INSTALL_KNOTIFYRCDIR} )
 
 ####################################################################################################
-########### target: kded_kmixd #####################################################################
-####################################################################################################
-
-# set(kmixd_SRCS
-#   apps/kmixd.cpp
-#   ${kmix_debug_SRCS}
-# )
-#
-# add_library(kded_kmixd MODULE ${kmixd_SRCS})
-# set_target_properties(kded_kmixd PROPERTIES OUTPUT_NAME kmixd)
-#
-# target_link_libraries(kded_kmixd
-#   kmixcore
-#   KF${QT_MAJOR_VERSION}::I18n
-#   KF${QT_MAJOR_VERSION}::CoreAddons
-#   KF${QT_MAJOR_VERSION}::DBusAddons
-# )
-#
-# install(TARGETS kded_kmixd DESTINATION ${KDE_INSTALL_PLUGINDIR}/kf${QT_MAJOR_VERSION}/kded)
-
-####################################################################################################
 ########### target: kmixctrl #######################################################################
 ####################################################################################################
 
