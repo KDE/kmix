@@ -8,19 +8,13 @@ set(RELEASE_SERVICE_VERSION "${RELEASE_SERVICE_VERSION_MAJOR}.${RELEASE_SERVICE_
 
 set(KMIX_VERSION ${RELEASE_SERVICE_VERSION})
 project(kmix VERSION ${KMIX_VERSION})
-# SOVERSION of the kmixcore library
-set(KMIX_VERSION_MAJOR ${QT_MAJOR_VERSION})
-# Version of the configuration, originally from core/version.h
-set(KMIX_CONFIG_VERSION 3)
 
 ####################################################################################################
 ########### options ################################################################################
 ####################################################################################################
 
-# Plasma dataengines are apparently deprecated and will be removed in Plasma 6
-if (${QT_MAJOR_VERSION} EQUAL 5)
-  option(BUILD_DATAENGINE "Build the Plasma dataengine" OFF)
-endif ()
+# Plasma dataengines are deprecated and will be removed in Plasma 6
+option(BUILD_DATAENGINE "Build the Plasma dataengine" OFF)
 
 # For testing OSS4 build on Linux with 4Front OSS4 installed
 #
@@ -32,15 +26,27 @@ set(OSS4_INCLUDES "" CACHE PATH "Include path for OSS4 include files")
 ########### dependencies and tests #################################################################
 ####################################################################################################
 
-if (${QT_MAJOR_VERSION} EQUAL 6)
+# KDE CI sets this for Qt6 runners but not for Qt5.
+if (NOT DEFINED QT_MAJOR_VERSION)
+  set (QT_MAJOR_VERSION 5)
+endif ()
+
+if (QT_MAJOR_VERSION EQUAL 6)
   set(QT_MIN_VERSION "6.3.0")
   set(KF_MIN_VERSION "6.1.0")
 else ()
-  if (${QT_MAJOR_VERSION} EQUAL 5)
+  if (QT_MAJOR_VERSION EQUAL 5)
     set(QT_MIN_VERSION "5.15.2")
     set(KF_MIN_VERSION "5.101.0")
+  else ()
+    message(FATAL_ERROR "Expecting to build for either Qt5 or Qt6")
   endif ()
 endif ()
+
+# SOVERSION of the kmixcore library
+set(KMIX_VERSION_MAJOR ${QT_MAJOR_VERSION})
+# Version of the configuration, originally from core/version.h
+set(KMIX_CONFIG_VERSION 3)
 
 set(PA_MIN_VERSION "0.9.16")
 set(KDE_COMPILERSETTINGS_LEVEL "5.82")
@@ -78,13 +84,16 @@ find_package(KF${QT_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED COMPONENTS
     DocTools
     GlobalAccel
     I18n
-    StatusNotifierItem
     Notifications
     Solid
     WidgetsAddons
     WindowSystem
     XmlGui
 )
+
+if (QT_MAJOR_VERSION GREATER_EQUAL 6)
+  find_package(KF${QT_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED COMPONENTS StatusNotifierItem)
+endif ()
 
 if (BUILD_DATAENGINE)
   find_package(KF${QT_MAJOR_VERSION}Plasma ${KF_MIN_VERSION} REQUIRED)
@@ -380,11 +389,14 @@ target_link_libraries(kmixgui
   KF${QT_MAJOR_VERSION}::ConfigCore
   KF${QT_MAJOR_VERSION}::ConfigGui
   KF${QT_MAJOR_VERSION}::GlobalAccel
-  KF${QT_MAJOR_VERSION}::StatusNotifierItem
   KF${QT_MAJOR_VERSION}::Notifications
   KF${QT_MAJOR_VERSION}::XmlGui
   KF${QT_MAJOR_VERSION}::WindowSystem
 )
+
+if (QT_MAJOR_VERSION GREATER_EQUAL 6)
+  target_link_libraries(kmixgui KF${QT_MAJOR_VERSION}::StatusNotifierItem)
+endif ()
 
 ####################################################################################################
 ########### target: kmix ###########################################################################
