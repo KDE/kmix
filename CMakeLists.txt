@@ -412,7 +412,6 @@ target_link_libraries(kmix
   KF${QT_MAJOR_VERSION}::DBusAddons
   KF${QT_MAJOR_VERSION}::GlobalAccel
   KF${QT_MAJOR_VERSION}::XmlGui
-  KF${QT_MAJOR_VERSION}::WindowSystem
 )
 
 install(TARGETS kmix ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})

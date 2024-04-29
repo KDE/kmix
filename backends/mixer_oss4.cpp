@@ -38,7 +38,7 @@
 #endif
 #endif
 
-#include <QRegExp>
+#include <qregularexpression.h>
 #include <qplatformdefs.h>
 
 #include "core/mixer.h"
@@ -48,9 +48,7 @@
 
 MixerBackend* OSS4_getMixer(Mixer *mixer, int device)
 {
-	MixerBackend *l_mixer;
-	l_mixer = new Mixer_OSS4(mixer, device);
-	return l_mixer;
+	return (new Mixer_OSS4(mixer, device));
 }
 
 Mixer_OSS4::Mixer_OSS4(Mixer *mixer, int device) : MixerBackend(mixer, device)
@@ -76,11 +74,18 @@ Mixer_OSS4::~Mixer_OSS4()
 	close();
 }
 
+
+static QString ucfirst(const QString &s)
+{
+	return (s.left(1).toUpper()+s.mid(1));
+}
+
+
 //classifies mixexts according to their name, last classification wins
 MixDevice::ChannelType Mixer_OSS4::classifyAndRename(QString &name, int flags)
 {
 	MixDevice::ChannelType cType = MixDevice::UNKNOWN;
-	QStringList classes = name.split (QRegExp( QLatin1String(  "[-,.]" ) ));
+	QStringList classes = name.split(QRegularExpression(QLatin1String("[-,.]")));
 
 #ifdef MIXF_PCMVOL
 	if (flags & MIXF_PCMVOL  ||			// these flags in 4Front only
@@ -91,102 +96,95 @@ MixDevice::ChannelType Mixer_OSS4::classifyAndRename(QString &name, int flags)
 	}
 #endif
 
-	for ( QStringList::Iterator it = classes.begin(); it != classes.end(); ++it )
+	for (QString &it : classes)
 	{
-		if ( *it == "line" )
+		if ( it == "line" )
 		{
-			*it = "Line";
+			it = ucfirst(it);
 			cType = MixDevice::EXTERNAL;
 
 		} else
-		if ( *it == "mic" )
+		if ( it == "mic" )
 		{
-			*it = "Microphone";
+			it = "Microphone";
 			cType = MixDevice::MICROPHONE;
 		} else
-		if ( *it == "vol" )
+		if ( it == "vol" )
 		{
-			*it = "Volume";
+			it = "Volume";
 			cType = MixDevice::VOLUME;
 		} else
-		if ( *it == "surr" )
+		if ( it == "surr" )
 		{
-			*it = "Surround";
+			it = "Surround";
 			cType = MixDevice::SURROUND;
 		} else
-		if ( *it == "bass" )
+		if ( it == "bass" )
 		{
-			*it = "Bass";
+			it = ucfirst(it);
 			cType = MixDevice::BASS;
 		} else
-		if ( *it == "treble" )
+		if ( it == "treble" )
 		{
-			*it = "Treble";
+			it = ucfirst(it);
 			cType = MixDevice::TREBLE;
 		} else
-		if ( (*it).startsWith ( QLatin1String("pcm") ) )
+		if ( it.startsWith(QLatin1String("pcm")) )
 		{
-			(*it).replace ( "pcm","PCM" );
+			it.replace( "pcm", "PCM" );
 			cType = MixDevice::AUDIO;
 		} else
-		if ( *it == "src" )
+		if ( it == "src" )
 		{
-			*it = "Source";
+			it = "Source";
 		} else
-		if ( *it == "rec" )
+		if ( it == "rec" )
 		{
-			*it = "Recording";
+			it = "Recording";
 		} else
-		if ( *it == "cd" )
+		if ( it == "cd" )
 		{
-			*it = (*it).toUpper();
+			it = it.toUpper();
 			cType = MixDevice::CD;
 		}
-		if ( (*it).startsWith(QLatin1String("vmix")) )
+		if ( it.startsWith(QLatin1String("vmix")) )
 		{
-			(*it).replace("vmix","Virtual Mixer");
+			it.replace( "vmix", "Virtual Mixer" );
 			cType = MixDevice::VOLUME;
 		} else
-		if ( (*it).endsWith(QLatin1String("vol")) )
+		if ( it.endsWith(QLatin1String("vol")) )
 		{
-			QCharRef ref = (*it)[0];
-			ref = ref.toUpper();
+			it = ucfirst(it);
 			cType = MixDevice::VOLUME;
 		} else
-		if ( (*it).contains("speaker") )
+		if ( it.contains("speaker") )
 		{
-			QCharRef ref = (*it)[0];
-			ref = ref.toUpper();
+			it = ucfirst(it);
 			cType = MixDevice::SPEAKER;	
 		} else
-		if ( (*it).contains("center") && (*it).contains("lfe"))
+		if ( it.contains("center") && it.contains("lfe"))
 		{
-			QCharRef ref = (*it)[0];
-			ref = ref.toUpper();
+			it = ucfirst(it);
 			cType = MixDevice::SURROUND_LFE;
 		} else
-		if ( (*it).contains("rear") )
+		if ( it.contains("rear") )
 		{
-			QCharRef ref = (*it)[0];
-			ref = ref.toUpper();
+			it = ucfirst(it);
 			cType = MixDevice::SURROUND_CENTERBACK;
 		} else
-		if ( (*it).contains("front") )
+		if ( it.contains("front") )
 		{
-			QCharRef ref = (*it)[0];
-			ref = ref.toUpper();
+			it = ucfirst(it);
 			cType = MixDevice::SURROUND_CENTERFRONT;
 		} else
-		if ( (*it).contains("headphone") )
+		if ( it.contains("headphone") )
 		{
-			QCharRef ref = (*it)[0];
-			ref = ref.toUpper();
+			it = ucfirst(it);
 			cType = MixDevice::HEADPHONE;
 		}
 		else
 		{
-			QCharRef ref = (*it)[0];
-			ref = ref.toUpper();
+			it = ucfirst(it);
 		}
 	}
 	name = classes.join( QLatin1String(  " " ));
@@ -726,19 +724,10 @@ void Mixer_OSS4::setEnumIdHW(const QString& id, unsigned int idx)
 
 
 	//according to oss docs maxVal < minVal could be true - strange...
-	unsigned int maxVal = (unsigned int) extinfo.maxvalue;
-	unsigned int minVal = (unsigned int) extinfo.minvalue;
-
-	if ( maxVal < minVal )
-	{
-		int temp;
-		temp = maxVal;
-		maxVal = minVal;
-		minVal = temp;
-	}
-
-	if ( idx > maxVal || idx < minVal )
-		idx = minVal;
+	unsigned int maxVal = static_cast<unsigned int>(extinfo.maxvalue);
+	unsigned int minVal = static_cast<unsigned int>(extinfo.minvalue);
+	if (maxVal < minVal) qSwap(maxVal, minVal);
+	idx = qBound(minVal, idx, maxVal);
 
 	mv.dev = extinfo.dev;
 	mv.ctrl = extinfo.ctrl;

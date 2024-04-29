@@ -41,7 +41,6 @@
 #endif // CAN_USE_ICON_OVERLAY
 
 #include <klocalizedstring.h>
-#include <kwindowsystem.h>
 #include <kactioncollection.h>
 #include <ktoggleaction.h>
 #include <kxmlguiwindow.h>

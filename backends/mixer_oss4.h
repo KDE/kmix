@@ -34,14 +34,14 @@ public:
   Mixer_OSS4(Mixer* mixer, int device);
   virtual ~Mixer_OSS4();
 
-  virtual QString errorText(int mixer_error);
-  virtual QString getDriverName();
+  virtual QString errorText(int mixer_error) override;
+  virtual QString getDriverName() override;
   virtual bool CheckCapture(oss_mixext *ext);
-  virtual bool hasChangedControls();
-  virtual int readVolumeFromHW(const QString& id, shared_ptr<MixDevice> md);
-  virtual int writeVolumeToHW(const QString& id, shared_ptr<MixDevice> md );
-  virtual void setEnumIdHW(const QString& id, unsigned int idx);
-  virtual unsigned int enumIdHW(const QString& id);
+  virtual bool hasChangedControls() override;
+  virtual int readVolumeFromHW(const QString& id, shared_ptr<MixDevice> md) override;
+  virtual int writeVolumeToHW(const QString& id, shared_ptr<MixDevice> md ) override;
+  virtual void setEnumIdHW(const QString& id, unsigned int idx) override;
+  virtual unsigned int enumIdHW(const QString& id) override;
 
 protected:
 
@@ -50,8 +50,8 @@ protected:
   int wrapIoctl(int ioctlRet);
 
   void reinitialize() { open(); close(); }
-  virtual int open();
-  virtual int close();
+  virtual int open() override;
+  virtual int close() override;
 
   int	  m_ossVersion;
   int     m_fd;
