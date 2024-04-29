@@ -178,11 +178,12 @@ void KMixWindow::initActions()
 
 	action = actionCollection()->addAction(QStringLiteral("toggle_channels_currentview"));
 	action->setText(i18n("Configure &Channels..."));
-	action->setIcon(QIcon::fromTheme("show-mixer"));
+	action->setIcon(QIcon::fromTheme("settings-channels"));
 	connect(action, &QAction::triggered, this, &KMixWindow::slotConfigureCurrentView);
 
 	action = actionCollection()->addAction(QStringLiteral("select_master"));
 	action->setText(i18n("Select Master Channel..."));
+	action->setIcon(QIcon::fromTheme("settings-master"));
 	connect(action, &QAction::triggered, this, &KMixWindow::slotSelectMaster);
 
 	action = actionCollection()->addAction(QStringLiteral("save_1"));

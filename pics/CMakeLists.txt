@@ -4,7 +4,7 @@
 
 ########### install files ###############
 
-install( FILES
+install(FILES
     mixer-pcm.png
     mixer-lfe.png
     mixer-cd.png
@@ -21,7 +21,9 @@ install( FILES
     mixer-digital.png
     mixer-ac97.png
     show-mixer.png
-    DESTINATION  ${KDE_INSTALL_DATADIR}/kmix/pics )
+    settings-channels.png
+    settings-master.png
+    DESTINATION ${KDE_INSTALL_DATADIR}/kmix/pics)
 
 ecm_install_icons(ICONS
     16-actions-kmix.png
