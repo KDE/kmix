@@ -59,7 +59,11 @@ public:
         return m_icon.actualSize(size, mode, state);
     }
 
+#if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     QList<QSize> availableSizes(QIcon::Mode mode, QIcon::State state) override
+#else
+    QList<QSize> availableSizes(QIcon::Mode mode, QIcon::State state) const override
+#endif
     {
         return m_icon.availableSizes(mode, state);
     }
