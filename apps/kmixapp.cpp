@@ -41,8 +41,6 @@ static bool firstCaller = true;
 // signal.  It can therefore be a simple QObject.
 
 KMixApp::KMixApp()
-	: QObject(),
-      m_kmix(nullptr)
 {
 	// We must disable QuitOnLastWindowClosed. Rationale:
 	// 1) The normal state of KMix is to only have the dock icon shown.
@@ -51,6 +49,9 @@ KMixApp::KMixApp()
 	// 3) During the reconstruction, it can easily happen that no window is present => KMix would quit
 	// => disable QuitOnLastWindowClosed
 	qApp->setQuitOnLastWindowClosed(false);
+
+	m_startupOptions = KMixApp::StartupOptions();	// command line not parsed
+	m_kmix = nullptr;				// no window created yet
 }
 
 KMixApp::~KMixApp()
@@ -62,17 +63,17 @@ KMixApp::~KMixApp()
 	Settings::self()->save();
 }
 
-void KMixApp::createWindowOnce(bool hasArgKeepvisibility, bool reset)
+void KMixApp::createWindowOnce()
 {
 	// Create window, if it was not yet created (e.g. via autostart or manually)
 	if (m_kmix==nullptr)
 	{
 		qCDebug(KMIX_LOG) << "Creating new KMix window";
-		m_kmix = new KMixWindow(hasArgKeepvisibility, reset);
+		m_kmix = new KMixWindow(m_startupOptions);
 	}
 }
 
-bool KMixApp::restoreSessionIfApplicable(bool hasArgKeepvisibility, bool reset)
+bool KMixApp::restoreSessionIfApplicable()
 {
 	/**
 	 * We should lock session creation. Rationale:
@@ -89,12 +90,12 @@ bool KMixApp::restoreSessionIfApplicable(bool hasArgKeepvisibility, bool reset)
 	 */
 	creationLock.lock();
 
-	bool restore = qApp->isSessionRestored(); // && KMainWindow::canBeRestored(0);
-	qCDebug(KMIX_LOG) << "Starting KMix using keepvisibility=" << hasArgKeepvisibility << ", failsafe=" << reset << ", sessionRestore=" << restore;
+	const bool restore = qApp->isSessionRestored(); // && KMainWindow::canBeRestored(0);
+	qCDebug(KMIX_LOG) << "Startup options" << m_startupOptions << "restore?" << restore;
 	int createCount = 0;
 	if (restore)
 	{
-		if (reset)
+		if (m_startupOptions & KMixApp::FailsafeReset)
 		{
 			qCWarning(KMIX_LOG) << "Reset cannot be performed while KMix is running. Please quit KMix and retry then.";
 		}
@@ -112,7 +113,7 @@ bool KMixApp::restoreSessionIfApplicable(bool hasArgKeepvisibility, bool reset)
 			else
 			{
 				// Create window, if it was not yet created (e.g. via autostart or manually)
-				createWindowOnce(hasArgKeepvisibility, reset);
+				createWindowOnce();
 				// #restore() is called with the parameter of "show == false", as KMixWindow itself decides on it.
 				m_kmix->restore(n, false);
 				createCount++;
@@ -124,7 +125,7 @@ bool KMixApp::restoreSessionIfApplicable(bool hasArgKeepvisibility, bool reset)
 	if (createCount == 0)
 	{
 		// Normal start, or if nothing could be restored
-		createWindowOnce(hasArgKeepvisibility, reset);
+		createWindowOnce();
 	}
 
 	creationLock.unlock();
@@ -165,11 +166,11 @@ void KMixApp::newInstance(const QStringList &arguments, const QString &workingDi
 		 *
 		 * Typical case: Normal start. KMix was not running yet => create a new KMixWindow
 		 */
-		restoreSessionIfApplicable(m_hasArgKeepvisibility, m_hasArgReset);
+		restoreSessionIfApplicable();
 	}
 	else
 	{
-		if (!m_hasArgKeepvisibility)
+		if (!(m_startupOptions & KMixApp::KeepVisibility))
 		{
 			/** CASE 2 ******************************************************
 			 *
@@ -185,7 +186,7 @@ void KMixApp::newInstance(const QStringList &arguments, const QString &workingDi
 			 * 2) Session restore => we are here at this line of code (CASE 2). m_kmix exists, but still must be restored
 			 *
 			 */
-			bool wasRestored = restoreSessionIfApplicable(m_hasArgKeepvisibility, m_hasArgReset);
+			bool wasRestored = restoreSessionIfApplicable();
 			if (!wasRestored)
 			{
 				//
@@ -210,9 +211,7 @@ void KMixApp::newInstance(const QStringList &arguments, const QString &workingDi
 			 *       (see BKO 58901), but nowadays Mixer Applets might want to use it, though they should
 			 *       use KMixD instead.
 			 */
-			qCDebug(KMIX_LOG)
-			<< "KMixApp::newInstance() REGULAR_START _keepVisibility="
-					<< m_hasArgKeepvisibility;
+			qCDebug(KMIX_LOG) << "Normal startup with options" << m_startupOptions;
 		}
 	}
 
@@ -222,8 +221,9 @@ void KMixApp::newInstance(const QStringList &arguments, const QString &workingDi
 
 void KMixApp::parseOptions(const QCommandLineParser &parser)
 {
-	m_hasArgKeepvisibility = parser.isSet("keepvisibility");
-	m_hasArgReset = parser.isSet("failsafe");
+	if (parser.isSet("keepvisibility")) m_startupOptions |= KMixApp::KeepVisibility;
+	if (parser.isSet("failsafe")) m_startupOptions |= KMixApp::FailsafeReset;
+	if (parser.isSet("nosystemtray")) m_startupOptions |= KMixApp::NoSystemTray;
 
 	// Hidden configuration settings which affect the entire application
 	// are also parsed and set here.  Therefore they do not need to be passed

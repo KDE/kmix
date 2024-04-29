@@ -27,6 +27,7 @@
 // KMix
 #include "core/ControlManager.h"
 #include "gui/kmixprefdlg.h"
+#include "kmixapp.h"
 
 
 class QTabWidget;
@@ -45,13 +46,12 @@ class KMixWindow : public KXmlGuiWindow
    Q_OBJECT
 
 public:
-   KMixWindow(bool invisible, bool reset);
+   KMixWindow(KMixApp::StartupOptions startupOptions);
    virtual ~KMixWindow();
 
 private:
    void saveBaseConfig();
    void saveViewConfig();
-   void loadAndInitConfig(bool reset);
    void loadBaseConfig();
 
    void initPrefDlg();
@@ -88,9 +88,9 @@ private:
     void forkExec(const QStringList& args);
     KToggleAction* _actionShowMenubar;
 
-   bool m_startVisible;
-   bool m_visibilityUpdateAllowed;
-   bool m_autouseMultimediaKeys;   // Due to message freeze, not in config dialog in KDE4.4
+    bool m_startVisible;
+    bool m_autouseMultimediaKeys;   // Due to message freeze, not in config dialog in KDE4.4
+    bool m_noDockWidget;
 
    QTabWidget *m_wsMixers;
 
@@ -111,6 +111,7 @@ private:
     bool updateDocking();
     void removeDock();
     void updateTabsClosable();
+    bool shouldShowDock() const;
 
 private:
     static QString getKmixctrlRcFilename(const QString &postfix);

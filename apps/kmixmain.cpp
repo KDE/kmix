@@ -70,7 +70,7 @@ int main(int argc, char *argv[])
 // aboutData.addAuthor(i18n("Nick Lopez")        , i18n("Initial ALSA port"), "kimo_sabe@usa.net");
 
    // Credit Policy: Authors who did a discrete part, like the Dataengine, OSD, help on specific platforms or soundcards.
-   aboutData.addCredit(i18n("Jonathan Marten")   , i18n("KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"), "jonathan.marten@kdemail.net");
+   aboutData.addCredit(i18n("Jonathan Marten")   , i18n("KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"), "jonathan.marten@kdemail.net");
    aboutData.addCredit(i18n("Igor Poboiko")      , i18n("Plasma Dataengine"), "igor.poboiko@gmail.com");
    aboutData.addCredit(i18n("Stefan Schimanski") , i18n("Temporary maintainer"), "schimmi@kde.org");
    aboutData.addCredit(i18n("Sebestyen Zoltan")  , i18n("*BSD fixes"), "szoli@digo.inf.elte.hu");
@@ -118,6 +118,7 @@ int main(int argc, char *argv[])
    parser.addOption(QCommandLineOption("failsafe", i18n("Start KMix in failsafe mode.")));
    parser.addOption(QCommandLineOption("backends", i18n("A list of backends to use (for testing only)."), i18n("name[,name...]"), QString()));
    parser.addOption(QCommandLineOption("multidriver", i18n("Enable the (experimental) multiple driver mode.")));
+   parser.addOption(QCommandLineOption("nosystemtray", i18n("Do not show the system tray volume control.")));
    parser.process(qapp);
 
    // Implement running as a unique application

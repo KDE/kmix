@@ -61,19 +61,23 @@
  * Constructs a mixer window (KMix main window)
  */
 
-KMixWindow::KMixWindow(bool invisible, bool reset) :
-		KXmlGuiWindow(nullptr),
-		m_autouseMultimediaKeys(true),
-		m_dockWidget(nullptr),
-		m_dsm(nullptr),
-		m_dontSetDefaultCardOnStart(false)
+KMixWindow::KMixWindow(KMixApp::StartupOptions options)
+        : KXmlGuiWindow(nullptr),
+	  m_autouseMultimediaKeys(true),
+	  m_dockWidget(nullptr),
+	  m_dsm(nullptr),
+	  m_dontSetDefaultCardOnStart(false)
 {
 	setObjectName(QStringLiteral("KMixWindow"));
 	// disable delete-on-close because KMix might just sit in the background waiting for cards to be plugged in
 	setAttribute(Qt::WA_DeleteOnClose, false);
 
+	m_noDockWidget = (options & KMixApp::NoSystemTray);
+	m_startVisible = true;				// force on for failsafe reset
+
+	const bool reset = (options & KMixApp::FailsafeReset);
 	initActions(); // init actions first, so we can use them in the loadConfig() already
-	loadAndInitConfig(reset); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
+	if (!reset) loadBaseConfig(); // Load config before initMixer(), e.g. due to "MultiDriver" keyword
 	initActionsLate(); // init actions that require a loaded config
 	// TODO: Port to KF5, see MixerBackend::translateKernelToWhatsthis()
 	//KGlobal::locale()->insertCatalog(QLatin1String("kmix-controls"));
@@ -95,7 +99,7 @@ KMixWindow::KMixWindow(bool invisible, bool reset) :
 
 	fixConfigAfterRead();
 
-	if (m_startVisible && !invisible) show();	// Started visible
+	if (m_startVisible && !(options & KMixApp::KeepVisibility)) show();	// Started visible
 
 	connect(qApp, &QCoreApplication::aboutToQuit, this, &KMixWindow::saveConfig);
 
@@ -298,6 +302,8 @@ void KMixWindow::initWidgets()
 	setCentralWidget(m_wsMixers);
 	m_wsMixers->setTabsClosable(false);
 	connect(m_wsMixers, &QTabWidget::tabCloseRequested, this, &KMixWindow::saveAndCloseView);
+	// TODO: connect this signal after all tabs are added, then there
+	// will be no need for m_dontSetDefaultCardOnStart
 	connect(m_wsMixers, &QTabWidget::currentChanged, this, &KMixWindow::newMixerShown);
 
 	// show menubar if the actions says so (or if the action does not exist)
@@ -320,14 +326,22 @@ void KMixWindow::setInitialSize()
 	if (!pos.isNull()) move(pos);
 }
 
+
 void KMixWindow::removeDock()
 {
-	if (m_dockWidget)
+	if (m_dockWidget!=nullptr)
 	{
 		m_dockWidget->deleteLater();
 		m_dockWidget = nullptr;
 	}
 }
+
+
+bool KMixWindow::shouldShowDock() const
+{
+	return (!m_noDockWidget && Settings::showDockWidget());
+}
+
 
 /**
  * Creates or deletes the KMixDockWidget, depending on whether there is a Mixer instance available.
@@ -337,15 +351,23 @@ void KMixWindow::removeDock()
  */
 bool KMixWindow::updateDocking()
 {
-	if (!Settings::showDockWidget() || MixerToolBox::mixers().isEmpty())
+	const bool showDock = shouldShowDock() && !MixerToolBox::mixers().isEmpty();
+
+	// If there is no system tray icon, then disable this action
+	// to indicate that closing the window will also quit KMix.
+	QAction *act = actionCollection()->action(QStringLiteral("hide_kmixwindow"));
+	if (act!=nullptr) act->setEnabled(showDock);
+
+	if (!showDock) removeDock();
+	else
 	{
-		removeDock();
-		return (false);
+		if (m_dockWidget==nullptr) m_dockWidget = new KMixDockWidget(this);
 	}
 
-	if (m_dockWidget==nullptr) m_dockWidget = new KMixDockWidget(this);
-	return (true);
+	return (showDock);
 }
+
+
 void KMixWindow::saveConfig()
 {
 	saveBaseConfig();
@@ -462,12 +484,6 @@ QString KMixWindow::getKmixctrlRcFilename(const QString &postfix)
 		kmixctrlRcFilename.append(".").append(postfix);
 	}
 	return kmixctrlRcFilename;
-}
-
-
-void KMixWindow::loadAndInitConfig(bool reset)
-{
-	if (!reset) loadBaseConfig();
 }
 
 
@@ -1002,7 +1018,7 @@ void KMixWindow::updateTabsClosable()
 
 bool KMixWindow::queryClose()
 {
-	if (Settings::showDockWidget() && !qApp->isSavingSession())
+	if (shouldShowDock() && !qApp->isSavingSession())
 	{
 		// Hide (don't close and destroy), if docking is enabled. Except when session saving (shutdown) is in process.
 		hide();
@@ -1020,7 +1036,7 @@ bool KMixWindow::queryClose()
 
 void KMixWindow::hideOrClose()
 {
-	if (Settings::showDockWidget() && m_dockWidget!=nullptr)
+	if (shouldShowDock() && m_dockWidget!=nullptr)
 	{
 		// we can hide if there is a dock widget
 		hide();
@@ -1212,22 +1228,38 @@ void KMixWindow::slotSelectMaster()
 void KMixWindow::newMixerShown(int /*tabIndex*/)
 {
 	const KMixerWidget *kmw = qobject_cast<const KMixerWidget *>(m_wsMixers->currentWidget());
-	if (kmw!=nullptr)
-	{
-		// I am using the app name as a PREFIX, as KMix is a single window app, and it is
-		// more helpful to the user to see "KDE Mixer" in a window list than a possibly cryptic
-		// soundcard name like "HDA ATI SB".
-		// Reformatted for KF5 so as to not say "KDE"
-		// and so that there are not two different dashes.
-		setWindowTitle(i18n("Mixer (%1)", kmw->mixer()->readableName()));
-		if (!m_dontSetDefaultCardOnStart)
-			m_defaultCardOnStart = kmw->getGuiprof()->getId();
-		// As switching the tab does NOT mean switching the master card, we do not need to update dock icon here.
-		// It would lead to unnecesary flickering of the (complete) dock area.
+	if (kmw==nullptr) return;			// no current mixer
 
-		// We only show the "Configure Channels..." menu item if the mixer is not dynamic
-		const ViewBase *view = kmw->currentView();
-		QAction *action = actionCollection()->action("toggle_channels_currentview");
-		if (view!=nullptr && action!=nullptr) action->setVisible(!view->isDynamic());
+	// I am using the app name as a PREFIX, as KMix is a single window
+	// application and it is more helpful to the user to see "KDE Mixer"
+	// in a window list than a possibly cryptic soundcard name like "HDA ATI SB".
+	// Reformatted for KF5 so as to not say "KDE" and so that there are not
+	// two different dashes.
+	setWindowTitle(i18n("Mixer (%1)", kmw->mixer()->readableName()));
+
+	if (!m_dontSetDefaultCardOnStart)
+		m_defaultCardOnStart = kmw->getGuiprof()->getId();
+
+	// As switching the tab does NOT mean switching the master card,
+	// we do not need to update the dock icon here.  It would lead to
+	// unnecesary flickering of the (complete) dock area.
+
+	// The "Configure Channels..." action is only applicable if the
+	// current mixer is not dynamic.  In order to keep the presence
+	// or absence of the action consistent between tabs, if the current
+	// mixer is PulseAudio then the action is hidden because it will
+	// never be applicable.  Otherwise the action is shown, and enabled
+	// unless the current mixer is dynamic - where the only other dynamic
+	// mixer is MPRIS2.
+	const ViewBase *view = kmw->currentView();
+	QAction *action = actionCollection()->action("toggle_channels_currentview");
+	if (view!=nullptr && action!=nullptr)
+	{
+		if (kmw->mixer()->getDriverName()=="PulseAudio") action->setVisible(false);
+		else
+		{
+			action->setVisible(true);
+			action->setEnabled(!view->isDynamic());
+		}
 	}
 }

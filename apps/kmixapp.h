@@ -38,17 +38,29 @@ class KMixApp : public QObject
 
     void parseOptions(const QCommandLineParser &parser);
 
+   // Options parsed from the command line and passed down to
+   // the KMixWindow via this KMixApp.
+   enum StartupOption
+   {
+       KeepVisibility = 0x01,
+       FailsafeReset = 0x02,
+       NoSystemTray = 0x04,
+   };
+   Q_DECLARE_FLAGS(StartupOptions, StartupOption)
+
 public Q_SLOTS:
     void newInstance(const QStringList &arguments = QStringList(), const QString &workingDirectory = QString());
 
 private:
-    bool restoreSessionIfApplicable(bool hasArgKeepvisibility, bool reset);
-    void createWindowOnce(bool hasArgKeepvisibility, bool reset);
+    bool restoreSessionIfApplicable();
+    void createWindowOnce();
 
     KMixWindow *m_kmix;
+    // TODO: does this need to be a member?
     QRecursiveMutex creationLock;
-    bool m_hasArgKeepvisibility;
-    bool m_hasArgReset;
+    KMixApp::StartupOptions m_startupOptions;
 };
+
+Q_DECLARE_OPERATORS_FOR_FLAGS(KMixApp::StartupOptions)
 
 #endif
