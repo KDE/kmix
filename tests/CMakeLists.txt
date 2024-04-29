@@ -8,10 +8,10 @@ target_link_libraries(profiletest
     Qt::Core
     Qt::DBus
     Qt::Test
-    KF5::ConfigCore
-    KF5::ConfigGui
-    KF5::I18n
-    KF5::Solid
+    KF${QT_MAJOR_VERSION}::ConfigCore
+    KF${QT_MAJOR_VERSION}::ConfigGui
+    KF${QT_MAJOR_VERSION}::I18n
+    KF${QT_MAJOR_VERSION}::Solid
 )
 
 add_test(NAME profiletest
