@@ -78,7 +78,7 @@ void DialogSelectMaster::createWidgets(const Mixer *mixer)
         m_cMixer = new QComboBox(mainFrame);
         m_cMixer->setObjectName( QLatin1String( "mixerCombo" ) );
         m_cMixer->setFixedHeight(m_cMixer->sizeHint().height());
-        connect(m_cMixer, QOverload<int>::of(&QComboBox::activated), this, &DialogSelectMaster::createPageByID);
+        connect(m_cMixer, qOverload<int>(&QComboBox::activated), this, &DialogSelectMaster::createPageByID);
 
         for (int i = 0; i<mixers.count(); ++i)
         {

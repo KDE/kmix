@@ -107,7 +107,7 @@ void DialogAddView::createWidgets(const Mixer *mixer)
         // If it was not found by the loop above, then select the first item.
         m_cMixer->setCurrentIndex(mixerIndex);
         
-        connect(m_cMixer, QOverload<int>::of(&QComboBox::activated), this, &DialogAddView::createPageByID);
+        connect(m_cMixer, qOverload<int>(&QComboBox::activated), this, &DialogAddView::createPageByID);
         mixerNameLayout->addWidget(m_cMixer);
     }
 
