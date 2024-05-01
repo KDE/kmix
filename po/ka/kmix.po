@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-11-05 12:31+0000\n"
+"POT-Creation-Date: 2024-05-01 01:41+0000\n"
 "PO-Revision-Date: 2023-07-25 05:00+0200\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
@@ -43,7 +43,7 @@ msgstr "kmixctrl - kmix -ის ხმის დონეების შენ�
 msgid "(c) 2000 by Stefan Schimanski"
 msgstr "(c) 2000 by Stefan Schimanski"
 
-#: apps/kmixctrl.cpp:45 apps/kmixmain.cpp:73
+#: apps/kmixctrl.cpp:45 apps/kmixmain.cpp:76
 #, kde-format
 msgid "Stefan Schimanski"
 msgstr "Stefan Schimanski"
@@ -58,57 +58,57 @@ msgstr "მიმდინარე ხმის დონეების ნა
 msgid "Restore default volumes"
 msgstr "ნაგულისხმები ხმების აღდგენა"
 
-#: apps/kmixmain.cpp:56
+#: apps/kmixmain.cpp:59
 #, kde-format
 msgid "KMix"
 msgstr "KMix"
 
-#: apps/kmixmain.cpp:57
+#: apps/kmixmain.cpp:60
 #, kde-format
 msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix - KDE-ის სრული ფუნქციონალის მქონე მინი-მიქსერი"
 
-#: apps/kmixmain.cpp:58
+#: apps/kmixmain.cpp:61
 #, kde-format
 msgid "(c) 1996-2013 The KMix Authors"
 msgstr "(c) 1996-2013 KMix -ის ავტორები"
 
-#: apps/kmixmain.cpp:61
+#: apps/kmixmain.cpp:64
 #, kde-format
 msgid "Christian Esken"
 msgstr "Christian Esken"
 
-#: apps/kmixmain.cpp:61
+#: apps/kmixmain.cpp:64
 #, kde-format
 msgid "Original author and current maintainer"
 msgstr "პროექტის მიმდინარე ხელმძღვანელი, ავტორი"
 
-#: apps/kmixmain.cpp:62
+#: apps/kmixmain.cpp:65
 #, kde-format
 msgid "Colin Guthrie"
 msgstr "Colin Guthrie"
 
-#: apps/kmixmain.cpp:62
+#: apps/kmixmain.cpp:65
 #, kde-format
 msgid "PulseAudio support"
 msgstr "PulseAudio -ის მხარდაჭერა"
 
-#: apps/kmixmain.cpp:63
+#: apps/kmixmain.cpp:66
 #, kde-format
 msgid "Helio Chissini de Castro"
 msgstr "Helio Chissini de Castro"
 
-#: apps/kmixmain.cpp:63
+#: apps/kmixmain.cpp:66
 #, kde-format
 msgid "ALSA 0.9x port"
 msgstr "ALSA 0.9x -ზე პორტი"
 
-#: apps/kmixmain.cpp:64
+#: apps/kmixmain.cpp:67
 #, kde-format
 msgid "Brian Hanson"
 msgstr "Brian Hanson"
 
-#: apps/kmixmain.cpp:64
+#: apps/kmixmain.cpp:67
 #, kde-format
 msgid "Solaris support"
 msgstr "Solaris -ის მხარდაჭერა"
@@ -117,132 +117,132 @@ msgstr "Solaris -ის მხარდაჭერა"
 #. The initial support was for ALSA 0.5. The new code is not based on it IIRC.
 #. i18n("Nick Lopez")        , i18n("Initial ALSA port"), "kimo_sabe@usa.net");
 #. Credit Policy: Authors who did a discrete part, like the Dataengine, OSD, help on specific platforms or soundcards.
-#: apps/kmixmain.cpp:71
+#: apps/kmixmain.cpp:74
 #, kde-format
 msgid "Jonathan Marten"
 msgstr "Jonathan Marten"
 
-#: apps/kmixmain.cpp:71
+#: apps/kmixmain.cpp:74
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
 msgstr "KF5 გაშვებულზე მიერთება, ALSA/OSS ხმის უკუკავშირი, GUI გაუმჯობესებები"
 
-#: apps/kmixmain.cpp:72
+#: apps/kmixmain.cpp:75
 #, kde-format
 msgid "Igor Poboiko"
 msgstr "Igor Poboiko"
 
-#: apps/kmixmain.cpp:72
+#: apps/kmixmain.cpp:75
 #, kde-format
 msgid "Plasma Dataengine"
 msgstr "Plasma მონაცემების ძრავი"
 
-#: apps/kmixmain.cpp:73
+#: apps/kmixmain.cpp:76
 #, kde-format
 msgid "Temporary maintainer"
 msgstr "დროებითი წამყვანი პროგრამისტი"
 
-#: apps/kmixmain.cpp:74
+#: apps/kmixmain.cpp:77
 #, kde-format
 msgid "Sebestyen Zoltan"
 msgstr "Sebestyen Zoltan"
 
-#: apps/kmixmain.cpp:74 apps/kmixmain.cpp:75
+#: apps/kmixmain.cpp:77 apps/kmixmain.cpp:78
 #, kde-format
 msgid "*BSD fixes"
 msgstr "*BSD -ზე შეცდომების გასწორება"
 
-#: apps/kmixmain.cpp:75
+#: apps/kmixmain.cpp:78
 #, kde-format
 msgid "Lennart Augustsson"
 msgstr "Lennart Augustsson"
 
-#: apps/kmixmain.cpp:76
+#: apps/kmixmain.cpp:79
 #, kde-format
 msgid "Nadeem Hasan"
 msgstr "Nadeem Hasan"
 
-#: apps/kmixmain.cpp:76
+#: apps/kmixmain.cpp:79
 #, kde-format
 msgid "Mute and volume preview, other fixes"
 msgstr "დადუმება და ხმის გადახედვა. სხვა შეცდომები"
 
-#: apps/kmixmain.cpp:77
+#: apps/kmixmain.cpp:80
 #, kde-format
 msgid "Erwin Mascher"
 msgstr "Erwin Mascher"
 
-#: apps/kmixmain.cpp:77
+#: apps/kmixmain.cpp:80
 #, kde-format
 msgid "Improving support for emu10k1 based soundcards"
 msgstr "Emu10k1-ზე ბაზირებული ხმოვანი ბარათების მხარდაჭერის გაუმჯობესება"
 
-#: apps/kmixmain.cpp:78
+#: apps/kmixmain.cpp:81
 #, kde-format
 msgid "Valentin Rusu"
 msgstr "ვალენტინ რუსუ"
 
-#: apps/kmixmain.cpp:78
+#: apps/kmixmain.cpp:81
 #, kde-format
 msgid "TerraTec DMX6Fire support"
 msgstr "TerraTec DMX6Fire -ის მხარდაჭერა"
 
-#: apps/kmixmain.cpp:86
+#: apps/kmixmain.cpp:89
 #, kde-format
 msgid "PulseAudio"
 msgstr "PulseAudio"
 
-#: apps/kmixmain.cpp:87
+#: apps/kmixmain.cpp:90
 #, kde-format
 msgid "Sound server"
 msgstr "ხმის სერვერი"
 
-#: apps/kmixmain.cpp:92
+#: apps/kmixmain.cpp:95
 #, kde-format
 msgid "ALSA"
 msgstr "ALSA"
 
-#: apps/kmixmain.cpp:93
+#: apps/kmixmain.cpp:96
 #, kde-format
 msgid "Advanced Linux Sound Architecture"
 msgstr "Advanced Linux Sound Architecture"
 
-#: apps/kmixmain.cpp:98
+#: apps/kmixmain.cpp:101
 #, kde-format
 msgid "OSS 3"
 msgstr "OSS 3"
 
-#: apps/kmixmain.cpp:99 apps/kmixmain.cpp:104
+#: apps/kmixmain.cpp:102 apps/kmixmain.cpp:107
 #, kde-format
 msgid "Open Sound System"
 msgstr "Open Sound System"
 
-#: apps/kmixmain.cpp:103
+#: apps/kmixmain.cpp:106
 #, kde-format
 msgid "OSS 4"
 msgstr "OSS 4"
 
-#: apps/kmixmain.cpp:115
+#: apps/kmixmain.cpp:118
 #, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
 msgstr "თუ Kmix-ი უკვე გაშვებულია, მთავარი ფანჯრის გამოჩენის აკრძალვა."
 
-#: apps/kmixmain.cpp:116
+#: apps/kmixmain.cpp:119
 #, kde-format
 msgid "Start KMix in failsafe mode."
 msgstr "KMix-ის უსაფრთხო რეჟიმში გაშვება."
 
-#: apps/kmixmain.cpp:117
+#: apps/kmixmain.cpp:120
 #, kde-format
 msgid "A list of backends to use (for testing only)."
 msgstr "გამოსაყენებელ უკანაბოლოების სია (მხოლოდ ტესტირებისთვის)"
 
-#: apps/kmixmain.cpp:117
+#: apps/kmixmain.cpp:120
 #, kde-format
 msgid "name[,name...]"
 msgstr "სახელი[,სახელი...]"
 
-#: apps/kmixmain.cpp:118
+#: apps/kmixmain.cpp:121
 #, kde-format
 msgid "Enable the (experimental) multiple driver mode."
 msgstr "ბევრი დრაივერის რეჟიმის (ექსპერიმენტალური) ჩართვა."
