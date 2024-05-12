@@ -23,6 +23,7 @@
 
 #include <QMutex>
 #include <QObject>
+#include <QPointer>
 
 class QCommandLineParser;
 class KMixWindow;
@@ -55,8 +56,7 @@ private:
     bool restoreSessionIfApplicable();
     void createWindowOnce();
 
-    KMixWindow *m_kmix;
-    // TODO: does this need to be a member?
+    QPointer<KMixWindow> m_kmix;
     QRecursiveMutex creationLock;
     KMixApp::StartupOptions m_startupOptions;
 };

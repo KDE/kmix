@@ -51,7 +51,6 @@ KMixApp::KMixApp()
 	qApp->setQuitOnLastWindowClosed(false);
 
 	m_startupOptions = KMixApp::StartupOptions();	// command line not parsed
-	m_kmix = nullptr;				// no window created yet
 }
 
 KMixApp::~KMixApp()
@@ -59,20 +58,15 @@ KMixApp::~KMixApp()
 	qCDebug(KMIX_LOG) << "Deleting KMixApp";
 	ControlManager::instance()->shutdownNow();
 	delete m_kmix;
-	m_kmix = nullptr;
 	Settings::self()->save();
 }
 
 void KMixApp::createWindowOnce()
 {
 	// Create window, if it was not yet created (e.g. via autostart or manually)
-	if (m_kmix==nullptr)
+	if (m_kmix.isNull())
 	{
-		// TODO: KMixWindow should take a QObject parent (this KMixApp),
-		// and m_kmix should be a QPointer.  There will then be no
-		// need to explicitly delete it in the destructor.
-
-		qCDebug(KMIX_LOG) << "Creating new KMix window";
+		qCDebug(KMIX_LOG) << "Creating new KMixWindow";
 		m_kmix = new KMixWindow(m_startupOptions);
 	}
 }
@@ -94,6 +88,14 @@ bool KMixApp::restoreSessionIfApplicable()
 	 */
 	creationLock.lock();
 
+	// TODO: is it really worth supporting session restore in this application?
+	// There can only be one instance of KMix, with one main window and
+	// optionally a system tray icon.  It is started on desktop login via
+	// autostart and persists.  Volumes are also restored via autostart.
+	// So it is not clear what session restore actually achieves - maybe
+	// just the open/hidden state of the window, even if that?  Eliminating
+	// session restore would simplify a lot.
+
 	const bool restore = qApp->isSessionRestored(); // && KMainWindow::canBeRestored(0);
 	qCDebug(KMIX_LOG) << "Startup options" << m_startupOptions << "restore?" << restore;
 	int createCount = 0;
@@ -106,7 +108,7 @@ bool KMixApp::restoreSessionIfApplicable()
 		int n = 1;
 		while (KMainWindow::canBeRestored(n))
 		{
-			qCDebug(KMIX_LOG) << "Restoring window " << n;
+			qCDebug(KMIX_LOG) << "Restoring window" << n;
 			if (n > 1)
 			{
 				// This code path is "impossible". It is here only for analyzing possible issues with session restoring.
@@ -116,9 +118,14 @@ bool KMixApp::restoreSessionIfApplicable()
 			}
 			else
 			{
-				// Create window, if it was not yet created (e.g. via autostart or manually)
+				// Create the window, if it has not yet been created
+				// (e.g. via autostart or manually).
 				createWindowOnce();
-				// #restore() is called with the parameter of "show == false", as KMixWindow itself decides on it.
+
+				// Having done the above, we now know that m_kmix
+				// is valid.  Its restore() is called with the 'show'
+				// parameter as false, as KMixWindow makes its own
+				// decision as to whether to do that.
 				m_kmix->restore(n, false);
 				createCount++;
 				n++;
