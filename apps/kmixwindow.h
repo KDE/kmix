@@ -21,6 +21,9 @@
 #ifndef KMIXWINDOW_H
 #define KMIXWINDOW_H
 
+// Qt
+#include <qpointer.h>
+
 // KDE
 #include <kxmlguiwindow.h>
 
@@ -95,7 +98,7 @@ private:
    QTabWidget *m_wsMixers;
 
    KMixDockWidget *m_dockWidget;
-   DialogSelectMaster *m_dsm;
+   QPointer<DialogSelectMaster> m_masterSelectDialog;
 
    QString m_defaultCardOnStart;
    bool m_dontSetDefaultCardOnStart;
@@ -126,7 +129,6 @@ private Q_SLOTS:
    void slotIncreaseVolume();
    void slotDecreaseVolume();
    void slotMute();
-   void slotSelectMasterClose();
 
    void newView();
    void saveAndCloseView(int);

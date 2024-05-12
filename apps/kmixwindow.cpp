@@ -66,8 +66,6 @@ KMixWindow::KMixWindow(KMixApp::StartupOptions options)
         : KXmlGuiWindow(nullptr),
 	  m_autouseMultimediaKeys(true),
 	  m_dockWidget(nullptr),
-	  // TODO: m_dsm should be a smart pointer and have a more descriptive name
-	  m_dsm(nullptr),
 	  m_dontSetDefaultCardOnStart(false)
 {
 	setObjectName(QStringLiteral("KMixWindow"));
@@ -119,8 +117,6 @@ KMixWindow::KMixWindow(KMixApp::StartupOptions options)
 KMixWindow::~KMixWindow()
 {
 	ControlManager::instance()->removeListener(this);
-
-	delete m_dsm;
 
 	// -1- Cleanup Memory: clearMixerWidgets
 	while (m_wsMixers->count() != 0)
@@ -764,15 +760,13 @@ void KMixWindow::newView()
 	}
 
 	Mixer *mixer = mixers.first();
-	QPointer<DialogAddView> dav = new DialogAddView(this, mixer);
-	int ret = dav->exec();
+	DialogAddView dav(this, mixer);
 
-	// TODO: it is pointless using a smart pointer for the dialogue
-	// (which is good practice) here and then not checking it!
-	if (QDialog::Accepted == ret)
+	const int ret = dav.exec();
+	if (ret==QDialog::Accepted)
 	{
-		QString profileName = dav->getresultViewName();
-		QString mixerId = dav->getresultMixerId();
+		QString profileName = dav.getresultViewName();
+		QString mixerId = dav.getresultMixerId();
 		mixer = MixerToolBox::findMixer(mixerId);
 		qCDebug(KMIX_LOG) << ">>> mixer = " << mixerId << " -> " << mixer;
 
@@ -788,17 +782,13 @@ void KMixWindow::newView()
 		}
 		else
 		{
-			bool added = addMixerWidget(mixer->id(), guiprof->getId(), -1);
+			const bool added = addMixerWidget(mixer->id(), guiprof->getId(), -1);
 			if (!added)
 			{
 				KMessageBox::error(this, i18n("Cannot add view - View already exists."), i18n("Error"));
 			}
 		}
-
-		delete dav;
 	}
-
-	//qCDebug(KMIX_LOG) << "Exit";
 }
 
 /**
@@ -1206,36 +1196,32 @@ void KMixWindow::slotConfigureCurrentView()
 	if (view!=nullptr) view->configureView();
 }
 
-void KMixWindow::slotSelectMasterClose()
-{
-	m_dsm = nullptr;
-}
 
 void KMixWindow::slotSelectMaster()
 {
 	const Mixer *mixer = MixerToolBox::getGlobalMasterMixer();
 	if (mixer!=nullptr)
 	{
-		// TODO: m_dsm will probably always be NULL here
-		// because closing the dialogue deletes itself (via
-		// the WA_DeleteOnClose) and it is reset to NULL
-		// in slotSelectMasterClose().
-		if (m_dsm==nullptr)
+		// m_masterSelectDialog will probably always be NULL here,
+		// because closing the dialogue deletes itself (because of
+		// the WA_DeleteOnClose set below) and the QPointer tracks
+		// that deletion.
+		if (m_masterSelectDialog.isNull())
 		{
-			m_dsm = new DialogSelectMaster(mixer, this);
-			connect(m_dsm, &QObject::destroyed, this, &KMixWindow::slotSelectMasterClose);
-			m_dsm->setAttribute(Qt::WA_DeleteOnClose, true);
-			m_dsm->show();
+			m_masterSelectDialog = new DialogSelectMaster(mixer, this);
+			m_masterSelectDialog->setAttribute(Qt::WA_DeleteOnClose, true);
+			m_masterSelectDialog->show();
 		}
 
-		m_dsm->raise();
-		m_dsm->activateWindow();
+		m_masterSelectDialog->raise();
+		m_masterSelectDialog->activateWindow();
 	}
 	else
 	{
 		KMessageBox::error(nullptr, KMixToolBox::noDevicesWarningString());
 	}
 }
+
 
 void KMixWindow::newMixerShown(int /*tabIndex*/)
 {
