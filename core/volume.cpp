@@ -198,7 +198,7 @@ long Volume::volumeStep(bool decrease) const
 {
     if (percent<=0 || percent>=100) return;
     s_volumeStepDivisor = 100.0/percent;
-    qDebug() << "percent" << percent << "-> divisor" << s_volumeStepDivisor;
+    qDebug(KMIX_LOG) << "percent" << percent << "-> divisor" << s_volumeStepDivisor;
 }
 
 

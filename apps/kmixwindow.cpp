@@ -29,6 +29,7 @@
 #include <QTimer>
 #include <QDBusInterface>
 #include <QDBusPendingCall>
+#include <QCloseEvent>
 
 // include files for KDE
 #include <kxmlgui_version.h>
@@ -65,6 +66,7 @@ KMixWindow::KMixWindow(KMixApp::StartupOptions options)
         : KXmlGuiWindow(nullptr),
 	  m_autouseMultimediaKeys(true),
 	  m_dockWidget(nullptr),
+	  // TODO: m_dsm should be a smart pointer and have a more descriptive name
 	  m_dsm(nullptr),
 	  m_dontSetDefaultCardOnStart(false)
 {
@@ -140,8 +142,8 @@ KMixWindow::~KMixWindow()
 	// Until we do so, this is the best place to call clearCache(). Later, e.g. in main() would likely be problematic.
 
 	GUIProfile::clearCache();
-
 }
+
 
 void KMixWindow::controlsChange(ControlManager::ChangeType changeType)
 {
@@ -156,7 +158,6 @@ void KMixWindow::controlsChange(ControlManager::ChangeType changeType)
 		ControlManager::warnUnexpectedChangeType(changeType, this);
 		break;
 	}
-
 }
 
 
@@ -165,20 +166,20 @@ void KMixWindow::initActions()
 	// file menu
 	KStandardAction::quit(this, &QCoreApplication::quit, actionCollection());
 
+	QAction *action = actionCollection()->addAction(QStringLiteral("hide_kmixwindow"));
+	action->setText(i18n("Hide Mixer Window"));
+	connect(action, &QAction::triggered, this, &QWidget::close);
+	actionCollection()->setDefaultShortcut(action, Qt::Key_Escape);
+
 	// settings menu
 	_actionShowMenubar = KStandardAction::showMenubar(this, &KMixWindow::toggleMenuBar, actionCollection());
 	KStandardAction::preferences(this, &KMixWindow::showSettings, actionCollection());
 	KStandardAction::keyBindings(guiFactory(), &KXMLGUIFactory::showConfigureShortcutsDialog, actionCollection());
 
-	QAction* action = actionCollection()->addAction(QStringLiteral("launch_kdesoundsetup"));
+	action = actionCollection()->addAction(QStringLiteral("launch_kdesoundsetup"));
 	action->setText(i18n("Audio Setup..."));
 	action->setIcon(QIcon::fromTheme("speaker"));
 	connect(action, &QAction::triggered, this, &KMixWindow::slotKdeAudioSetupExec);
-
-	action = actionCollection()->addAction(QStringLiteral("hide_kmixwindow"));
-	action->setText(i18n("Hide Mixer Window"));
-	connect(action, &QAction::triggered, this, &KMixWindow::hideOrClose);
-	actionCollection()->setDefaultShortcut(action, Qt::Key_Escape);
 
 	action = actionCollection()->addAction(QStringLiteral("toggle_channels_currentview"));
 	action->setText(i18n("Configure &Channels..."));
@@ -329,11 +330,8 @@ void KMixWindow::setInitialSize()
 
 void KMixWindow::removeDock()
 {
-	if (m_dockWidget!=nullptr)
-	{
-		m_dockWidget->deleteLater();
-		m_dockWidget = nullptr;
-	}
+	if (m_dockWidget!=nullptr) m_dockWidget->deleteLater();
+	m_dockWidget = nullptr;
 }
 
 
@@ -534,6 +532,7 @@ void KMixWindow::recreateGUI(bool saveConfig, bool reset)
 	recreateGUI(saveConfig, QString(), false, reset);
 }
 
+
 /**
  * Create or recreate the Mixer GUI elements
  *
@@ -709,26 +708,41 @@ void KMixWindow::recreateGUI(bool saveConfig, const QString& mixerId, bool force
 	mixerHasProfile.clear();
 
 	// -4- FINALIZE **********************************
-	if (m_wsMixers->count() > 0)
+
+
+	// Show the system tray icon, if it is enabled and there
+	// is at least one sound card.
+	const bool dockingSucceded = updateDocking();
+	if (reset)
 	{
-		if (oldTabPosition >= 0)
-		{
-			m_wsMixers->setCurrentIndex(oldTabPosition);
-		}
-		bool dockingSucceded = updateDocking();
-		if (!dockingSucceded && !MixerToolBox::mixers().empty())
-		{
-			show(); // avoid invisible and inaccessible main window
-		}
+		// Always show the main window, along with the system tray
+		// icon if enabled, on a GUI reset.
+		show();
+	}
+	else if (m_wsMixers->count()>0)			// at least one tab present
+	{
+		if (oldTabPosition>=0) m_wsMixers->setCurrentIndex(oldTabPosition);
+
+		// If there is no system tray icon, then ensure that the
+		// main window is shown.  Originally this also checked
+		// for '!MixerToolBox::mixers().empty()', but if that is
+		// the case then there should be at least one tab.
+		if (!dockingSucceded) show();
 	}
 	else
 	{
-		// No soundcard found. Do not complain, but sit in the background, and wait for newly plugged soundcards.
-		updateDocking();  // -<- removes the DockIcon
+		// TODO: is this correct?  This means that there is no GUI
+		// way to quit KMix if there are no sound cards.
+		//
+		// No sound card was found.  Do not complain, but just sit
+		// in the background and wait for newly plugged soundcards.
+		// The updateDocking() below will also remove the system
+		// tray icon until there is a sound card available.
+		updateDocking();
 		hide();
 	}
-
 }
+
 
 KMixerWidget *KMixWindow::findKMWforTab(const QString &kmwId)
 {
@@ -774,8 +788,8 @@ void KMixWindow::newView()
 		}
 		else
 		{
-			bool ret = addMixerWidget(mixer->id(), guiprof->getId(), -1);
-			if (!ret)
+			bool added = addMixerWidget(mixer->id(), guiprof->getId(), -1);
+			if (!added)
 			{
 				KMessageBox::error(this, i18n("Cannot add view - View already exists."), i18n("Error"));
 			}
@@ -1016,37 +1030,31 @@ void KMixWindow::updateTabsClosable()
 	m_wsMixers->setTabsClosable(!MixerToolBox::pulseaudioPresent() && m_wsMixers->count() > 1);
 }
 
-bool KMixWindow::queryClose()
+
+void KMixWindow::closeEvent(QCloseEvent *ev)
 {
-	if (shouldShowDock() && !qApp->isSavingSession())
+	if (m_dockWidget!=nullptr && !qApp->isSavingSession())
 	{
-		// Hide (don't close and destroy), if docking is enabled. Except when session saving (shutdown) is in process.
+		// The system tray icon is present, so just hide the
+		// main window and do not close it.  The test for
+		// whether m_dockWidget exists will have also taken
+		// account of shouldShowDock().
 		hide();
-		return false;
+		ev->ignore();
 	}
 	else
 	{
-		// Accept the close, if:
-		//     The user has disabled docking
-		// or  SessionSaving() is running
-		//         qCDebug(KMIX_LOG) << "close";
-		return true;
+		// There is no system tray icon, so closing this
+		// window quits the application.  Because we cannot
+		// set WA_DeleteOnClose for this KMixWindow (because
+		// KMixApp just keeps a simple pointer to its m_kmix
+		// and so cannot know when it gets deleted), it is
+		// necessary to explicitly quit the application here.
+		QCoreApplication::quit();
+		ev->accept();
 	}
 }
 
-void KMixWindow::hideOrClose()
-{
-	if (shouldShowDock() && m_dockWidget!=nullptr)
-	{
-		// we can hide if there is a dock widget
-		hide();
-	}
-	else
-	{
-		//  if there is no dock widget, we will quit
-		QCoreApplication::quit();
-	}
-}
 
 // internal helper to prevent code duplication in slotIncreaseVolume and slotDecreaseVolume
 void KMixWindow::increaseOrDecreaseVolume(bool increase)
@@ -1208,6 +1216,10 @@ void KMixWindow::slotSelectMaster()
 	const Mixer *mixer = MixerToolBox::getGlobalMasterMixer();
 	if (mixer!=nullptr)
 	{
+		// TODO: m_dsm will probably always be NULL here
+		// because closing the dialogue deletes itself (via
+		// the WA_DeleteOnClose) and it is reset to NULL
+		// in slotSelectMasterClose().
 		if (m_dsm==nullptr)
 		{
 			m_dsm = new DialogSelectMaster(mixer, this);

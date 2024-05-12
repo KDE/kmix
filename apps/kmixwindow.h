@@ -63,7 +63,7 @@ private:
    void fixConfigAfterRead();
 
 protected:
-   bool queryClose() override;
+    void closeEvent(QCloseEvent *ev) override;
 
 public Q_SLOTS:
    void controlsChange(ControlManager::ChangeType changeType);
@@ -123,7 +123,6 @@ private Q_SLOTS:
    void plugged(const char *driverName, const QString &udi, int dev);
    void unplugged(const QString &udi);
 
-   void hideOrClose();
    void slotIncreaseVolume();
    void slotDecreaseVolume();
    void slotMute();

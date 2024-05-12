@@ -36,7 +36,7 @@ static bool firstCaller = true;
 
 
 // Originally this class was a subclass of KUniqueApplication.
-// Since, now that a unique application is enforced earlier by KDBusService,
+// Now that a unique application is enforced earlier by KDBusService,
 // the only purpose of this class is to receive the activateRequested()
 // signal.  It can therefore be a simple QObject.
 
@@ -68,6 +68,10 @@ void KMixApp::createWindowOnce()
 	// Create window, if it was not yet created (e.g. via autostart or manually)
 	if (m_kmix==nullptr)
 	{
+		// TODO: KMixWindow should take a QObject parent (this KMixApp),
+		// and m_kmix should be a QPointer.  There will then be no
+		// need to explicitly delete it in the destructor.
+
 		qCDebug(KMIX_LOG) << "Creating new KMix window";
 		m_kmix = new KMixWindow(m_startupOptions);
 	}
