@@ -4,13 +4,13 @@
 # Malcolm Hunter <malcolm.hunter@gmx.co.uk>, 2003, 2004, 2005, 2006.
 # Jonathan Riddell <kde-en-gb@jriddell.org>, 2003.
 # Andrew Coles <andrew_coles@yahoo.co.uk>, 2004, 2005, 2009, 2010.
-# Steve Allewell <steve.allewell@gmail.com>, 2014, 2017, 2018, 2019, 2020, 2021, 2023.
+# SPDX-FileCopyrightText: 2014, 2017, 2018, 2019, 2020, 2021, 2023, 2024 Steve Allewell <steve.allewell@gmail.com>
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-05-01 01:41+0000\n"
-"PO-Revision-Date: 2023-06-17 12:18+0100\n"
+"PO-Revision-Date: 2024-05-24 19:14+0100\n"
 "Last-Translator: Steve Allewell <steve.allewell@gmail.com>\n"
 "Language-Team: British English\n"
 "Language: en_GB\n"
@@ -18,7 +18,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 23.03.70\n"
+"X-Generator: Lokalize 24.02.2\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -347,30 +347,27 @@ msgstr "Cannot add view - View already exists."
 #: apps/kmixwindow.cpp:841
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr ""
+msgstr "The sound device '%1' was connected."
 
 #: apps/kmixwindow.cpp:894
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr ""
+msgstr "The sound device '%1' was disconnected."
 
 #: apps/kmixwindow.cpp:919
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
-"The soundcard containing the master device was unplugged. Changing to "
-"control %1 on card %2."
+"The current master device was disconnected. Changing master to '%1' on "
+"device '%2'."
 
 #: apps/kmixwindow.cpp:926
-#, fuzzy, kde-format
-#| msgid "No sound devices are installed or are currently available."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
-msgstr "No sound devices are installed or are currently available."
+msgstr ""
+"The last sound device was disconnected. No sound devices are available."
 
 #: apps/kmixwindow.cpp:1187
 #, kde-format
