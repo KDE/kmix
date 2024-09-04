@@ -38,8 +38,6 @@
 #include <klocalizedstring.h>
 #include <kstandardaction.h>
 #include <kxmlguifactory.h>
-#include <kprocess.h>
-#include <kcoreaddons_version.h>
 
 // KMix
 #include "kmix_debug.h"
@@ -171,11 +169,6 @@ void KMixWindow::initActions()
 	_actionShowMenubar = KStandardAction::showMenubar(this, &KMixWindow::toggleMenuBar, actionCollection());
 	KStandardAction::preferences(this, &KMixWindow::showSettings, actionCollection());
 	KStandardAction::keyBindings(guiFactory(), &KXMLGUIFactory::showConfigureShortcutsDialog, actionCollection());
-
-	action = actionCollection()->addAction(QStringLiteral("launch_kdesoundsetup"));
-	action->setText(i18n("Audio Setup..."));
-	action->setIcon(QIcon::fromTheme("speaker"));
-	connect(action, &QAction::triggered, this, &KMixWindow::slotKdeAudioSetupExec);
 
 	action = actionCollection()->addAction(QStringLiteral("toggle_channels_currentview"));
 	action->setText(i18n("Configure &Channels..."));
@@ -1169,23 +1162,6 @@ void KMixWindow::applyPrefs(KMixPrefDlg::PrefChanges changes)
 void KMixWindow::toggleMenuBar()
 {
 	menuBar()->setVisible(_actionShowMenubar->isChecked());
-}
-
-
-void KMixWindow::slotKdeAudioSetupExec()
-{
-    forkExec(QStringList() << QString("kcmshell%1").arg(KCOREADDONS_VERSION_MAJOR) << "kcm_pulseaudio");
-}
-
-
-void KMixWindow::forkExec(const QStringList& args)
-{
-   int pid = KProcess::startDetached(args);
-   if (pid == 0)
-   {
-       KMessageBox::error(this, i18n("The helper application is either not installed or not working.\n\n%1",
-                         args.join(QLatin1String(" "))));
-   }
 }
 
 void KMixWindow::slotConfigureCurrentView()
