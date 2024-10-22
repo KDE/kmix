@@ -1,8 +1,8 @@
 # Translation of kmix.po to Catalan
-# Copyright (C) 1999-2023 This_file_is_part_of_KDE
+# Copyright (C) 1999-2024 This_file_is_part_of_KDE
 #
 # Sebastià Pla i Sanz <sps@sastia.com>, 1999, 2004.
-# Josep M. Ferrer <txemaq@gmail.com>, 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023.
+# SPDX-FileCopyrightText: 2002, 2003, 2004, 2005, 2006, 2007, 2008, 2009, 2010, 2012, 2013, 2014, 2015, 2016, 2017, 2018, 2019, 2020, 2021, 2022, 2023, 2024 Josep M. Ferrer <txemaq@gmail.com>
 # Albert Astals Cid <aacid@kde.org>, 2004, 2005.
 # Joan Maspons <joanmaspons@gmail.com>, 2009.
 # Manuel Tortosa <manutortosa@chakra-project.org>, 2010, 2011.
@@ -12,14 +12,14 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-05-01 01:41+0000\n"
-"PO-Revision-Date: 2023-07-26 15:19+0200\n"
-"Last-Translator: Antoni Bella Pérez <antonibella5@yahoo.com>\n"
+"PO-Revision-Date: 2024-10-21 20:40+0200\n"
+"Last-Translator: Josep M. Ferrer <txemaq@gmail.com>\n"
 "Language-Team: Catalan <kde-i18n-ca@kde.org>\n"
 "Language: ca\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 23.07.70\n"
+"X-Generator: Lokalize 24.08.2\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 "X-Accelerator-Marker: &\n"
 
@@ -1034,7 +1034,7 @@ msgstr ""
 #: gui/kmixprefdlg.cpp:236
 #, kde-format
 msgid "Volume overdrive is only available for PulseAudio."
-msgstr "La distorsió del volum només està disponibles per al PulseAudio."
+msgstr "La distorsió del volum només està disponible per al PulseAudio."
 
 #: gui/kmixprefdlg.cpp:246
 #, kde-format
