@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-11-05 12:31+0000\n"
+"POT-Creation-Date: 2024-05-01 01:41+0000\n"
 "PO-Revision-Date: 2013-01-07 03:50+0600\n"
 "Last-Translator: Sairan Kikkarin <sairan@computer.org>\n"
 "Language-Team: Kazakh <kde-i18n-doc@kde.org>\n"
@@ -45,7 +45,7 @@ msgstr "kmixctrl - kmix дауыс деңгейін сақтау/қалпына 
 msgid "(c) 2000 by Stefan Schimanski"
 msgstr "(c) 2000, Stefan Schimanski"
 
-#: apps/kmixctrl.cpp:45 apps/kmixmain.cpp:73
+#: apps/kmixctrl.cpp:45 apps/kmixmain.cpp:76
 #, kde-format
 msgid "Stefan Schimanski"
 msgstr "Stefan Schimanski"
@@ -60,57 +60,57 @@ msgstr "Қазіргі к деңгейлерін әдетті қылу"
 msgid "Restore default volumes"
 msgstr "Әдеттегі үнділіктеріне ауысу"
 
-#: apps/kmixmain.cpp:56
+#: apps/kmixmain.cpp:59
 #, kde-format
 msgid "KMix"
 msgstr "KMix"
 
-#: apps/kmixmain.cpp:57
+#: apps/kmixmain.cpp:60
 #, kde-format
 msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix - KDE-нің қасиеттрі толық мини микшері"
 
-#: apps/kmixmain.cpp:58
+#: apps/kmixmain.cpp:61
 #, kde-format
 msgid "(c) 1996-2013 The KMix Authors"
 msgstr "(c) 1996 - 2013  KMix авторлары"
 
-#: apps/kmixmain.cpp:61
+#: apps/kmixmain.cpp:64
 #, kde-format
 msgid "Christian Esken"
 msgstr "Christian Esken"
 
-#: apps/kmixmain.cpp:61
+#: apps/kmixmain.cpp:64
 #, kde-format
 msgid "Original author and current maintainer"
 msgstr "Бастапқы авторы мен қазіргі жетілдірушісі"
 
-#: apps/kmixmain.cpp:62
+#: apps/kmixmain.cpp:65
 #, kde-format
 msgid "Colin Guthrie"
 msgstr "Colin Guthrie"
 
-#: apps/kmixmain.cpp:62
+#: apps/kmixmain.cpp:65
 #, kde-format
 msgid "PulseAudio support"
 msgstr "PulseAudio қолдауы"
 
-#: apps/kmixmain.cpp:63
+#: apps/kmixmain.cpp:66
 #, kde-format
 msgid "Helio Chissini de Castro"
 msgstr "Helio Chissini de Castro"
 
-#: apps/kmixmain.cpp:63
+#: apps/kmixmain.cpp:66
 #, kde-format
 msgid "ALSA 0.9x port"
 msgstr "ALSA 0.9x порты"
 
-#: apps/kmixmain.cpp:64
+#: apps/kmixmain.cpp:67
 #, kde-format
 msgid "Brian Hanson"
 msgstr "Brian Hanson"
 
-#: apps/kmixmain.cpp:64
+#: apps/kmixmain.cpp:67
 #, kde-format
 msgid "Solaris support"
 msgstr "Solaris қолдауы"
@@ -119,137 +119,137 @@ msgstr "Solaris қолдауы"
 #. The initial support was for ALSA 0.5. The new code is not based on it IIRC.
 #. i18n("Nick Lopez")        , i18n("Initial ALSA port"), "kimo_sabe@usa.net");
 #. Credit Policy: Authors who did a discrete part, like the Dataengine, OSD, help on specific platforms or soundcards.
-#: apps/kmixmain.cpp:71
+#: apps/kmixmain.cpp:74
 #, kde-format
 msgid "Jonathan Marten"
 msgstr ""
 
-#: apps/kmixmain.cpp:71
+#: apps/kmixmain.cpp:74
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
 msgstr ""
 
-#: apps/kmixmain.cpp:72
+#: apps/kmixmain.cpp:75
 #, kde-format
 msgid "Igor Poboiko"
 msgstr "Igor Poboiko"
 
-#: apps/kmixmain.cpp:72
+#: apps/kmixmain.cpp:75
 #, kde-format
 msgid "Plasma Dataengine"
 msgstr "Plasma ДерекТетігі"
 
-#: apps/kmixmain.cpp:73
+#: apps/kmixmain.cpp:76
 #, kde-format
 msgid "Temporary maintainer"
 msgstr "Уақытша жетілдірушісі"
 
-#: apps/kmixmain.cpp:74
+#: apps/kmixmain.cpp:77
 #, kde-format
 msgid "Sebestyen Zoltan"
 msgstr "Sebestyen Zoltan"
 
-#: apps/kmixmain.cpp:74 apps/kmixmain.cpp:75
+#: apps/kmixmain.cpp:77 apps/kmixmain.cpp:78
 #, kde-format
 msgid "*BSD fixes"
 msgstr "*BSD қателерін түзеу"
 
-#: apps/kmixmain.cpp:75
+#: apps/kmixmain.cpp:78
 #, kde-format
 msgid "Lennart Augustsson"
 msgstr "Lennart Augustsson"
 
-#: apps/kmixmain.cpp:76
+#: apps/kmixmain.cpp:79
 #, kde-format
 msgid "Nadeem Hasan"
 msgstr "Nadeem Hasan"
 
-#: apps/kmixmain.cpp:76
+#: apps/kmixmain.cpp:79
 #, kde-format
 msgid "Mute and volume preview, other fixes"
 msgstr "Үнін өшіру, үнділік деңгейін көру және түрлі қателерді түзеу"
 
-#: apps/kmixmain.cpp:77
+#: apps/kmixmain.cpp:80
 #, kde-format
 msgid "Erwin Mascher"
 msgstr "Erwin Mascher"
 
-#: apps/kmixmain.cpp:77
+#: apps/kmixmain.cpp:80
 #, kde-format
 msgid "Improving support for emu10k1 based soundcards"
 msgstr "emu10k1 негіздегі дыбыс тақшаның қолдауын жақсарту"
 
-#: apps/kmixmain.cpp:78
+#: apps/kmixmain.cpp:81
 #, kde-format
 msgid "Valentin Rusu"
 msgstr "Valentin Rusu"
 
-#: apps/kmixmain.cpp:78
+#: apps/kmixmain.cpp:81
 #, kde-format
 msgid "TerraTec DMX6Fire support"
 msgstr "TerraTec DMX6Fire қолдауы"
 
-#: apps/kmixmain.cpp:86
+#: apps/kmixmain.cpp:89
 #, fuzzy, kde-format
 #| msgid "PulseAudio support"
 msgid "PulseAudio"
 msgstr "PulseAudio қолдауы"
 
-#: apps/kmixmain.cpp:87
+#: apps/kmixmain.cpp:90
 #, fuzzy, kde-format
 #| msgid "Sound drivers used:"
 msgid "Sound server"
 msgstr "Қолданыстағы дыбыс драйвері:"
 
-#: apps/kmixmain.cpp:92
+#: apps/kmixmain.cpp:95
 #, kde-format
 msgid "ALSA"
 msgstr ""
 
-#: apps/kmixmain.cpp:93
+#: apps/kmixmain.cpp:96
 #, kde-format
 msgid "Advanced Linux Sound Architecture"
 msgstr ""
 
-#: apps/kmixmain.cpp:98
+#: apps/kmixmain.cpp:101
 #, kde-format
 msgid "OSS 3"
 msgstr ""
 
-#: apps/kmixmain.cpp:99 apps/kmixmain.cpp:104
+#: apps/kmixmain.cpp:102 apps/kmixmain.cpp:107
 #, fuzzy, kde-format
 #| msgid "Event Sounds"
 msgid "Open Sound System"
 msgstr "Оқиға дыбыстары"
 
-#: apps/kmixmain.cpp:103
+#: apps/kmixmain.cpp:106
 #, kde-format
 msgid "OSS 4"
 msgstr ""
 
-#: apps/kmixmain.cpp:115
+#: apps/kmixmain.cpp:118
 #, fuzzy, kde-format
 #| msgid ""
 #| "Inhibits the unhiding of the KMix main window, if KMix is already running."
 msgid "Inhibit showing the KMix main window, if KMix is already running."
 msgstr "KMix жегілген болса, оның негізгі терезесін шығаруын болдырмау"
 
-#: apps/kmixmain.cpp:116
+#: apps/kmixmain.cpp:119
 #, kde-format
 msgid "Start KMix in failsafe mode."
 msgstr ""
 
-#: apps/kmixmain.cpp:117
+#: apps/kmixmain.cpp:120
 #, kde-format
 msgid "A list of backends to use (for testing only)."
 msgstr ""
 
-#: apps/kmixmain.cpp:117
+#: apps/kmixmain.cpp:120
 #, kde-format
 msgid "name[,name...]"
 msgstr ""
 
-#: apps/kmixmain.cpp:118
+#: apps/kmixmain.cpp:121
 #, kde-format
 msgid "Enable the (experimental) multiple driver mode."
 msgstr ""

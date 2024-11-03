@@ -1,6 +1,6 @@
 # translation of kmix2.po to Polish
 # translation of kmix.po to
-# Version: $Revision: 1664120 $
+# Version: $Revision: 1681059 $
 # Krzysztof Lichota, 2004.
 # Marcin Giedz <mgiedz@elka.pw.edu.pl>, 2002.
 # Mikolaj Machowski <mikmach@wp.pl>, 2003, 2004, 2005, 2007, 2008, 2009.
@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix2\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2023-11-05 12:31+0000\n"
+"POT-Creation-Date: 2024-05-01 01:41+0000\n"
 "PO-Revision-Date: 2023-10-01 08:49+0200\n"
 "Last-Translator: Łukasz Wojniłowicz <lukasz.wojnilowicz@gmail.com>\n"
 "Language-Team: Polish <kde-i18n-doc@kde.org>\n"
@@ -22,7 +22,6 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 23.04.3\n"
 "Plural-Forms: nplurals=3; plural=(n==1 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 "
 "|| n%100>=20) ? 1 : 2);\n"
 
@@ -53,7 +52,7 @@ msgstr "kmixctrl - narzędzie zapisu/przywracania głośności w kmix"
 msgid "(c) 2000 by Stefan Schimanski"
 msgstr "(c) 2000 by Stefan Schimanski"
 
-#: apps/kmixctrl.cpp:45 apps/kmixmain.cpp:73
+#: apps/kmixctrl.cpp:45 apps/kmixmain.cpp:76
 #, kde-format
 msgid "Stefan Schimanski"
 msgstr "Stefan Schimanski"
@@ -68,57 +67,57 @@ msgstr "Zapisuje bieżące ustawienia głośności jako domyślne"
 msgid "Restore default volumes"
 msgstr "Przywraca domyślne ustawienia głośności"
 
-#: apps/kmixmain.cpp:56
+#: apps/kmixmain.cpp:59
 #, kde-format
 msgid "KMix"
 msgstr "KMix"
 
-#: apps/kmixmain.cpp:57
+#: apps/kmixmain.cpp:60
 #, kde-format
 msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix - Wielofunkcyjny mini mikser KDE"
 
-#: apps/kmixmain.cpp:58
+#: apps/kmixmain.cpp:61
 #, kde-format
 msgid "(c) 1996-2013 The KMix Authors"
 msgstr "(c) 1996-2013 Autorzy KMix"
 
-#: apps/kmixmain.cpp:61
+#: apps/kmixmain.cpp:64
 #, kde-format
 msgid "Christian Esken"
 msgstr "Christian Esken"
 
-#: apps/kmixmain.cpp:61
+#: apps/kmixmain.cpp:64
 #, kde-format
 msgid "Original author and current maintainer"
 msgstr "Pierwotny autor i obecny opiekun"
 
-#: apps/kmixmain.cpp:62
+#: apps/kmixmain.cpp:65
 #, kde-format
 msgid "Colin Guthrie"
 msgstr "Colin Guthrie"
 
-#: apps/kmixmain.cpp:62
+#: apps/kmixmain.cpp:65
 #, kde-format
 msgid "PulseAudio support"
 msgstr "Obsługa PulseAudio"
 
-#: apps/kmixmain.cpp:63
+#: apps/kmixmain.cpp:66
 #, kde-format
 msgid "Helio Chissini de Castro"
 msgstr "Helio Chissini de Castro"
 
-#: apps/kmixmain.cpp:63
+#: apps/kmixmain.cpp:66
 #, kde-format
 msgid "ALSA 0.9x port"
 msgstr "Port ALSA 0.9x"
 
-#: apps/kmixmain.cpp:64
+#: apps/kmixmain.cpp:67
 #, kde-format
 msgid "Brian Hanson"
 msgstr "Brian Hanson"
 
-#: apps/kmixmain.cpp:64
+#: apps/kmixmain.cpp:67
 #, kde-format
 msgid "Solaris support"
 msgstr "Obsługa Solaris"
@@ -127,134 +126,134 @@ msgstr "Obsługa Solaris"
 #. The initial support was for ALSA 0.5. The new code is not based on it IIRC.
 #. i18n("Nick Lopez")        , i18n("Initial ALSA port"), "kimo_sabe@usa.net");
 #. Credit Policy: Authors who did a discrete part, like the Dataengine, OSD, help on specific platforms or soundcards.
-#: apps/kmixmain.cpp:71
+#: apps/kmixmain.cpp:74
 #, kde-format
 msgid "Jonathan Marten"
 msgstr "Jonathan Marten"
 
-#: apps/kmixmain.cpp:71
+#: apps/kmixmain.cpp:74
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
 msgstr ""
 "Podpinanie na gorąco KF5, informacja zwrotna głośności ALSA/OSS, "
 "usprawnienia w GUI"
 
-#: apps/kmixmain.cpp:72
+#: apps/kmixmain.cpp:75
 #, kde-format
 msgid "Igor Poboiko"
 msgstr "Igor Poboiko"
 
-#: apps/kmixmain.cpp:72
+#: apps/kmixmain.cpp:75
 #, kde-format
 msgid "Plasma Dataengine"
 msgstr "Silnik danych Plazmy"
 
-#: apps/kmixmain.cpp:73
+#: apps/kmixmain.cpp:76
 #, kde-format
 msgid "Temporary maintainer"
 msgstr "Tymczasowy opiekun"
 
-#: apps/kmixmain.cpp:74
+#: apps/kmixmain.cpp:77
 #, kde-format
 msgid "Sebestyen Zoltan"
 msgstr "Sebestyen Zoltan"
 
-#: apps/kmixmain.cpp:74 apps/kmixmain.cpp:75
+#: apps/kmixmain.cpp:77 apps/kmixmain.cpp:78
 #, kde-format
 msgid "*BSD fixes"
 msgstr "*Poprawki BSD"
 
-#: apps/kmixmain.cpp:75
+#: apps/kmixmain.cpp:78
 #, kde-format
 msgid "Lennart Augustsson"
 msgstr "Lennart Augustsson"
 
-#: apps/kmixmain.cpp:76
+#: apps/kmixmain.cpp:79
 #, kde-format
 msgid "Nadeem Hasan"
 msgstr "Nadeem Hasan"
 
-#: apps/kmixmain.cpp:76
+#: apps/kmixmain.cpp:79
 #, kde-format
 msgid "Mute and volume preview, other fixes"
 msgstr "Podgląd głośności i wyciszenia, inne poprawki"
 
-#: apps/kmixmain.cpp:77
+#: apps/kmixmain.cpp:80
 #, kde-format
 msgid "Erwin Mascher"
 msgstr "Erwin Mascher"
 
-#: apps/kmixmain.cpp:77
+#: apps/kmixmain.cpp:80
 #, kde-format
 msgid "Improving support for emu10k1 based soundcards"
 msgstr "Poprawa obsługi kart bazujących na emu10k1"
 
-#: apps/kmixmain.cpp:78
+#: apps/kmixmain.cpp:81
 #, kde-format
 msgid "Valentin Rusu"
 msgstr "Valentin Rusu"
 
-#: apps/kmixmain.cpp:78
+#: apps/kmixmain.cpp:81
 #, kde-format
 msgid "TerraTec DMX6Fire support"
 msgstr "Obsługa TerraTec DMX6Fire"
 
-#: apps/kmixmain.cpp:86
+#: apps/kmixmain.cpp:89
 #, kde-format
 msgid "PulseAudio"
 msgstr "PulseAudio"
 
-#: apps/kmixmain.cpp:87
+#: apps/kmixmain.cpp:90
 #, kde-format
 msgid "Sound server"
 msgstr "Serwer dźwięku"
 
-#: apps/kmixmain.cpp:92
+#: apps/kmixmain.cpp:95
 #, kde-format
 msgid "ALSA"
 msgstr "ALSA"
 
-#: apps/kmixmain.cpp:93
+#: apps/kmixmain.cpp:96
 #, kde-format
 msgid "Advanced Linux Sound Architecture"
 msgstr "Advanced Linux Sound Architecture"
 
-#: apps/kmixmain.cpp:98
+#: apps/kmixmain.cpp:101
 #, kde-format
 msgid "OSS 3"
 msgstr "OSS 3"
 
-#: apps/kmixmain.cpp:99 apps/kmixmain.cpp:104
+#: apps/kmixmain.cpp:102 apps/kmixmain.cpp:107
 #, kde-format
 msgid "Open Sound System"
 msgstr "Open Sound System"
 
-#: apps/kmixmain.cpp:103
+#: apps/kmixmain.cpp:106
 #, kde-format
 msgid "OSS 4"
 msgstr "OSS 4"
 
-#: apps/kmixmain.cpp:115
+#: apps/kmixmain.cpp:118
 #, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
 msgstr "Nie pokaże głównego okna KMix, jeśli KMix został już uruchomiony."
 
-#: apps/kmixmain.cpp:116
+#: apps/kmixmain.cpp:119
 #, kde-format
 msgid "Start KMix in failsafe mode."
 msgstr "Uruchom KMix w trybie awaryjnym."
 
-#: apps/kmixmain.cpp:117
+#: apps/kmixmain.cpp:120
 #, kde-format
 msgid "A list of backends to use (for testing only)."
 msgstr "Wykaz silników do użycia (tylko do prób)."
 
-#: apps/kmixmain.cpp:117
+#: apps/kmixmain.cpp:120
 #, kde-format
 msgid "name[,name...]"
 msgstr "nazwa[,nazwa...]"
 
-#: apps/kmixmain.cpp:118
+#: apps/kmixmain.cpp:121
 #, kde-format
 msgid "Enable the (experimental) multiple driver mode."
 msgstr "Włącz (próbny) tryb wielu sterowników."
