@@ -25,9 +25,10 @@
 
 // Define this if KStatusNotifierItem::setOverlayIconByName() works.
 // For KF5 as of March 2020 it appears to be not working, the base icon
-// is shown but with no overlay.  KF6 appears to be fine.
+// is shown but with no overlay.  KF6 originally appeared to be fine but
+// currently as of October 2024 the overlay is not working again.
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
-#define CAN_USE_ICON_OVERLAY
+#undef CAN_USE_ICON_OVERLAY
 #endif
 
 #include <QDBusConnection>
@@ -356,6 +357,9 @@ void KMixDockWidget::activate(const QPoint &pos)
 		_dockPopupWrapper->hide();
 		return;
 	}
+
+	shared_ptr<MixDevice> md = MixerToolBox::getGlobalMasterMD();
+	if (md.get()==nullptr) return;			// no mixer devices, do not show
 
 	createWidgets();				// recreate the popup
 
