@@ -21,6 +21,7 @@
 
 #include <qcommandlineparser.h>
 #include <qapplication.h>
+#include <qicon.h>
 
 #include <kaboutdata.h>
 #include <KCrash>
@@ -57,7 +58,7 @@ int main(int argc, char *argv[])
 
     KAboutData aboutData("kmix", i18n("KMix"),
                          KMIX_VERSION, i18n("KMix - KDE's full featured mini mixer"), KAboutLicense::GPL,
-                         i18n("(c) 1996-2013 The KMix Authors"));
+                         i18n("(c) 1996-2024 The KMix Authors"));
 
    // Author Policy: Long-term maintainers and backend writers/maintainers go in the Authors list.
    aboutData.addAuthor(i18n("Christian Esken")   , i18n("Original author and current maintainer"), "esken@kde.org");
@@ -107,6 +108,10 @@ int main(int argc, char *argv[])
                            QByteArray::number(SOUND_VERSION, 16),
                            "http://www.opensound.com/");
 #endif
+
+    // Set the window icon explicitly for the "About <application>"
+    // dialogue and the "About <application>" menu action.
+    QGuiApplication::setWindowIcon(QIcon::fromTheme("kmix"));
 
    KAboutData::setApplicationData(aboutData);
 
