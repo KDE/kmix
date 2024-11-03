@@ -345,7 +345,7 @@ bool KMixWindow::shouldShowDock() const
  */
 bool KMixWindow::updateDocking()
 {
-	const bool showDock = shouldShowDock() && !MixerToolBox::mixers().isEmpty();
+	const bool showDock = shouldShowDock();
 
 	// If there is no system tray icon, then disable this action
 	// to indicate that closing the window will also quit KMix.
