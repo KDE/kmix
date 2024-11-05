@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-05-01 01:41+0000\n"
+"POT-Creation-Date: 2024-11-05 00:39+0000\n"
 "PO-Revision-Date: 2023-08-06 21:32+0200\n"
 "Last-Translator: Shinjo Park <kde@peremen.name>\n"
 "Language-Team: Korean <kde-kr@kde.org>\n"
@@ -34,8 +34,9 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, kde-format
-msgid "kmixctrl - kmix volume save/restore utility"
+#, fuzzy, kde-format
+#| msgid "kmixctrl - kmix volume save/restore utility"
+msgid "kmixctrl - KMix volume save/restore utility"
 msgstr "kmixctrl - kmix 음량 저장/복원 유틸리티"
 
 #: apps/kmixctrl.cpp:43
@@ -69,8 +70,9 @@ msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix - KDE의 조그마한 믹서"
 
 #: apps/kmixmain.cpp:61
-#, kde-format
-msgid "(c) 1996-2013 The KMix Authors"
+#, fuzzy, kde-format
+#| msgid "(c) 1996-2013 The KMix Authors"
+msgid "(c) 1996-2024 The KMix Authors"
 msgstr "(c) 1996-2013 The KMix Authors"
 
 #: apps/kmixmain.cpp:64
@@ -123,8 +125,9 @@ msgid "Jonathan Marten"
 msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:74
-#, kde-format
-msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
+#, fuzzy, kde-format
+#| msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
+msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
 msgstr "KF5 핫플러그, ALSA/OSS 음량 피드백, GUI 개선"
 
 #: apps/kmixmain.cpp:75
@@ -222,137 +225,143 @@ msgstr "OSS(열린 사운드 시스템)"
 msgid "OSS 4"
 msgstr "OSS 4"
 
-#: apps/kmixmain.cpp:118
+#: apps/kmixmain.cpp:122
 #, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
 msgstr "KMix가 이미 실행 중이면 KMaix 주 창 표시를 방지합니다."
 
-#: apps/kmixmain.cpp:119
+#: apps/kmixmain.cpp:123
 #, kde-format
 msgid "Start KMix in failsafe mode."
 msgstr "KMix를 안전 모드로 시작합니다."
 
-#: apps/kmixmain.cpp:120
+#: apps/kmixmain.cpp:124
 #, kde-format
 msgid "A list of backends to use (for testing only)."
 msgstr "사용할 백엔드 목록입니다(테스트 전용)."
 
-#: apps/kmixmain.cpp:120
+#: apps/kmixmain.cpp:124
 #, kde-format
 msgid "name[,name...]"
 msgstr "name[,name...]"
 
-#: apps/kmixmain.cpp:121
+#: apps/kmixmain.cpp:125
 #, kde-format
 msgid "Enable the (experimental) multiple driver mode."
 msgstr "실험적인 다중 드라이버 모드가 활성화되었습니다."
 
-#: apps/kmixwindow.cpp:168
-#, kde-format
-msgid "Audio Setup..."
-msgstr "오디오 설정..."
+#: apps/kmixmain.cpp:126
+#, fuzzy, kde-format
+#| msgid "Set the orientation of the system tray volume control sliders"
+msgid "Do not show the system tray volume control."
+msgstr "시스템 트레이 음량 제어 슬라이더 방향 설정"
 
-#: apps/kmixwindow.cpp:172
+#: apps/kmixwindow.cpp:166
 #, kde-format
 msgid "Hide Mixer Window"
 msgstr "믹서 창 숨기기"
 
-#: apps/kmixwindow.cpp:177
+#: apps/kmixwindow.cpp:176
+#, kde-format
+msgid "Audio Setup..."
+msgstr "오디오 설정..."
+
+#: apps/kmixwindow.cpp:181
 #, kde-format
 msgid "Configure &Channels..."
 msgstr "채널 설정(&C)..."
 
-#: apps/kmixwindow.cpp:181
+#: apps/kmixwindow.cpp:186
 #, kde-format
 msgid "Select Master Channel..."
 msgstr "마스터 채널 선택..."
 
-#: apps/kmixwindow.cpp:186
+#: apps/kmixwindow.cpp:192
 #, kde-format
 msgid "Save volume profile 1"
 msgstr "음량 프로필 1 저장"
 
-#: apps/kmixwindow.cpp:191
+#: apps/kmixwindow.cpp:197
 #, kde-format
 msgid "Save volume profile 2"
 msgstr "음량 프로필 2 저장"
 
-#: apps/kmixwindow.cpp:196
+#: apps/kmixwindow.cpp:202
 #, kde-format
 msgid "Save volume profile 3"
 msgstr "음량 프로필 3 저장"
 
-#: apps/kmixwindow.cpp:201
+#: apps/kmixwindow.cpp:207
 #, kde-format
 msgid "Save volume profile 4"
 msgstr "음량 프로필 4 저장"
 
-#: apps/kmixwindow.cpp:206
+#: apps/kmixwindow.cpp:212
 #, kde-format
 msgid "Load volume profile 1"
 msgstr "음량 프로필 1 불러오기"
 
-#: apps/kmixwindow.cpp:211
+#: apps/kmixwindow.cpp:217
 #, kde-format
 msgid "Load volume profile 2"
 msgstr "음량 프로필 2 불러오기"
 
-#: apps/kmixwindow.cpp:216
+#: apps/kmixwindow.cpp:222
 #, kde-format
 msgid "Load volume profile 3"
 msgstr "음량 프로필 3 불러오기"
 
-#: apps/kmixwindow.cpp:221
+#: apps/kmixwindow.cpp:227
 #, kde-format
 msgid "Load volume profile 4"
 msgstr "음량 프로필 4 불러오기"
 
-#: apps/kmixwindow.cpp:232
+#: apps/kmixwindow.cpp:238
 #, kde-format
 msgid "Increase Volume"
 msgstr "음량 증가"
 
-#: apps/kmixwindow.cpp:239
+#: apps/kmixwindow.cpp:245
 #, kde-format
 msgid "Decrease Volume"
 msgstr "음량 감소"
 
-#: apps/kmixwindow.cpp:244 gui/mdwslider.cpp:101
+#: apps/kmixwindow.cpp:250 gui/mdwslider.cpp:101
 #, kde-format
 msgid "Mute"
 msgstr "음소거"
 
-#: apps/kmixwindow.cpp:258
+#: apps/kmixwindow.cpp:264
 #, kde-format
 msgid "Add new view"
 msgstr "새 보기 추가하기"
 
-#: apps/kmixwindow.cpp:762
+#: apps/kmixwindow.cpp:781
 #, kde-format
 msgid "Cannot add view - GUIProfile is invalid."
 msgstr "보기를 추가할 수 없음 - 잘못된 GUIProfile."
 
-#: apps/kmixwindow.cpp:762 apps/kmixwindow.cpp:769
+#: apps/kmixwindow.cpp:781 apps/kmixwindow.cpp:788
 #, kde-format
 msgid "Error"
 msgstr "오류"
 
-#: apps/kmixwindow.cpp:769
+#: apps/kmixwindow.cpp:788
 #, kde-format
 msgid "Cannot add view - View already exists."
 msgstr "보기를 추가할 수 없음 - 이미 존재합니다."
 
-#: apps/kmixwindow.cpp:841
+#: apps/kmixwindow.cpp:856
 #, kde-format
 msgid "The sound device '%1' was connected."
 msgstr "'%1' 소리 장치가 연결되었습니다."
 
-#: apps/kmixwindow.cpp:894
+#: apps/kmixwindow.cpp:909
 #, kde-format
 msgid "The sound device '%1' was disconnected."
 msgstr "'%1' 소리 장치의 연결이 해제되었습니다."
 
-#: apps/kmixwindow.cpp:919
+#: apps/kmixwindow.cpp:934
 #, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
@@ -361,14 +370,14 @@ msgstr ""
 "현재 마스터 장치의 연결이 해제되었습니다. '%2' 장치의 '%1'(으)로 마스터를 변"
 "경합니다."
 
-#: apps/kmixwindow.cpp:926
+#: apps/kmixwindow.cpp:941
 #, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
 msgstr ""
 "마지막 소리 장치의 연결이 해제되었습니다. 사용할 수 있는 소리 장치가 없습니"
 "다."
 
-#: apps/kmixwindow.cpp:1187
+#: apps/kmixwindow.cpp:1186
 #, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
@@ -379,7 +388,7 @@ msgstr ""
 "\n"
 "%1"
 
-#: apps/kmixwindow.cpp:1238
+#: apps/kmixwindow.cpp:1236
 #, kde-format
 msgid "Mixer (%1)"
 msgstr "믹서(%1)"
@@ -389,7 +398,7 @@ msgstr "믹서(%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "음량 제어 피드백 소리"
 
-#: backends/mixer_alsa9.cpp:959
+#: backends/mixer_alsa9.cpp:964
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -398,7 +407,7 @@ msgstr ""
 "Alsa 믹서 장치에 접근할 수 있는 권한이 없습니다.\n"
 "모든 alsa 장치가 만들어져 있는지 확인하십시오."
 
-#: backends/mixer_alsa9.cpp:963
+#: backends/mixer_alsa9.cpp:968
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -414,126 +423,126 @@ msgstr ""
 msgid "Application Streams"
 msgstr "앱 스트림"
 
-#: backends/mixer_oss.cpp:71
+#: backends/mixer_oss.cpp:73
 msgid "Volume"
 msgstr "음량"
 
-#: backends/mixer_oss.cpp:71
+#: backends/mixer_oss.cpp:73
 msgid "Bass"
 msgstr "저음"
 
-#: backends/mixer_oss.cpp:71
+#: backends/mixer_oss.cpp:73
 msgid "Treble"
 msgstr "고음"
 
-#: backends/mixer_oss.cpp:72
+#: backends/mixer_oss.cpp:74
 msgid "Synth"
 msgstr "미디 합성"
 
-#: backends/mixer_oss.cpp:72
+#: backends/mixer_oss.cpp:74
 msgid "Pcm"
 msgstr "PCM"
 
-#: backends/mixer_oss.cpp:72
+#: backends/mixer_oss.cpp:74
 msgid "Speaker"
 msgstr "스피커"
 
-#: backends/mixer_oss.cpp:73 backends/mixer_sun.cpp:74
+#: backends/mixer_oss.cpp:75 backends/mixer_sun.cpp:74
 #, kde-format
 msgid "Microphone"
 msgstr "마이크"
 
-#: backends/mixer_oss.cpp:73 backends/mixer_sun.cpp:76
+#: backends/mixer_oss.cpp:75 backends/mixer_sun.cpp:76
 #, kde-format
 msgid "CD"
 msgstr "CD"
 
-#: backends/mixer_oss.cpp:73
+#: backends/mixer_oss.cpp:75
 msgid "Line"
 msgstr "라인 입력"
 
-#: backends/mixer_oss.cpp:74
+#: backends/mixer_oss.cpp:76
 msgid "Mix"
 msgstr "믹스"
 
-#: backends/mixer_oss.cpp:74
+#: backends/mixer_oss.cpp:76
 msgid "Pcm2"
 msgstr "PCM2"
 
-#: backends/mixer_oss.cpp:74
+#: backends/mixer_oss.cpp:76
 msgid "RecMon"
 msgstr "녹음 모니터"
 
-#: backends/mixer_oss.cpp:75
+#: backends/mixer_oss.cpp:77
 msgid "IGain"
 msgstr "입력 게인"
 
-#: backends/mixer_oss.cpp:75
+#: backends/mixer_oss.cpp:77
 msgid "OGain"
 msgstr "출력 게인"
 
-#: backends/mixer_oss.cpp:75
+#: backends/mixer_oss.cpp:77
 msgid "Line1"
 msgstr "라인 입력 1"
 
-#: backends/mixer_oss.cpp:76
+#: backends/mixer_oss.cpp:78
 msgid "Line2"
 msgstr "라인 입력 2"
 
-#: backends/mixer_oss.cpp:76
+#: backends/mixer_oss.cpp:78
 msgid "Line3"
 msgstr "라인 입력 3"
 
-#: backends/mixer_oss.cpp:76
+#: backends/mixer_oss.cpp:78
 msgid "Digital1"
 msgstr "디지털 1"
 
-#: backends/mixer_oss.cpp:77
+#: backends/mixer_oss.cpp:79
 msgid "Digital2"
 msgstr "디지털 2"
 
-#: backends/mixer_oss.cpp:77
+#: backends/mixer_oss.cpp:79
 msgid "Digital3"
 msgstr "디지털 3"
 
-#: backends/mixer_oss.cpp:77
+#: backends/mixer_oss.cpp:79
 msgid "PhoneIn"
 msgstr "모뎀 입력"
 
-#: backends/mixer_oss.cpp:78
+#: backends/mixer_oss.cpp:80
 msgid "PhoneOut"
 msgstr "모뎀 출력"
 
-#: backends/mixer_oss.cpp:78
+#: backends/mixer_oss.cpp:80
 msgid "Video"
 msgstr "비디오"
 
-#: backends/mixer_oss.cpp:78
+#: backends/mixer_oss.cpp:80
 msgid "Radio"
 msgstr "라디오"
 
-#: backends/mixer_oss.cpp:79
+#: backends/mixer_oss.cpp:81
 msgid "Monitor"
 msgstr "모니터"
 
-#: backends/mixer_oss.cpp:82
+#: backends/mixer_oss.cpp:84
 msgid "3D-depth"
 msgstr "3D 깊이"
 
-#: backends/mixer_oss.cpp:82
+#: backends/mixer_oss.cpp:84
 msgid "3D-center"
 msgstr "3D 중심"
 
-#: backends/mixer_oss.cpp:83 backends/mixer_oss.cpp:84 core/mixdevice.cpp:124
+#: backends/mixer_oss.cpp:85 backends/mixer_oss.cpp:86 core/mixdevice.cpp:124
 #, kde-format
 msgid "unknown"
 msgstr "알 수 없음"
 
-#: backends/mixer_oss.cpp:84
+#: backends/mixer_oss.cpp:86
 msgid "unused"
 msgstr "사용되지 않음"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
+#: backends/mixer_oss.cpp:240 backends/mixer_oss4.cpp:526
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -542,7 +551,7 @@ msgstr ""
 "kmix: 믹서 장치에 접근할 수 없습니다. \n"
 "접근을 허용하려면 루트 권한으로 'chmod a+rw /dev/mixer*' 명령을 내리십시오."
 
-#: backends/mixer_oss.cpp:242
+#: backends/mixer_oss.cpp:244
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"
@@ -556,7 +565,7 @@ msgstr ""
 "리눅스에서 드라이버를 부르려면 'insmod' 명령을 사용하십시오.\n"
 "상용 OSS를 사용한다면 'soundon'을 사용하십시오."
 
-#: backends/mixer_oss4.cpp:532
+#: backends/mixer_oss4.cpp:530
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"
@@ -640,7 +649,7 @@ msgstr ""
 "kmix: 믹서 장치에 접근할 수 없습니다. \n"
 "시스템 관리자에게 /dev/audioctl 접근을 허용할 수 있도록 요청하십시오."
 
-#: backends/mixerbackend.cpp:321
+#: backends/mixerbackend.cpp:324
 #, kde-format
 msgid ""
 "kmix:You do not have permission to access the mixer device.\n"
@@ -649,17 +658,17 @@ msgstr ""
 "kmix: 믹서 장치 접근 권한이 없습니다.\n"
 "접근을 허용하도록 운영 체제를 설정하십시오."
 
-#: backends/mixerbackend.cpp:325
+#: backends/mixerbackend.cpp:328
 #, kde-format
 msgid "kmix: Could not write to mixer."
 msgstr "kmix: 믹서에 쓸 수 없습니다."
 
-#: backends/mixerbackend.cpp:328
+#: backends/mixerbackend.cpp:331
 #, kde-format
 msgid "kmix: Could not read from mixer."
 msgstr "kmix: 믹서에서 읽을 수 없습니다."
 
-#: backends/mixerbackend.cpp:331
+#: backends/mixerbackend.cpp:334
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"
@@ -669,17 +678,17 @@ msgstr ""
 "kmix: 믹서를 찾을 수 없습니다. \n"
 "사운드 카드가 설치되어 있는지, 드라이버가 불러와져 있는지 확인하세요.\n"
 
-#: backends/mixerbackend.cpp:336
+#: backends/mixerbackend.cpp:339
 #, kde-format
 msgid "kmix: Unknown error. Please report how you produced this error."
 msgstr "kmix: 알 수 없는 오류. 오류가 발생한 원인을 보고해 주십시오."
 
-#: backends/mixerbackend.cpp:345
+#: backends/mixerbackend.cpp:351
 #, kde-format
 msgid "Recording level of the microphone input."
 msgstr "마이크 입력의 녹음 레벨입니다."
 
-#: backends/mixerbackend.cpp:346
+#: backends/mixerbackend.cpp:352
 #, kde-format
 msgid ""
 "Controls the volume of the front speakers or all speakers (depending on your "
@@ -691,7 +700,7 @@ msgstr ""
 "털 출력을 사용한다면 ADC/DAC 같은 추가적인 제어가 필요할 수도 있습니다. 헤드"
 "폰의 경우, 사운드 카드에서 헤드폰 제어를 제공합니다."
 
-#: backends/mixerbackend.cpp:347
+#: backends/mixerbackend.cpp:353
 #, kde-format
 msgid ""
 "Most media, such as MP3s or Videos, are played back using the PCM channel. "
@@ -701,7 +710,7 @@ msgstr ""
 "MP3이나 동영상과 같은 대부분의 미디어는 PCM 채널로 재생됩니다. 따라서 미디어"
 "의 재생 음량은 이 채널과 마스터 및 헤드폰 채널 둘 다로 조정됩니다."
 
-#: backends/mixerbackend.cpp:348
+#: backends/mixerbackend.cpp:354
 #, kde-format
 msgid ""
 "Controls the headphone volume. Some soundcards include a switch that must be "
@@ -710,7 +719,7 @@ msgstr ""
 "헤드폰 음량을 조정합니다. 일부 사운드 카드에는 헤드폰 출력을 활성화할 때 필요"
 "한 스위치가 달려 있습니다."
 
-#: backends/mixerbackend.cpp:349
+#: backends/mixerbackend.cpp:355
 #, kde-format
 msgid "---"
 msgstr "---"
@@ -896,32 +905,38 @@ msgstr "보이는 채널"
 msgid "Available channels"
 msgstr "사용 가능한 채널"
 
-#: gui/kmixdockwidget.cpp:62 gui/kmixprefdlg.cpp:87
+#: gui/kmixdockwidget.cpp:64 gui/kmixprefdlg.cpp:87
 #, kde-format
 msgid "Volume Control"
 msgstr "음량 제어"
 
-#: gui/kmixdockwidget.cpp:175
+#: gui/kmixdockwidget.cpp:186
 #, kde-format
 msgid "M&ute"
 msgstr "음소거(&U)"
 
-#: gui/kmixdockwidget.cpp:199
+#: gui/kmixdockwidget.cpp:196
+#, fuzzy, kde-format
+#| msgid "Hide Mixer Window"
+msgid "Show Mixer Window"
+msgstr "믹서 창 숨기기"
+
+#: gui/kmixdockwidget.cpp:222
 #, kde-format
 msgid "No mixer devices available"
 msgstr "믹서 장치가 없음"
 
-#: gui/kmixdockwidget.cpp:207
+#: gui/kmixdockwidget.cpp:230
 #, kde-format
 msgid "Volume muted"
 msgstr "음량 음소거됨"
 
-#: gui/kmixdockwidget.cpp:208
+#: gui/kmixdockwidget.cpp:231
 #, kde-format
 msgid "Volume at %1%"
 msgstr "음량 %1%"
 
-#: gui/kmixdockwidget.cpp:210
+#: gui/kmixdockwidget.cpp:233
 #, kde-format
 msgid "%1 - %2"
 msgstr "%1 - %2"
@@ -1146,7 +1161,7 @@ msgstr "사운드 장치가 설치되어 있지 않거나 현재 사용 가능�
 msgid "Split Channels"
 msgstr "채널 나누기"
 
-#: gui/mdwslider.cpp:107 gui/mdwslider.cpp:627
+#: gui/mdwslider.cpp:107 gui/mdwslider.cpp:626
 #, kde-format
 msgid "Capture"
 msgstr "캡처"
@@ -1196,12 +1211,12 @@ msgstr ""
 "%1\n"
 "%2"
 
-#: gui/mdwslider.cpp:679
+#: gui/mdwslider.cpp:678
 #, kde-format
 msgid "%1 (capture)"
 msgstr "%1(캡처)"
 
-#: gui/mdwslider.cpp:1102
+#: gui/mdwslider.cpp:1101
 #, kde-format
 msgid "Automatic (according to category)"
 msgstr "분류에 따라 자동으로"
@@ -1211,20 +1226,10 @@ msgstr "분류에 따라 자동으로"
 msgid "Channel Shortcuts..."
 msgstr "채널 단축키..."
 
-#: gui/viewbase.cpp:96
+#: gui/viewbase.cpp:88
 #, kde-format
 msgid "Configure this view"
 msgstr "이 보기 설정"
-
-#: gui/viewbase.cpp:166
-#, kde-format
-msgid "Configure Channels..."
-msgstr "채널 설정..."
-
-#: gui/viewbase.cpp:270
-#, kde-format
-msgid "Device Settings"
-msgstr "장치 설정"
 
 #: gui/viewdockareapopup.cpp:483
 #, kde-format
@@ -1236,25 +1241,31 @@ msgstr "전체 믹서 창 표시"
 msgid "Load volume profile %1"
 msgstr "음량 프로필 %1 불러오기"
 
-#: gui/viewsliders.cpp:180
+#: gui/viewsliders.cpp:181
 #, kde-format
 msgid "Nothing is playing audio."
 msgstr "오디오 재생 프로그램이 없습니다."
 
-#: gui/viewsliders.cpp:183
+#: gui/viewsliders.cpp:184
 #, kde-format
 msgid "Nothing is capturing audio."
 msgstr "오디오 캡처 프로그램이 없습니다."
 
-#: gui/viewsliders.cpp:184
+#: gui/viewsliders.cpp:185
 #, kde-format
 msgid "There are no capture devices."
 msgstr "캡처 장치가 없습니다."
 
-#: gui/viewsliders.cpp:185
+#: gui/viewsliders.cpp:186
 #, kde-format
 msgid "There are no playback devices."
 msgstr "재생 장치가 없습니다."
+
+#~ msgid "Configure Channels..."
+#~ msgstr "채널 설정..."
+
+#~ msgid "Device Settings"
+#~ msgstr "장치 설정"
 
 #~ msgid "The last soundcard was unplugged."
 #~ msgstr "마지막 사운드 카드의 연결이 해제되었습니다."

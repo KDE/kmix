@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kdemultimedia-kde4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-05-01 01:41+0000\n"
+"POT-Creation-Date: 2024-11-05 00:39+0000\n"
 "PO-Revision-Date: 2024-09-23 15:28+0300\n"
 "Last-Translator: Emir SARI <emir_sari@icloud.com>\n"
 "Language-Team: Turkish <kde-l10n-tr@kde.org>\n"
@@ -50,8 +50,9 @@ msgid "KMixCtrl"
 msgstr "K Miks Denetimi"
 
 #: apps/kmixctrl.cpp:41
-#, kde-format
-msgid "kmixctrl - kmix volume save/restore utility"
+#, fuzzy, kde-format
+#| msgid "kmixctrl - kmix volume save/restore utility"
+msgid "kmixctrl - KMix volume save/restore utility"
 msgstr "kmixctrl - kmix ses kayıt/yükleme uygulaması"
 
 #: apps/kmixctrl.cpp:43
@@ -82,11 +83,12 @@ msgstr "K Miks"
 #: apps/kmixmain.cpp:60
 #, kde-format
 msgid "KMix - KDE's full featured mini mixer"
-msgstr "K Miks - KDE'nin tam özellikli mini karıştırıcısı"
+msgstr "K Miks — KDE’nin tam özellikli mini karıştırıcısı"
 
 #: apps/kmixmain.cpp:61
-#, kde-format
-msgid "(c) 1996-2013 The KMix Authors"
+#, fuzzy, kde-format
+#| msgid "(c) 1996-2013 The KMix Authors"
+msgid "(c) 1996-2024 The KMix Authors"
 msgstr "© 1996–2013 K Miks Yazarları"
 
 #: apps/kmixmain.cpp:64
@@ -97,7 +99,7 @@ msgstr "Christian Esken"
 #: apps/kmixmain.cpp:64
 #, kde-format
 msgid "Original author and current maintainer"
-msgstr "Asıl yazar ve projeyi yürüten"
+msgstr "Özgün yazar ve geçerli bakımcı"
 
 #: apps/kmixmain.cpp:65
 #, kde-format
@@ -139,8 +141,9 @@ msgid "Jonathan Marten"
 msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:74
-#, kde-format
-msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
+#, fuzzy, kde-format
+#| msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
+msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
 msgstr ""
 "KF5 anında takıp çıkarma desteği, ALSA/OSS ses düzeyi geri bildirimi, arayüz "
 "iyileştirmeleri"
@@ -148,12 +151,12 @@ msgstr ""
 #: apps/kmixmain.cpp:75
 #, kde-format
 msgid "Igor Poboiko"
-msgstr "Igor Poboiko"
+msgstr "İgor Poboiko"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
 msgid "Plasma Dataengine"
-msgstr "Plasma Veri İşletkesi"
+msgstr "Plasma veri işletkesi"
 
 #: apps/kmixmain.cpp:76
 #, kde-format
@@ -240,162 +243,168 @@ msgstr "Open Sound System"
 msgid "OSS 4"
 msgstr "OSS 4"
 
-#: apps/kmixmain.cpp:118
+#: apps/kmixmain.cpp:122
 #, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
 msgstr "K Miks çalışıyorsa K Miks ana penceresinin gösterilmesini engelleyin."
 
-#: apps/kmixmain.cpp:119
+#: apps/kmixmain.cpp:123
 #, kde-format
 msgid "Start KMix in failsafe mode."
-msgstr "K Miks'i güvenceli kipte başlatın."
+msgstr "K Miks’i güvenceli kipte başlatın."
 
-#: apps/kmixmain.cpp:120
+#: apps/kmixmain.cpp:124
 #, kde-format
 msgid "A list of backends to use (for testing only)."
 msgstr "Kullanılacak arka uçların listesi (sınama amaçlı)."
 
-#: apps/kmixmain.cpp:120
+#: apps/kmixmain.cpp:124
 #, kde-format
 msgid "name[,name...]"
-msgstr "name[,ad...]"
+msgstr "name[,ad…]"
 
-#: apps/kmixmain.cpp:121
+#: apps/kmixmain.cpp:125
 #, kde-format
 msgid "Enable the (experimental) multiple driver mode."
 msgstr "Çoklu sürücü kipini (deneysel) etkinleştirin."
 
-#: apps/kmixwindow.cpp:168
-#, kde-format
-msgid "Audio Setup..."
-msgstr "Ses Kurulumu..."
+#: apps/kmixmain.cpp:126
+#, fuzzy, kde-format
+#| msgid "Set the orientation of the system tray volume control sliders"
+msgid "Do not show the system tray volume control."
+msgstr "Sistem tepsisi ses düzeyi sürgülerinin yönünü ayarla"
 
-#: apps/kmixwindow.cpp:172
+#: apps/kmixwindow.cpp:166
 #, kde-format
 msgid "Hide Mixer Window"
 msgstr "Karıştırıcı Penceresini Gizle"
 
-#: apps/kmixwindow.cpp:177
+#: apps/kmixwindow.cpp:176
 #, kde-format
-msgid "Configure &Channels..."
-msgstr "&Kanalları Yapılandır..."
+msgid "Audio Setup..."
+msgstr "Ses Ayarları…"
 
 #: apps/kmixwindow.cpp:181
 #, kde-format
-msgid "Select Master Channel..."
-msgstr "Ana Kanalı Seç..."
+msgid "Configure &Channels..."
+msgstr "&Kanalları Yapılandır…"
 
 #: apps/kmixwindow.cpp:186
 #, kde-format
-msgid "Save volume profile 1"
-msgstr "Ses düzeyi profili 1'i kaydet"
+msgid "Select Master Channel..."
+msgstr "Ana Kanalı Seç…"
 
-#: apps/kmixwindow.cpp:191
+#: apps/kmixwindow.cpp:192
+#, kde-format
+msgid "Save volume profile 1"
+msgstr "Ses düzeyi profili 1’i kaydet"
+
+#: apps/kmixwindow.cpp:197
 #, kde-format
 msgid "Save volume profile 2"
-msgstr "Ses düzeyi profili 2'yi kaydet"
+msgstr "Ses düzeyi profili 2’yi kaydet"
 
-#: apps/kmixwindow.cpp:196
+#: apps/kmixwindow.cpp:202
 #, kde-format
 msgid "Save volume profile 3"
-msgstr "Ses düzeyi profili 3'ü kaydet"
+msgstr "Ses düzeyi profili 3’ü kaydet"
 
-#: apps/kmixwindow.cpp:201
+#: apps/kmixwindow.cpp:207
 #, kde-format
 msgid "Save volume profile 4"
-msgstr "Ses düzeyi profili 4'ü kaydet"
+msgstr "Ses düzeyi profili 4’ü kaydet"
 
-#: apps/kmixwindow.cpp:206
+#: apps/kmixwindow.cpp:212
 #, kde-format
 msgid "Load volume profile 1"
-msgstr "Ses düzeyi profili 1'i yükle"
+msgstr "Ses düzeyi profili 1’i yükle"
 
-#: apps/kmixwindow.cpp:211
+#: apps/kmixwindow.cpp:217
 #, kde-format
 msgid "Load volume profile 2"
-msgstr "Ses düzeyi profili 2'yi yükle"
+msgstr "Ses düzeyi profili 2’yi yükle"
 
-#: apps/kmixwindow.cpp:216
+#: apps/kmixwindow.cpp:222
 #, kde-format
 msgid "Load volume profile 3"
-msgstr "Ses düzeyi profili 3'ü yükle"
+msgstr "Ses düzeyi profili 3’ü yükle"
 
-#: apps/kmixwindow.cpp:221
+#: apps/kmixwindow.cpp:227
 #, kde-format
 msgid "Load volume profile 4"
-msgstr "Ses düzeyi profili 4'ü yükle"
+msgstr "Ses düzeyi profili 4’ü yükle"
 
-#: apps/kmixwindow.cpp:232
+#: apps/kmixwindow.cpp:238
 #, kde-format
 msgid "Increase Volume"
 msgstr "Sesi Yükselt"
 
-#: apps/kmixwindow.cpp:239
+#: apps/kmixwindow.cpp:245
 #, kde-format
 msgid "Decrease Volume"
 msgstr "Sesi Alçalt"
 
-#: apps/kmixwindow.cpp:244 gui/mdwslider.cpp:101
+#: apps/kmixwindow.cpp:250 gui/mdwslider.cpp:101
 #, kde-format
 msgid "Mute"
-msgstr "Sessiz"
+msgstr "Sessize Al"
 
-#: apps/kmixwindow.cpp:258
+#: apps/kmixwindow.cpp:264
 #, kde-format
 msgid "Add new view"
 msgstr "Yeni görünüm ekle"
 
-#: apps/kmixwindow.cpp:762
+#: apps/kmixwindow.cpp:781
 #, kde-format
 msgid "Cannot add view - GUIProfile is invalid."
-msgstr "Görünüm eklenemedi - GUI Profili geçersiz."
+msgstr "Görünüm eklenemedi — arayüz profili geçersiz."
 
-#: apps/kmixwindow.cpp:762 apps/kmixwindow.cpp:769
+#: apps/kmixwindow.cpp:781 apps/kmixwindow.cpp:788
 #, kde-format
 msgid "Error"
 msgstr "Hata"
 
-#: apps/kmixwindow.cpp:769
+#: apps/kmixwindow.cpp:788
 #, kde-format
 msgid "Cannot add view - View already exists."
-msgstr "Görünüm eklenemiyor - Görünüm zaten mevcut."
+msgstr "Görünüm eklenemiyor — görünüm halihazırda var."
 
-#: apps/kmixwindow.cpp:841
+#: apps/kmixwindow.cpp:856
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr "Ses aygıtı '%1' takıldı."
+msgstr "Ses aygıtı “%1” takıldı."
 
-#: apps/kmixwindow.cpp:894
+#: apps/kmixwindow.cpp:909
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr "Ses aygıtı '%1' çıkarıldı."
+msgstr "Ses aygıtı “%1” çıkarıldı."
 
-#: apps/kmixwindow.cpp:919
+#: apps/kmixwindow.cpp:934
 #, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
-"Geçerli ana aygıt çıkarıldı. '%2' aygıtındaki ana aygıt '%1' olarak "
+"Geçerli ana aygıt çıkarıldı. “%2” aygıtındaki ana aygıt “%1” olarak "
 "değiştiriliyor."
 
-#: apps/kmixwindow.cpp:926
+#: apps/kmixwindow.cpp:941
 #, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
 msgstr "Son ses aygıtı çıkarıldı. Kullanılabilir ses aygıtı yok."
 
-#: apps/kmixwindow.cpp:1187
+#: apps/kmixwindow.cpp:1186
 #, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
 "\n"
 "%1"
 msgstr ""
-"Yardımcı uygulama kurulu değil ya da çalışmıyor.\n"
+"Yardımcı uygulama kurulu değil veya çalışmıyor.\n"
 "\n"
 "%1"
 
-#: apps/kmixwindow.cpp:1238
+#: apps/kmixwindow.cpp:1236
 #, kde-format
 msgid "Mixer (%1)"
 msgstr "Karıştırıcı (%1)"
@@ -405,7 +414,7 @@ msgstr "Karıştırıcı (%1)"
 msgid "Volume Control Feedback Sound"
 msgstr "Ses Denetimi Geri Bildirim Sesi"
 
-#: backends/mixer_alsa9.cpp:959
+#: backends/mixer_alsa9.cpp:964
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -414,7 +423,7 @@ msgstr ""
 "Alsa karıştırıcı aygıtına erişim izniniz yok. Lütfen alsa karıştırıcı\n"
 "aygıtının düzgün oluşturulduğundan emin olun."
 
-#: backends/mixer_alsa9.cpp:963
+#: backends/mixer_alsa9.cpp:968
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -430,135 +439,135 @@ msgstr ""
 msgid "Application Streams"
 msgstr "Uygulama Akışları"
 
-#: backends/mixer_oss.cpp:71
+#: backends/mixer_oss.cpp:73
 msgid "Volume"
 msgstr "Ses Düzeyi"
 
-#: backends/mixer_oss.cpp:71
+#: backends/mixer_oss.cpp:73
 msgid "Bass"
 msgstr "Bas"
 
-#: backends/mixer_oss.cpp:71
+#: backends/mixer_oss.cpp:73
 msgid "Treble"
 msgstr "Tiz"
 
-#: backends/mixer_oss.cpp:72
+#: backends/mixer_oss.cpp:74
 msgid "Synth"
 msgstr "Synth"
 
-#: backends/mixer_oss.cpp:72
+#: backends/mixer_oss.cpp:74
 msgid "Pcm"
 msgstr "Pcm"
 
-#: backends/mixer_oss.cpp:72
+#: backends/mixer_oss.cpp:74
 msgid "Speaker"
 msgstr "Hoparlör"
 
-#: backends/mixer_oss.cpp:73 backends/mixer_sun.cpp:74
+#: backends/mixer_oss.cpp:75 backends/mixer_sun.cpp:74
 #, kde-format
 msgid "Microphone"
 msgstr "Mikrofon"
 
-#: backends/mixer_oss.cpp:73 backends/mixer_sun.cpp:76
+#: backends/mixer_oss.cpp:75 backends/mixer_sun.cpp:76
 #, kde-format
 msgid "CD"
 msgstr "CD"
 
-#: backends/mixer_oss.cpp:73
+#: backends/mixer_oss.cpp:75
 msgid "Line"
 msgstr "Giriş"
 
-#: backends/mixer_oss.cpp:74
+#: backends/mixer_oss.cpp:76
 msgid "Mix"
 msgstr "Miks"
 
-#: backends/mixer_oss.cpp:74
+#: backends/mixer_oss.cpp:76
 msgid "Pcm2"
 msgstr "Pcm2"
 
-#: backends/mixer_oss.cpp:74
+#: backends/mixer_oss.cpp:76
 msgid "RecMon"
 msgstr "KayıtMon"
 
-#: backends/mixer_oss.cpp:75
+#: backends/mixer_oss.cpp:77
 msgid "IGain"
 msgstr "IGain"
 
-#: backends/mixer_oss.cpp:75
+#: backends/mixer_oss.cpp:77
 msgid "OGain"
 msgstr "OGain"
 
-#: backends/mixer_oss.cpp:75
+#: backends/mixer_oss.cpp:77
 msgid "Line1"
 msgstr "Kanal1"
 
-#: backends/mixer_oss.cpp:76
+#: backends/mixer_oss.cpp:78
 msgid "Line2"
 msgstr "Kanal2"
 
-#: backends/mixer_oss.cpp:76
+#: backends/mixer_oss.cpp:78
 msgid "Line3"
 msgstr "Kanal3"
 
-#: backends/mixer_oss.cpp:76
+#: backends/mixer_oss.cpp:78
 msgid "Digital1"
 msgstr "Sayısal1"
 
-#: backends/mixer_oss.cpp:77
+#: backends/mixer_oss.cpp:79
 msgid "Digital2"
 msgstr "Sayısal2"
 
-#: backends/mixer_oss.cpp:77
+#: backends/mixer_oss.cpp:79
 msgid "Digital3"
 msgstr "Sayısal3"
 
-#: backends/mixer_oss.cpp:77
+#: backends/mixer_oss.cpp:79
 msgid "PhoneIn"
 msgstr "TelefonGiriş"
 
-#: backends/mixer_oss.cpp:78
+#: backends/mixer_oss.cpp:80
 msgid "PhoneOut"
 msgstr "TelefonÇıkış"
 
-#: backends/mixer_oss.cpp:78
+#: backends/mixer_oss.cpp:80
 msgid "Video"
 msgstr "Video"
 
-#: backends/mixer_oss.cpp:78
+#: backends/mixer_oss.cpp:80
 msgid "Radio"
 msgstr "Radyo"
 
-#: backends/mixer_oss.cpp:79
+#: backends/mixer_oss.cpp:81
 msgid "Monitor"
 msgstr "Monitör"
 
-#: backends/mixer_oss.cpp:82
+#: backends/mixer_oss.cpp:84
 msgid "3D-depth"
 msgstr "3B Derinlik"
 
-#: backends/mixer_oss.cpp:82
+#: backends/mixer_oss.cpp:84
 msgid "3D-center"
 msgstr "3B Merkez"
 
-#: backends/mixer_oss.cpp:83 backends/mixer_oss.cpp:84 core/mixdevice.cpp:124
+#: backends/mixer_oss.cpp:85 backends/mixer_oss.cpp:86 core/mixdevice.cpp:124
 #, kde-format
 msgid "unknown"
 msgstr "bilinmiyor"
 
-#: backends/mixer_oss.cpp:84
+#: backends/mixer_oss.cpp:86
 msgid "unused"
 msgstr "kullanılmayan"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
+#: backends/mixer_oss.cpp:240 backends/mixer_oss4.cpp:526
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
 "Login as root and do a 'chmod a+rw /dev/mixer*' to allow the access."
 msgstr ""
 "kmix: Karıştırıcı aygıtına erişim izniniz yok.\n"
-"root kullanıcısıyla girin ve 'chmod a+rw /dev/mixer*' komutunu çalıştırın."
+"root kullanıcısıyla girin ve “chmod a+rw /dev/mixer*” komutunu çalıştırın."
 
-#: backends/mixer_oss.cpp:242
+#: backends/mixer_oss.cpp:244
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"
@@ -570,10 +579,10 @@ msgstr ""
 "kmix: Karıştırıcı bulunamıyor.\n"
 "Lütfen ses kartınızın kurulmuş olup olmadığını ve\n"
 "ses kartı sürücüsünün yüklenip yüklenmediğini denetleyin.\n"
-"Linux üzerinde, sürücüyü yüklemek için 'insmod' komutunu\n"
+"Linux üzerinde, sürücüyü yüklemek için “insmod” komutunu\n"
 "kullanmanız gerekebilir."
 
-#: backends/mixer_oss4.cpp:532
+#: backends/mixer_oss4.cpp:530
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"
@@ -585,8 +594,8 @@ msgstr ""
 "kmix: Karıştırıcı bulunamadı.\n"
 "Lütfen ses kartınızın kurulmuş olup olmadığını ve\n"
 "ses kartı sürücüsünün yüklenip yüklenmediğini denetleyin.\n"
-"Linux üzerinde, sürücüyü yüklemek için 'insmod' komutunu kullanabilirsiniz.\n"
-"OSS4 kullanıyorsanız 4front'tan  'soundon' komutunu kullanın."
+"Linux üzerinde, sürücüyü yüklemek için “insmod” komutunu kullanabilirsiniz.\n"
+"OSS4 kullanıyorsanız 4front’tan “soundon” komutunu kullanın."
 
 #: backends/mixer_pulse.cpp:352 backends/mixer_pulse.cpp:409
 #, kde-format
@@ -621,7 +630,7 @@ msgstr "Yakalama Akışları"
 #: backends/mixer_sun.cpp:69
 #, kde-format
 msgid "Master Volume"
-msgstr "Asıl Ses"
+msgstr "Ana Ses"
 
 #: backends/mixer_sun.cpp:70
 #, kde-format
@@ -655,28 +664,28 @@ msgid ""
 "Ask your system administrator to fix /dev/audioctl to allow access."
 msgstr ""
 "kmix: Karıştırıcı aygıtına erişim izniniz yok.\n"
-"/dev/audioctl'ye erişim izni için lütfen sistem yöneticinize başvurun."
+"/dev/audioctl konumuna erişim izni için lütfen sistem yöneticinize başvurun."
 
-#: backends/mixerbackend.cpp:321
+#: backends/mixerbackend.cpp:324
 #, kde-format
 msgid ""
 "kmix:You do not have permission to access the mixer device.\n"
 "Please check your operating systems manual to allow the access."
 msgstr ""
 "kmix:Karıştırıcı aygıtına erişim izniniz yok.\n"
-"Erişim izni için lütfen işletim sisteminizin dokümanlarına başvurun."
+"Erişim izni için lütfen işletim sisteminizin kılavuzuna başvurun."
 
-#: backends/mixerbackend.cpp:325
+#: backends/mixerbackend.cpp:328
 #, kde-format
 msgid "kmix: Could not write to mixer."
 msgstr "kmix: Karıştırıcıya yazılamadı."
 
-#: backends/mixerbackend.cpp:328
+#: backends/mixerbackend.cpp:331
 #, kde-format
 msgid "kmix: Could not read from mixer."
 msgstr "kmix: Karıştırıcıdan okunamadı."
 
-#: backends/mixerbackend.cpp:331
+#: backends/mixerbackend.cpp:334
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"
@@ -687,19 +696,18 @@ msgstr ""
 "Lütfen ses kartınızın kurulmuş olup olmadığını ve\n"
 "ses kartı sürücüsünün yüklenip yüklenmediğini denetleyin.\n"
 
-#: backends/mixerbackend.cpp:336
+#: backends/mixerbackend.cpp:339
 #, kde-format
 msgid "kmix: Unknown error. Please report how you produced this error."
 msgstr ""
-"kmix: Bilinmeyen hata. Lütfen bu hatayı nasıl meydana getirdiğinizi "
-"bildiriniz."
+"kmix: Bilinmeyen hata. Lütfen bu hatayı nasıl meydana getirdiğinizi bildirin."
 
-#: backends/mixerbackend.cpp:345
+#: backends/mixerbackend.cpp:351
 #, kde-format
 msgid "Recording level of the microphone input."
 msgstr "Mikrofon girişinin kayıt düzeyi."
 
-#: backends/mixerbackend.cpp:346
+#: backends/mixerbackend.cpp:352
 #, kde-format
 msgid ""
 "Controls the volume of the front speakers or all speakers (depending on your "
@@ -712,7 +720,7 @@ msgstr ""
 "denetimleri de kullanmanız gerekebilir. Kulaklıklar için, ses kartları "
 "genellikle ayrı bir Kulaklık denetimi sunmaktadır."
 
-#: backends/mixerbackend.cpp:347
+#: backends/mixerbackend.cpp:353
 #, kde-format
 msgid ""
 "Most media, such as MP3s or Videos, are played back using the PCM channel. "
@@ -723,7 +731,7 @@ msgstr ""
 "ortamların yürütme ses düzeyi, hem PCM kanalı hem de Ana Kanal (Master) veya "
 "Kulaklık kanalı tarafından denetlenir."
 
-#: backends/mixerbackend.cpp:348
+#: backends/mixerbackend.cpp:354
 #, kde-format
 msgid ""
 "Controls the headphone volume. Some soundcards include a switch that must be "
@@ -732,7 +740,7 @@ msgstr ""
 "Kulaklık ses düzeyini denetler. Bazı ses kartlarında, kulaklık çıkışının "
 "kullanılabilmesi için elle etkinleştirilmesi gereken bir anahtar vardır."
 
-#: backends/mixerbackend.cpp:349
+#: backends/mixerbackend.cpp:355
 #, kde-format
 msgid "---"
 msgstr "---"
@@ -877,7 +885,7 @@ msgstr "Kanalları Yapılandır"
 #, kde-format
 msgid "Configure the visible channels. Drag icons between the lists to update."
 msgstr ""
-"Görünür kanalları yapılandır. Güncellemek için simgeleri listeler arasında "
+"Görünür kanalları yapılandırın. Güncellemek için simgeleri listeler arasında "
 "sürükleyin."
 
 #: gui/dialogviewconfiguration.cpp:217
@@ -920,35 +928,41 @@ msgstr "Görünür kanallar"
 msgid "Available channels"
 msgstr "Kullanılabilir kanallar"
 
-#: gui/kmixdockwidget.cpp:62 gui/kmixprefdlg.cpp:87
+#: gui/kmixdockwidget.cpp:64 gui/kmixprefdlg.cpp:87
 #, kde-format
 msgid "Volume Control"
 msgstr "Ses Denetimi"
 
-#: gui/kmixdockwidget.cpp:175
+#: gui/kmixdockwidget.cpp:186
 #, kde-format
 msgid "M&ute"
 msgstr "S&essiz"
 
-#: gui/kmixdockwidget.cpp:199
+#: gui/kmixdockwidget.cpp:196
+#, fuzzy, kde-format
+#| msgid "Hide Mixer Window"
+msgid "Show Mixer Window"
+msgstr "Karıştırıcı Penceresini Gizle"
+
+#: gui/kmixdockwidget.cpp:222
 #, kde-format
 msgid "No mixer devices available"
 msgstr "Karıştırıcı aygıt yok"
 
-#: gui/kmixdockwidget.cpp:207
+#: gui/kmixdockwidget.cpp:230
 #, kde-format
 msgid "Volume muted"
 msgstr "Sessize alındı"
 
-#: gui/kmixdockwidget.cpp:208
+#: gui/kmixdockwidget.cpp:231
 #, kde-format
 msgid "Volume at %1%"
 msgstr "Ses %​%1"
 
-#: gui/kmixdockwidget.cpp:210
+#: gui/kmixdockwidget.cpp:233
 #, kde-format
 msgid "%1 - %2"
-msgstr "%1 - %2"
+msgstr "%1 — %2"
 
 #: gui/kmixprefdlg.cpp:53
 #, kde-format
@@ -968,12 +982,12 @@ msgstr "Başlangıç"
 #: gui/kmixprefdlg.cpp:124
 #, kde-format
 msgid "Start KMix on desktop startup"
-msgstr "Masaüstü başlangıcında K Miks'i başlat"
+msgstr "Masaüstü başlangıcında K Miks’i başlat"
 
 #: gui/kmixprefdlg.cpp:128
 #, kde-format
 msgid "Start KMix automatically when the desktop starts"
-msgstr "Masaüstü başlatıldığında K Miks'i kendiliğinden başlat"
+msgstr "Masaüstü başlatıldığında K Miks’i kendiliğinden başlat"
 
 #: gui/kmixprefdlg.cpp:131
 #, kde-format
@@ -981,8 +995,8 @@ msgid ""
 "Autostart will not work, because the autostart file kmix_autostart.desktop "
 "is missing. Check that KMix is installed correctly."
 msgstr ""
-"Otomatik başlatma çalışmayacak; çünkü kmix_autostart_desktop dosyası eksik. "
-"K Miks'in düzgünce kurulduğundan emin olun."
+"Kendiliğinden başlatma çalışmayacak; çünkü kmix_autostart_desktop dosyası "
+"eksik. K Miks’in düzgünce kurulduğundan emin olun."
 
 #: gui/kmixprefdlg.cpp:141
 #, kde-format
@@ -1042,7 +1056,7 @@ msgstr "Aşırı yüklenilmiş ses düzeyi yalnızca PulseAudio ile kullanılabi
 #, kde-format
 msgid "%1 must be restarted for the volume overdrive setting to take effect."
 msgstr ""
-"Aşırı yüklenilmiş ses düzeyi ayarının etkinleştirilebilmesi iin %1 yeniden "
+"Aşırı yüklenilmiş ses düzeyi ayarının etkinleştirilebilmesi için %1 yeniden "
 "başlatılmalıdır."
 
 #: gui/kmixprefdlg.cpp:256
@@ -1150,7 +1164,7 @@ msgid ""
 "Dock the mixer into the system tray. Click on it to open the popup volume "
 "control."
 msgstr ""
-"Karıştırıcıyı sistem tepsisine rıhtımla. Ses düzeyi denetimini açmak için "
+"Karıştırıcıyı sistem tepsisine rıhtımlayın. Ses düzeyi denetimini açmak için "
 "tıklayın."
 
 #: gui/kmixprefdlg.cpp:355
@@ -1181,7 +1195,7 @@ msgstr "Kurulu veya kullanılabilir bir ses aygıtı yok."
 msgid "Split Channels"
 msgstr "Kanalları Ayır"
 
-#: gui/mdwslider.cpp:107 gui/mdwslider.cpp:627
+#: gui/mdwslider.cpp:107 gui/mdwslider.cpp:626
 #, kde-format
 msgid "Capture"
 msgstr "Yakala"
@@ -1231,12 +1245,12 @@ msgstr ""
 "%1\n"
 "%2"
 
-#: gui/mdwslider.cpp:679
+#: gui/mdwslider.cpp:678
 #, kde-format
 msgid "%1 (capture)"
 msgstr "%1 (yakala)"
 
-#: gui/mdwslider.cpp:1102
+#: gui/mdwslider.cpp:1101
 #, kde-format
 msgid "Automatic (according to category)"
 msgstr "Otomatik (kategoriye göre)"
@@ -1244,22 +1258,12 @@ msgstr "Otomatik (kategoriye göre)"
 #: gui/mixdevicewidget.cpp:65
 #, kde-format
 msgid "Channel Shortcuts..."
-msgstr "Kanal Kısayolları..."
+msgstr "Kanal Kısayolları…"
 
-#: gui/viewbase.cpp:96
+#: gui/viewbase.cpp:88
 #, kde-format
 msgid "Configure this view"
 msgstr "Bu görünümü yapılandır"
-
-#: gui/viewbase.cpp:166
-#, kde-format
-msgid "Configure Channels..."
-msgstr "Kanalları Yapılandır..."
-
-#: gui/viewbase.cpp:270
-#, kde-format
-msgid "Device Settings"
-msgstr "Aygıt Ayarları"
 
 #: gui/viewdockareapopup.cpp:483
 #, kde-format
@@ -1271,25 +1275,28 @@ msgstr "Karıştırıcı penceresini tam ekran göster"
 msgid "Load volume profile %1"
 msgstr "%1 ses düzeyi profilini yükle"
 
-#: gui/viewsliders.cpp:180
+#: gui/viewsliders.cpp:181
 #, kde-format
 msgid "Nothing is playing audio."
 msgstr "Hiçbir uygulama ses çalmıyor."
 
-#: gui/viewsliders.cpp:183
+#: gui/viewsliders.cpp:184
 #, kde-format
 msgid "Nothing is capturing audio."
 msgstr "Ses yakalayıcı hiçbir uygulama çalışmıyor."
 
-#: gui/viewsliders.cpp:184
+#: gui/viewsliders.cpp:185
 #, kde-format
 msgid "There are no capture devices."
 msgstr "Yakalama aygıtı yok."
 
-#: gui/viewsliders.cpp:185
+#: gui/viewsliders.cpp:186
 #, kde-format
 msgid "There are no playback devices."
 msgstr "Çalan aygıt yok."
 
-#~ msgid "The last soundcard was unplugged."
-#~ msgstr "Son ses kartı çıkarıldı."
+#~ msgid "Configure Channels..."
+#~ msgstr "Kanalları Yapılandır…"
+
+#~ msgid "Device Settings"
+#~ msgstr "Aygıt Ayarları"

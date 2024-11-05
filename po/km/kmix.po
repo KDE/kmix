@@ -4,7 +4,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-05-01 01:41+0000\n"
+"POT-Creation-Date: 2024-11-05 00:39+0000\n"
 "PO-Revision-Date: 2012-06-20 15:10+0700\n"
 "Last-Translator: Khoem Sokhem <khoemsokhem@khmeros.info>\n"
 "Language-Team: Khmer\n"
@@ -32,8 +32,9 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, kde-format
-msgid "kmixctrl - kmix volume save/restore utility"
+#, fuzzy, kde-format
+#| msgid "kmixctrl - kmix volume save/restore utility"
+msgid "kmixctrl - KMix volume save/restore utility"
 msgstr "kmixctrl - ឧបករណ៍​សម្រាប់​រក្សាទុក ឬ ស្ដារ​កម្រិត​សំឡេង kmix"
 
 #: apps/kmixctrl.cpp:43
@@ -69,7 +70,7 @@ msgstr "KMix - ឧបករណ៍​លាយ​សំឡេង​ដ៏​ត�
 #: apps/kmixmain.cpp:61
 #, fuzzy, kde-format
 #| msgid "(c) 1996-2012 The KMix Authors"
-msgid "(c) 1996-2013 The KMix Authors"
+msgid "(c) 1996-2024 The KMix Authors"
 msgstr "រក្សាសិទ្ធិ​ឆ្នាំ ១៩៩៦-២០១២ ដោយ​អ្នកនិពន្ធ KMix"
 
 #: apps/kmixmain.cpp:64
@@ -123,7 +124,7 @@ msgstr ""
 
 #: apps/kmixmain.cpp:74
 #, kde-format
-msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
+msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
 msgstr ""
 
 #: apps/kmixmain.cpp:75
@@ -224,142 +225,148 @@ msgstr "សំឡេង​ព្រឹត្តិការណ៍"
 msgid "OSS 4"
 msgstr ""
 
-#: apps/kmixmain.cpp:118
+#: apps/kmixmain.cpp:122
 #, fuzzy, kde-format
 #| msgid ""
 #| "Inhibits the unhiding of the KMix main window, if KMix is already running."
 msgid "Inhibit showing the KMix main window, if KMix is already running."
 msgstr "ទប់ស្កាត់​ការ​មិនលាក់​របស់​បង្អួច​មេ KMix ប្រសិន​បើ KMix កំពុង​រត់ ។"
 
-#: apps/kmixmain.cpp:119
+#: apps/kmixmain.cpp:123
 #, kde-format
 msgid "Start KMix in failsafe mode."
 msgstr ""
 
-#: apps/kmixmain.cpp:120
+#: apps/kmixmain.cpp:124
 #, kde-format
 msgid "A list of backends to use (for testing only)."
 msgstr ""
 
-#: apps/kmixmain.cpp:120
+#: apps/kmixmain.cpp:124
 #, kde-format
 msgid "name[,name...]"
 msgstr ""
 
-#: apps/kmixmain.cpp:121
+#: apps/kmixmain.cpp:125
 #, kde-format
 msgid "Enable the (experimental) multiple driver mode."
 msgstr ""
 
-#: apps/kmixwindow.cpp:168
+#: apps/kmixmain.cpp:126
+#, fuzzy, kde-format
+#| msgid "Enable system tray &volume control"
+msgid "Do not show the system tray volume control."
+msgstr "អនុញ្ញាត​ឲ្យ​មាន​ឧបករណ៍​បញ្ជា​កម្រិត​សំឡេង នៅ​ក្នុង​ថាស​ប្រព័ន្ធ"
+
+#: apps/kmixwindow.cpp:166
+#, kde-format
+msgid "Hide Mixer Window"
+msgstr "លាក់​បង្អួច​ឧបករណ៍​លាយ"
+
+#: apps/kmixwindow.cpp:176
 #, fuzzy, kde-format
 #| msgid "Audio Setup"
 msgid "Audio Setup..."
 msgstr "កា​ររៀបចំ​អូឌីយ៉ូ"
 
-#: apps/kmixwindow.cpp:172
-#, kde-format
-msgid "Hide Mixer Window"
-msgstr "លាក់​បង្អួច​ឧបករណ៍​លាយ"
-
-#: apps/kmixwindow.cpp:177
+#: apps/kmixwindow.cpp:181
 #, kde-format
 msgid "Configure &Channels..."
 msgstr "កំណត់​រចនា​សម្ព័ន្ធ​ឆានែល..."
 
-#: apps/kmixwindow.cpp:181
+#: apps/kmixwindow.cpp:186
 #, kde-format
 msgid "Select Master Channel..."
 msgstr "ជ្រើស​ឆានែល​​មេ..."
 
-#: apps/kmixwindow.cpp:186
+#: apps/kmixwindow.cpp:192
 #, kde-format
 msgid "Save volume profile 1"
 msgstr "រក្សាទុក​កម្រិត​សំឡេង​ទម្រង់ ១"
 
-#: apps/kmixwindow.cpp:191
+#: apps/kmixwindow.cpp:197
 #, kde-format
 msgid "Save volume profile 2"
 msgstr "រក្សាទុក​កម្រិត​សំឡេង​ទម្រង់ ២"
 
-#: apps/kmixwindow.cpp:196
+#: apps/kmixwindow.cpp:202
 #, kde-format
 msgid "Save volume profile 3"
 msgstr "រក្សាទុក​កម្រិត​សំឡេង​ទម្រង់ ៣"
 
-#: apps/kmixwindow.cpp:201
+#: apps/kmixwindow.cpp:207
 #, kde-format
 msgid "Save volume profile 4"
 msgstr "រក្សាទុក​កម្រិត​សំឡេង​ទម្រង់ ៤"
 
-#: apps/kmixwindow.cpp:206
+#: apps/kmixwindow.cpp:212
 #, kde-format
 msgid "Load volume profile 1"
 msgstr "ផ្ទុក​កម្រិត​សំឡេង​ទម្រង់ ២"
 
-#: apps/kmixwindow.cpp:211
+#: apps/kmixwindow.cpp:217
 #, kde-format
 msgid "Load volume profile 2"
 msgstr "ផ្ទុក​កម្រិត​សំឡេង​ទម្រង់ ២"
 
-#: apps/kmixwindow.cpp:216
+#: apps/kmixwindow.cpp:222
 #, kde-format
 msgid "Load volume profile 3"
 msgstr "ផ្ទុក​កម្រិត​សំឡេង​ទម្រង់ ៣"
 
-#: apps/kmixwindow.cpp:221
+#: apps/kmixwindow.cpp:227
 #, kde-format
 msgid "Load volume profile 4"
 msgstr "ផ្ទុក​កម្រិត​សំឡេង​ទម្រង់ ៤"
 
-#: apps/kmixwindow.cpp:232
+#: apps/kmixwindow.cpp:238
 #, kde-format
 msgid "Increase Volume"
 msgstr "បង្កើន​កម្រិត​សំឡេង"
 
-#: apps/kmixwindow.cpp:239
+#: apps/kmixwindow.cpp:245
 #, kde-format
 msgid "Decrease Volume"
 msgstr "បន្ថយ​កម្រិត​សំឡេង"
 
-#: apps/kmixwindow.cpp:244 gui/mdwslider.cpp:101
+#: apps/kmixwindow.cpp:250 gui/mdwslider.cpp:101
 #, kde-format
 msgid "Mute"
 msgstr "ស្ងាត់"
 
-#: apps/kmixwindow.cpp:258
+#: apps/kmixwindow.cpp:264
 #, fuzzy, kde-format
 #| msgid "Add View"
 msgid "Add new view"
 msgstr "បន្ថែម​ទិដ្ឋភាព"
 
-#: apps/kmixwindow.cpp:762
+#: apps/kmixwindow.cpp:781
 #, kde-format
 msgid "Cannot add view - GUIProfile is invalid."
 msgstr "មិន​អាច​បន្ថែម​ទិដ្ឋភាព GUIProfile មិន​ត្រឹមត្រូវ ។"
 
-#: apps/kmixwindow.cpp:762 apps/kmixwindow.cpp:769
+#: apps/kmixwindow.cpp:781 apps/kmixwindow.cpp:788
 #, kde-format
 msgid "Error"
 msgstr "កំហុស"
 
-#: apps/kmixwindow.cpp:769
+#: apps/kmixwindow.cpp:788
 #, fuzzy, kde-format
 #| msgid "Cannot add view - GUIProfile is invalid."
 msgid "Cannot add view - View already exists."
 msgstr "មិន​អាច​បន្ថែម​ទិដ្ឋភាព GUIProfile មិន​ត្រឹមត្រូវ ។"
 
-#: apps/kmixwindow.cpp:841
+#: apps/kmixwindow.cpp:856
 #, kde-format
 msgid "The sound device '%1' was connected."
 msgstr ""
 
-#: apps/kmixwindow.cpp:894
+#: apps/kmixwindow.cpp:909
 #, kde-format
 msgid "The sound device '%1' was disconnected."
 msgstr ""
 
-#: apps/kmixwindow.cpp:919
+#: apps/kmixwindow.cpp:934
 #, fuzzy, kde-format
 #| msgid ""
 #| "The soundcard containing the master device was unplugged. Changing to "
@@ -369,13 +376,13 @@ msgid ""
 "device '%2'."
 msgstr "កាត​សំឡេង​ដែល​មាន​ឧបករណ៍​មេ​មិនបាន​ដោត ។ ប្ដូរ ដើម្បី​ត្រួតពិនិត្យ %1 នៅ​លើ​កាត %2"
 
-#: apps/kmixwindow.cpp:926
+#: apps/kmixwindow.cpp:941
 #, fuzzy, kde-format
 #| msgid "No sound card is installed or currently plugged in."
 msgid "The last sound device was disconnected. No sound devices are available."
 msgstr "មិនមានកាត​សំឡេង​បានដំឡើង​ ឬ​បច្ចុប្បន្ន​មិនបានដោត ។"
 
-#: apps/kmixwindow.cpp:1187
+#: apps/kmixwindow.cpp:1186
 #, fuzzy, kde-format
 #| msgid "The helper application is either not installed or not working."
 msgid ""
@@ -384,7 +391,7 @@ msgid ""
 "%1"
 msgstr "កម្មវិធី​ជំនួយ​មិន​ត្រូវបាន​ដំឡើង ឬ​មិន​ដំណើរការ ។"
 
-#: apps/kmixwindow.cpp:1238
+#: apps/kmixwindow.cpp:1236
 #, fuzzy, kde-format
 #| msgid "Mixer"
 msgid "Mixer (%1)"
@@ -395,7 +402,7 @@ msgstr "ឧបករណ៍​លាយ"
 msgid "Volume Control Feedback Sound"
 msgstr "ត្រួតពិនិត្យ​កម្រិត​សំឡេង​ត្រឡប់"
 
-#: backends/mixer_alsa9.cpp:959
+#: backends/mixer_alsa9.cpp:964
 #, kde-format
 msgid ""
 "You do not have permission to access the alsa mixer device.\n"
@@ -404,7 +411,7 @@ msgstr ""
 "អ្នក​មិន​មាន​សិទ្ធិ​ដើម្បី​ចូលដំណើរការ​ឧបករណ៍​លាយ alsa ឡើយ ។\n"
 "សូម​ផ្ទៀងផ្ទាត់​ថា បាន​បង្កើត​ឧបករណ៍ alsa ទាំងអស់​បាន​ត្រឹមត្រូវ ។"
 
-#: backends/mixer_alsa9.cpp:963
+#: backends/mixer_alsa9.cpp:968
 #, kde-format
 msgid ""
 "Alsa mixer cannot be found.\n"
@@ -420,126 +427,126 @@ msgstr ""
 msgid "Application Streams"
 msgstr ""
 
-#: backends/mixer_oss.cpp:71
+#: backends/mixer_oss.cpp:73
 msgid "Volume"
 msgstr "កម្រិត​សំឡេង"
 
-#: backends/mixer_oss.cpp:71
+#: backends/mixer_oss.cpp:73
 msgid "Bass"
 msgstr "បាស"
 
-#: backends/mixer_oss.cpp:71
+#: backends/mixer_oss.cpp:73
 msgid "Treble"
 msgstr "សូរបី"
 
-#: backends/mixer_oss.cpp:72
+#: backends/mixer_oss.cpp:74
 msgid "Synth"
 msgstr "Synth"
 
-#: backends/mixer_oss.cpp:72
+#: backends/mixer_oss.cpp:74
 msgid "Pcm"
 msgstr "Pcm"
 
-#: backends/mixer_oss.cpp:72
+#: backends/mixer_oss.cpp:74
 msgid "Speaker"
 msgstr "ធុងបាស"
 
-#: backends/mixer_oss.cpp:73 backends/mixer_sun.cpp:74
+#: backends/mixer_oss.cpp:75 backends/mixer_sun.cpp:74
 #, kde-format
 msgid "Microphone"
 msgstr "មីក្រូ"
 
-#: backends/mixer_oss.cpp:73 backends/mixer_sun.cpp:76
+#: backends/mixer_oss.cpp:75 backends/mixer_sun.cpp:76
 #, kde-format
 msgid "CD"
 msgstr "ស៊ីឌី"
 
-#: backends/mixer_oss.cpp:73
+#: backends/mixer_oss.cpp:75
 msgid "Line"
 msgstr "ខ្សែ"
 
-#: backends/mixer_oss.cpp:74
+#: backends/mixer_oss.cpp:76
 msgid "Mix"
 msgstr "លាយ"
 
-#: backends/mixer_oss.cpp:74
+#: backends/mixer_oss.cpp:76
 msgid "Pcm2"
 msgstr "Pcm2"
 
-#: backends/mixer_oss.cpp:74
+#: backends/mixer_oss.cpp:76
 msgid "RecMon"
 msgstr "RecMon"
 
-#: backends/mixer_oss.cpp:75
+#: backends/mixer_oss.cpp:77
 msgid "IGain"
 msgstr "IGain"
 
-#: backends/mixer_oss.cpp:75
+#: backends/mixer_oss.cpp:77
 msgid "OGain"
 msgstr "OGain"
 
-#: backends/mixer_oss.cpp:75
+#: backends/mixer_oss.cpp:77
 msgid "Line1"
 msgstr "ខ្សែ​ទី ១"
 
-#: backends/mixer_oss.cpp:76
+#: backends/mixer_oss.cpp:78
 msgid "Line2"
 msgstr "ខ្សែ​ទី ២"
 
-#: backends/mixer_oss.cpp:76
+#: backends/mixer_oss.cpp:78
 msgid "Line3"
 msgstr "ខ្សែ​ទី ៣"
 
-#: backends/mixer_oss.cpp:76
+#: backends/mixer_oss.cpp:78
 msgid "Digital1"
 msgstr "ឌីជីថល​ទី ១"
 
-#: backends/mixer_oss.cpp:77
+#: backends/mixer_oss.cpp:79
 msgid "Digital2"
 msgstr "ឌីជីថល​ទី ២"
 
-#: backends/mixer_oss.cpp:77
+#: backends/mixer_oss.cpp:79
 msgid "Digital3"
 msgstr "ឌីជីថល​ទី ៣"
 
-#: backends/mixer_oss.cpp:77
+#: backends/mixer_oss.cpp:79
 msgid "PhoneIn"
 msgstr "ទូរស័ព្ទ ចូល"
 
-#: backends/mixer_oss.cpp:78
+#: backends/mixer_oss.cpp:80
 msgid "PhoneOut"
 msgstr "ទូរស័ព្ទ ចេញ"
 
-#: backends/mixer_oss.cpp:78
+#: backends/mixer_oss.cpp:80
 msgid "Video"
 msgstr "វីដេអូ"
 
-#: backends/mixer_oss.cpp:78
+#: backends/mixer_oss.cpp:80
 msgid "Radio"
 msgstr "វិទ្យុ"
 
-#: backends/mixer_oss.cpp:79
+#: backends/mixer_oss.cpp:81
 msgid "Monitor"
 msgstr "ម៉ូនីទ័រ"
 
-#: backends/mixer_oss.cpp:82
+#: backends/mixer_oss.cpp:84
 msgid "3D-depth"
 msgstr "ជម្រៅ-3D"
 
-#: backends/mixer_oss.cpp:82
+#: backends/mixer_oss.cpp:84
 msgid "3D-center"
 msgstr "កណ្ដាល-3D"
 
-#: backends/mixer_oss.cpp:83 backends/mixer_oss.cpp:84 core/mixdevice.cpp:124
+#: backends/mixer_oss.cpp:85 backends/mixer_oss.cpp:86 core/mixdevice.cpp:124
 #, kde-format
 msgid "unknown"
 msgstr "មិន​ស្គាល់​"
 
-#: backends/mixer_oss.cpp:84
+#: backends/mixer_oss.cpp:86
 msgid "unused"
 msgstr "មិន​ប្រើ"
 
-#: backends/mixer_oss.cpp:238 backends/mixer_oss4.cpp:528
+#: backends/mixer_oss.cpp:240 backends/mixer_oss4.cpp:526
 #, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
@@ -548,7 +555,7 @@ msgstr ""
 "kmix ៖ អ្នក​មិន​មាន​សិទ្ធិ​ដើម្បី​ចូលដំណើរការ​ឧបករណ៍​លាយ​ឡើយ ។\n"
 "សូម​ចូល​ជា root ហើយ​រត់​ពាក្យបញ្ជា 'chmod a+rw /dev/mixer*' ដើម្បី​អនុញ្ញាត​ការ​ចូលដំណើរការ ។"
 
-#: backends/mixer_oss.cpp:242
+#: backends/mixer_oss.cpp:244
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"
@@ -563,7 +570,7 @@ msgstr ""
 "នៅ​ក្នុង​លីនីក អ្នក​ប្រហែល​ជា​ត្រូវ​ប្រើ 'insmod' ដើម្បី​ផ្ទុក​កម្មវិធី​បញ្ជា ។\n"
 "ប្រើ 'soundon' បើ​អ្នក​ប្រើ OSS ពាណិជ្ជកម្ម ។"
 
-#: backends/mixer_oss4.cpp:532
+#: backends/mixer_oss4.cpp:530
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"
@@ -648,7 +655,7 @@ msgstr ""
 "សូម​សាកសួរ​អ្នក​គ្រប់គ្រង​ប្រព័ន្ធ​របស់​អ្នក ឲ្យ​គាត់​កែប្រែ​ឯកសារ /dev/audioctl ដើម្បី​អនុញ្ញាត​ការ​ចូល​"
 "ដំណើរការ ។"
 
-#: backends/mixerbackend.cpp:321
+#: backends/mixerbackend.cpp:324
 #, kde-format
 msgid ""
 "kmix:You do not have permission to access the mixer device.\n"
@@ -657,17 +664,17 @@ msgstr ""
 "kmix ៖ អ្នក​មិន​មានសិទ្ធិ​ចូលដំណើរការ​ឧបករណ៍​លាយ​ឡើយ ។\n"
 "សូម​ពិនិត្យ​មើល​សៀវភៅ​ដៃ​នៃ​ប្រព័ន្ធ​ប្រតិបត្តិការ៍​របស់​អ្នកដើម្បី​អនុញ្ញាត​ឲ្យ​ចូលដំណើរការ ។។"
 
-#: backends/mixerbackend.cpp:325
+#: backends/mixerbackend.cpp:328
 #, kde-format
 msgid "kmix: Could not write to mixer."
 msgstr "kmix ៖ មិន​អាច​សរសេរ​ទៅ​កាន់​ឧបករណ៍​លាយ​បាន​ឡើយ ។"
 
-#: backends/mixerbackend.cpp:328
+#: backends/mixerbackend.cpp:331
 #, kde-format
 msgid "kmix: Could not read from mixer."
 msgstr "kmix ៖ មិន​អាច​អាន​ពី​​ឧបករណ៍​លាយ​បាន​ឡើយ ។"
 
-#: backends/mixerbackend.cpp:331
+#: backends/mixerbackend.cpp:334
 #, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"
@@ -678,17 +685,17 @@ msgstr ""
 "សូម​ពិនិត្យ​មើលថា បាន​ដំឡើង​កាត​សំឡេង\n"
 "ហើយ​បាន​ផ្ទុក​កម្មវិធី​បញ្ជា​កាត​សំឡេង ។\n"
 
-#: backends/mixerbackend.cpp:336
+#: backends/mixerbackend.cpp:339
 #, kde-format
 msgid "kmix: Unknown error. Please report how you produced this error."
 msgstr "kmix ៖ មិន​ស្គាល់​កំហុស​ឡើយ ។ សូម​រាយការណ៍​ពី​របៀប​ដែល​អ្នក​បង្កើត​កំហុស​នេះ ។"
 
-#: backends/mixerbackend.cpp:345
+#: backends/mixerbackend.cpp:351
 #, kde-format
 msgid "Recording level of the microphone input."
 msgstr "កម្រិត​ថត​នៃ​កា​របញ្ចូល​របស់​មីក្រូ ។"
 
-#: backends/mixerbackend.cpp:346
+#: backends/mixerbackend.cpp:352
 #, kde-format
 msgid ""
 "Controls the volume of the front speakers or all speakers (depending on your "
@@ -700,7 +707,7 @@ msgstr ""
 "ប្រសិនបើ​អ្នក​ប្រើ​លទ្ធផល​ឌីជីថល អ្នក​ត្រូវ​តែ​ប្រើ​ការ​ត្រួតពិនិត្យ​ផ្សេងៗ​ទៀត​ដូចជា  ADC ឬ DAC ។ ចំពោះ​កាស "
 "កាត​សំឡេង​ជា​រឿយៗ​ផ្ដល់​នូវ​ការ​ត្រួតពិនិត្យ​កាស ។"
 
-#: backends/mixerbackend.cpp:347
+#: backends/mixerbackend.cpp:353
 #, kde-format
 msgid ""
 "Most media, such as MP3s or Videos, are played back using the PCM channel. "
@@ -710,7 +717,7 @@ msgstr ""
 "មេឌៀ​ភាគ​ច្រើន ដូចជា  MP3s ឬ​វីដេអូ ត្រូវ​បាន​ចាក់ឡើង​វិញ​ ដោយ​ប្រើ​ឆានែល PCM ។ដូចជា កម្រិត​សំឡេង​ចាក់​"
 "ឡើង​វិញ​នៃ​មេឌៀ​ប្រភេទ​នោះ​ត្រូវ​បាន​ត្រួតពិនិត្យ​ដោយ​ទាំង​ពីរ​នេះ គឺ​​ឆានែល​កាស ឬ​ឆានែលមេ ។"
 
-#: backends/mixerbackend.cpp:348
+#: backends/mixerbackend.cpp:354
 #, kde-format
 msgid ""
 "Controls the headphone volume. Some soundcards include a switch that must be "
@@ -719,7 +726,7 @@ msgstr ""
 "ពិនិត្យ​យមើល​កម្រិត​សំឡេង​របស់​កាស ។ កាត​សំឡេង​មួយ​ចំនួន​ រួមមាន​ការ​ប្ដូរ​ ដែល​ត្រូ​វបានធ្វើ​ឲ្យ​សកម្ម​ដោយ​ដៃ "
 "ដើម្បីបើក​​លទ្ធផល​របស់​កាស ។"
 
-#: backends/mixerbackend.cpp:349
+#: backends/mixerbackend.cpp:355
 #, kde-format
 msgid "---"
 msgstr "---"
@@ -910,33 +917,39 @@ msgstr "ឆានែល​ដែលមើល​ឃើញ"
 msgid "Available channels"
 msgstr "ឆានែល​ដែលអាច​ប្រើបាន"
 
-#: gui/kmixdockwidget.cpp:62 gui/kmixprefdlg.cpp:87
+#: gui/kmixdockwidget.cpp:64 gui/kmixprefdlg.cpp:87
 #, kde-format
 msgid "Volume Control"
 msgstr "ត្រួតពិនិត្យ​​កម្រិត​សំឡេង"
 
-#: gui/kmixdockwidget.cpp:175
+#: gui/kmixdockwidget.cpp:186
 #, kde-format
 msgid "M&ute"
 msgstr "ស្ងាត់"
 
-#: gui/kmixdockwidget.cpp:199
+#: gui/kmixdockwidget.cpp:196
+#, fuzzy, kde-format
+#| msgid "Hide Mixer Window"
+msgid "Show Mixer Window"
+msgstr "លាក់​បង្អួច​ឧបករណ៍​លាយ"
+
+#: gui/kmixdockwidget.cpp:222
 #, kde-format
 msgid "No mixer devices available"
 msgstr ""
 
-#: gui/kmixdockwidget.cpp:207
+#: gui/kmixdockwidget.cpp:230
 #, fuzzy, kde-format
 #| msgid "Volume Control Feedback Sound"
 msgid "Volume muted"
 msgstr "ត្រួតពិនិត្យ​កម្រិត​សំឡេង​ត្រឡប់"
 
-#: gui/kmixdockwidget.cpp:208
+#: gui/kmixdockwidget.cpp:231
 #, kde-format
 msgid "Volume at %1%"
 msgstr "កម្រិត​សំឡេង​ត្រឹម %1%"
 
-#: gui/kmixdockwidget.cpp:210
+#: gui/kmixdockwidget.cpp:233
 #, kde-format
 msgid "%1 - %2"
 msgstr ""
@@ -1170,7 +1183,7 @@ msgstr "មិនមានកាត​សំឡេង​បានដំឡើង
 msgid "Split Channels"
 msgstr "ពុះ​ឆានែល"
 
-#: gui/mdwslider.cpp:107 gui/mdwslider.cpp:627
+#: gui/mdwslider.cpp:107 gui/mdwslider.cpp:626
 #, kde-format
 msgid "Capture"
 msgstr "ចាប់យក"
@@ -1223,12 +1236,12 @@ msgid ""
 "%2"
 msgstr ""
 
-#: gui/mdwslider.cpp:679
+#: gui/mdwslider.cpp:678
 #, kde-format
 msgid "%1 (capture)"
 msgstr "%1 (ចាប់យក)"
 
-#: gui/mdwslider.cpp:1102
+#: gui/mdwslider.cpp:1101
 #, fuzzy, kde-format
 #| msgid "Automatic According to Category"
 msgid "Automatic (according to category)"
@@ -1240,22 +1253,11 @@ msgstr "យោង​តាម​ប្រភេទ​ដោយ​ស្វ័យ
 msgid "Channel Shortcuts..."
 msgstr "កំណត់​រចនាសម្ព័ន្ធ​ផ្លូវកាត់..."
 
-#: gui/viewbase.cpp:96
+#: gui/viewbase.cpp:88
 #, fuzzy, kde-format
 #| msgid "Configure &Channels..."
 msgid "Configure this view"
 msgstr "កំណត់​រចនា​សម្ព័ន្ធ​ឆានែល..."
-
-#: gui/viewbase.cpp:166
-#, fuzzy, kde-format
-#| msgid "Configure &Channels..."
-msgid "Configure Channels..."
-msgstr "កំណត់​រចនា​សម្ព័ន្ធ​ឆានែល..."
-
-#: gui/viewbase.cpp:270
-#, kde-format
-msgid "Device Settings"
-msgstr "ការ​កំណត់​ឧបករណ៍"
 
 #: gui/viewdockareapopup.cpp:483
 #, kde-format
@@ -1268,27 +1270,35 @@ msgstr ""
 msgid "Load volume profile %1"
 msgstr "ផ្ទុក​កម្រិត​សំឡេង​ទម្រង់ ២"
 
-#: gui/viewsliders.cpp:180
+#: gui/viewsliders.cpp:181
 #, kde-format
 msgid "Nothing is playing audio."
 msgstr "គ្មាន​អ្វី​កំពុង​ចាក់​អូឌីយ៉ូ​ទេ ។"
 
-#: gui/viewsliders.cpp:183
+#: gui/viewsliders.cpp:184
 #, kde-format
 msgid "Nothing is capturing audio."
 msgstr "គ្មាន​អ្វី​កំពុង​ចាប់​យក​អូឌីយ៉ូ​ទេ ។"
 
-#: gui/viewsliders.cpp:184
+#: gui/viewsliders.cpp:185
 #, fuzzy, kde-format
 #| msgid "No capture devices."
 msgid "There are no capture devices."
 msgstr "គ្មាន​ឧបករណ៍​ចាប់យក ។"
 
-#: gui/viewsliders.cpp:185
+#: gui/viewsliders.cpp:186
 #, fuzzy, kde-format
 #| msgid "No playback devices."
 msgid "There are no playback devices."
 msgstr "គ្មាន​ឧបករណ៍​ចាក់​សារ​ថ្មី ។"
+
+#, fuzzy
+#~| msgid "Configure &Channels..."
+#~ msgid "Configure Channels..."
+#~ msgstr "កំណត់​រចនា​សម្ព័ន្ធ​ឆានែល..."
+
+#~ msgid "Device Settings"
+#~ msgstr "ការ​កំណត់​ឧបករណ៍"
 
 #~ msgid "The last soundcard was unplugged."
 #~ msgstr "កាត​សំឡេង​ចុងក្រោយ​មិនបាន​ដោត ។"
