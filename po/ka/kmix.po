@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-11-05 00:39+0000\n"
-"PO-Revision-Date: 2023-07-25 05:00+0200\n"
+"PO-Revision-Date: 2024-11-05 04:15+0100\n"
 "Last-Translator: Temuri Doghonadze <temuri.doghonadze@gmail.com>\n"
 "Language-Team: Georgian <kde-i18n-doc@kde.org>\n"
 "Language: ka\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.5\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -34,10 +34,9 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
-msgstr "kmixctrl - kmix -ის ხმის დონეების შენახვის და აღდგენის პროგრამა"
+msgstr "kmixctrl - kmix-ის ხმის დონეების შენახვის/აღდგენის პროგრამა"
 
 #: apps/kmixctrl.cpp:43
 #, kde-format
@@ -70,10 +69,9 @@ msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix - KDE-ის სრული ფუნქციონალის მქონე მინი-მიქსერი"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "(c) 1996-2013 KMix -ის ავტორები"
+msgstr "(c) 1996-2024 KMix -ის ავტორები"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -125,10 +123,11 @@ msgid "Jonathan Marten"
 msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:74
-#, fuzzy, kde-format
-#| msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
+#, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
-msgstr "KF5 გაშვებულზე მიერთება, ALSA/OSS ხმის უკუკავშირი, GUI გაუმჯობესებები"
+msgstr ""
+"KF5 გაშვებულზე მიერთება, ALSA/OSS ხმის უკუკავშირი, GUI გაუმჯობესებები, KF6-"
+"ზე გადატანა"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -251,10 +250,9 @@ msgid "Enable the (experimental) multiple driver mode."
 msgstr "ბევრი დრაივერის რეჟიმის (ექსპერიმენტალური) ჩართვა."
 
 #: apps/kmixmain.cpp:126
-#, fuzzy, kde-format
-#| msgid "Set the orientation of the system tray volume control sliders"
+#, kde-format
 msgid "Do not show the system tray volume control."
-msgstr "სისტემის კუთხეში ხმის კონტროლის ჩოჩიების ორიენტაციის დაყენება"
+msgstr "სისტემურ საათთან ხმის მართვის არჩვენება."
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -921,8 +919,7 @@ msgid "M&ute"
 msgstr "&დადუმება"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
 msgstr "მიქსერის ფანჯრის ჩვენება"
 

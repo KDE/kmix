@@ -50,15 +50,14 @@ msgid "KMixCtrl"
 msgstr "K Miks Denetimi"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
-msgstr "kmixctrl - kmix ses kayıt/yükleme uygulaması"
+msgstr "K Miks Denetimi — K Miks ses kaydetme/geri yükleme uygulaması"
 
 #: apps/kmixctrl.cpp:43
 #, kde-format
 msgid "(c) 2000 by Stefan Schimanski"
-msgstr "© 2000 by Stefan Schimanski"
+msgstr "© 2000 Stefan Schimanski"
 
 #: apps/kmixctrl.cpp:45 apps/kmixmain.cpp:76
 #, kde-format
@@ -68,7 +67,7 @@ msgstr "Stefan Schimanski"
 #: apps/kmixctrl.cpp:51
 #, kde-format
 msgid "Save current volumes as default"
-msgstr "Geçerli ses ayarlamalarını öntanımlı olarak kaydet"
+msgstr "Geçerli ses düzeylerini öntanımlı olarak kaydet"
 
 #: apps/kmixctrl.cpp:53
 #, kde-format
@@ -86,10 +85,9 @@ msgid "KMix - KDE's full featured mini mixer"
 msgstr "K Miks — KDE’nin tam özellikli mini karıştırıcısı"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "© 1996–2013 K Miks Yazarları"
+msgstr "© 1996–2024 K Miks Yazarları"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -141,12 +139,11 @@ msgid "Jonathan Marten"
 msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:74
-#, fuzzy, kde-format
-#| msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
+#, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
 msgstr ""
-"KF5 anında takıp çıkarma desteği, ALSA/OSS ses düzeyi geri bildirimi, arayüz "
-"iyileştirmeleri"
+"KF5 anında tak/çıkar desteği, ALSA/OSS ses düzeyi geri bildirimi, arayüz "
+"iyileştirmeleri, KF6 geçişi"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -269,10 +266,9 @@ msgid "Enable the (experimental) multiple driver mode."
 msgstr "Çoklu sürücü kipini (deneysel) etkinleştirin."
 
 #: apps/kmixmain.cpp:126
-#, fuzzy, kde-format
-#| msgid "Set the orientation of the system tray volume control sliders"
+#, kde-format
 msgid "Do not show the system tray volume control."
-msgstr "Sistem tepsisi ses düzeyi sürgülerinin yönünü ayarla"
+msgstr "Sistem tepsisi ses denetimini göstermeyin."
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -939,10 +935,9 @@ msgid "M&ute"
 msgstr "S&essiz"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
-msgstr "Karıştırıcı Penceresini Gizle"
+msgstr "Karıştırıcı Penceresini Göster"
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
@@ -1294,9 +1289,3 @@ msgstr "Yakalama aygıtı yok."
 #, kde-format
 msgid "There are no playback devices."
 msgstr "Çalan aygıt yok."
-
-#~ msgid "Configure Channels..."
-#~ msgstr "Kanalları Yapılandır…"
-
-#~ msgid "Device Settings"
-#~ msgstr "Aygıt Ayarları"

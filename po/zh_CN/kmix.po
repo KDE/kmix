@@ -37,10 +37,9 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
-msgstr "kmixctrl - kmix 音量保存和恢复工具"
+msgstr ""
 
 #: apps/kmixctrl.cpp:43
 #, kde-format
@@ -73,10 +72,9 @@ msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix - KDE 的全功能迷你混音器"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "(c) 1996-2013 KMix 全体开发人员"
+msgstr ""
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -128,10 +126,9 @@ msgid "Jonathan Marten"
 msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:74
-#, fuzzy, kde-format
-#| msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
+#, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
-msgstr "KF5 热插拔功能、ALSA/OSS 音量反馈、GUI 改进"
+msgstr ""
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -254,10 +251,9 @@ msgid "Enable the (experimental) multiple driver mode."
 msgstr "启用多驱动程序模式 (实验性)。"
 
 #: apps/kmixmain.cpp:126
-#, fuzzy, kde-format
-#| msgid "Set the orientation of the system tray volume control sliders"
+#, kde-format
 msgid "Do not show the system tray volume control."
-msgstr "设置系统托盘中音量控制滑动条的方向"
+msgstr ""
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -914,10 +910,9 @@ msgid "M&ute"
 msgstr "静音(&U)"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
-msgstr "隐藏混音器窗口"
+msgstr ""
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
@@ -1255,9 +1250,3 @@ msgstr "没有捕获设备。"
 #, kde-format
 msgid "There are no playback devices."
 msgstr "没有播放设备。"
-
-#~ msgid "Configure Channels..."
-#~ msgstr "配置通道..."
-
-#~ msgid "Device Settings"
-#~ msgstr "设备设置"

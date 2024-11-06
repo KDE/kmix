@@ -2,7 +2,7 @@
 # Translation of kmix.po to Slovenian
 # KMIX TRANSLATION TO SLOVENIAN LANGUAGE.
 # Copyright (C) 2001, 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
-# $Id: kmix.po 1694313 2024-11-05 01:16:33Z scripty $
+# $Id: kmix.po 1694387 2024-11-06 01:16:50Z scripty $
 # $Source$
 #
 # Rok Papez <rok@slo.net>, 2000.
@@ -16,7 +16,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-11-05 00:39+0000\n"
-"PO-Revision-Date: 2023-07-24 19:17+0200\n"
+"PO-Revision-Date: 2024-11-05 06:51+0100\n"
 "Last-Translator: Matjaž Jeran <matjaz.jeran@amis.net>\n"
 "Language-Team: Slovenian <lugos-slo@lugos.si>\n"
 "Language: sl\n"
@@ -26,7 +26,7 @@ msgstr ""
 "Plural-Forms: nplurals=4; plural=(n%100==1 ? 1 : n%100==2 ? 2 : n%100==3 || n"
 "%100==4 ? 3 : 0);\n"
 "Translator: Andrej Mernik <andrejm@ubuntu.si>\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.5\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -47,10 +47,9 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
-msgstr "kmixctrl - pripomoček za shranjevanje/obnavljanje glasnosti kmix"
+msgstr "kmixctrl - Pripomoček za shranjevanje/obnavljanje glasnosti KMix"
 
 #: apps/kmixctrl.cpp:43
 #, kde-format
@@ -83,10 +82,9 @@ msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix - KDE-jev polno-zmogljiv mini mešalnik"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "© 1996–2013 Avtorji KMix"
+msgstr "(c) 1996-2024 Avtorji KMix"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -138,11 +136,11 @@ msgid "Jonathan Marten"
 msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:74
-#, fuzzy, kde-format
-#| msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
+#, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
 msgstr ""
-"KF5 hotplugging, ALSA/OSS odziv glasnosti, izboljšave grafilčnega vmesnika"
+"KF5 hotplugging, ALSA/OSS odziv glasnosti, izboljšave grafičnega vmesnika, "
+"prenos na KF6"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -266,10 +264,9 @@ msgid "Enable the (experimental) multiple driver mode."
 msgstr "Vklopljen eksperimentalni način z več gonilniki."
 
 #: apps/kmixmain.cpp:126
-#, fuzzy, kde-format
-#| msgid "Set the orientation of the system tray volume control sliders"
+#, kde-format
 msgid "Do not show the system tray volume control."
-msgstr "Nastavi usmerjenost drsnikov za nadzor glasnosti v sistemskem pladnju"
+msgstr "Ne prikazuj nadzora glasnosti na sistemskem pladnju."
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -936,8 +933,7 @@ msgid "M&ute"
 msgstr "Tiho"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
 msgstr "Skrij okno mešalnika"
 
