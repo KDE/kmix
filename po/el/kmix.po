@@ -42,10 +42,9 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
-msgstr "kmixctrl - εργαλείο αποθήκευσης/αποκατάστασης έντασης του kmix"
+msgstr "kmixctrl - εργαλείο αποθήκευσης/αποκατάστασης έντασης του KMix"
 
 #: apps/kmixctrl.cpp:43
 #, kde-format

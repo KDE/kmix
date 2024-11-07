@@ -39,7 +39,7 @@ msgstr "KMixCtrl"
 #: apps/kmixctrl.cpp:41
 #, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
-msgstr ""
+msgstr "kmixctrl - KMix 音量保存和恢复工具"
 
 #: apps/kmixctrl.cpp:43
 #, kde-format
@@ -74,7 +74,7 @@ msgstr "KMix - KDE 的全功能迷你混音器"
 #: apps/kmixmain.cpp:61
 #, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr ""
+msgstr "(c) 1996-2024 The KMix Authors"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -128,7 +128,7 @@ msgstr "Jonathan Marten"
 #: apps/kmixmain.cpp:74
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
-msgstr ""
+msgstr "KF5 热插拔功能、ALSA/OSS 音量反馈、GUI 改进、KF6 移植"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -253,7 +253,7 @@ msgstr "启用多驱动程序模式 (实验性)。"
 #: apps/kmixmain.cpp:126
 #, kde-format
 msgid "Do not show the system tray volume control."
-msgstr ""
+msgstr "不显示系统托盘音量控制器。"
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -912,7 +912,7 @@ msgstr "静音(&U)"
 #: gui/kmixdockwidget.cpp:196
 #, kde-format
 msgid "Show Mixer Window"
-msgstr ""
+msgstr "显示混音器窗口"
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
