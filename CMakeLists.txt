@@ -13,8 +13,9 @@ project(kmix VERSION ${KMIX_VERSION})
 ########### options ################################################################################
 ####################################################################################################
 
-# Plasma dataengines are deprecated and will be removed in Plasma 6
-option(BUILD_DATAENGINE "Build the Plasma dataengine" OFF)
+# Plasma dataengines are deprecated, needs at least porting to Plasma5Support as an intermediate
+# step, or should be removed
+#option(BUILD_DATAENGINE "Build the Plasma dataengine" OFF)
 
 # For testing OSS4 build on Linux with 4Front OSS4 installed
 #
@@ -26,25 +27,11 @@ set(OSS4_INCLUDES "" CACHE PATH "Include path for OSS4 include files")
 ########### dependencies and tests #################################################################
 ####################################################################################################
 
-# KDE CI sets this for Qt6 runners but not for Qt5.
-if (NOT DEFINED QT_MAJOR_VERSION)
-  set (QT_MAJOR_VERSION 5)
-endif ()
-
-if (QT_MAJOR_VERSION EQUAL 6)
-  set(QT_MIN_VERSION "6.3.0")
-  set(KF_MIN_VERSION "6.1.0")
-else ()
-  if (QT_MAJOR_VERSION EQUAL 5)
-    set(QT_MIN_VERSION "5.15.2")
-    set(KF_MIN_VERSION "5.101.0")
-  else ()
-    message(FATAL_ERROR "Expecting to build for either Qt5 or Qt6")
-  endif ()
-endif ()
+set(QT_MIN_VERSION "6.3.0")
+set(KF_MIN_VERSION "6.1.0")
 
 # SOVERSION of the kmixcore library
-set(KMIX_VERSION_MAJOR ${QT_MAJOR_VERSION})
+set(KMIX_VERSION_MAJOR 6)
 # Version of the configuration, originally from core/version.h
 set(KMIX_CONFIG_VERSION 3)
 
@@ -66,7 +53,7 @@ include(CheckIncludeFile)
 include(CheckSourceRuns)
 include(CheckStructHasMember)
 
-find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} REQUIRED NO_MODULE COMPONENTS
+find_package(Qt6 ${QT_MIN_VERSION} REQUIRED NO_MODULE COMPONENTS
     Core
     DBus
     Gui
@@ -74,7 +61,7 @@ find_package(Qt${QT_MAJOR_VERSION} ${QT_MIN_VERSION} REQUIRED NO_MODULE COMPONEN
     Xml
 )
 
-find_package(KF${QT_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED COMPONENTS
+find_package(KF6 ${KF_MIN_VERSION} REQUIRED COMPONENTS
     Config
     ConfigWidgets
     Crash
@@ -86,19 +73,19 @@ find_package(KF${QT_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED COMPONENTS
     I18n
     Notifications
     Solid
+    StatusNotifierItem
     WidgetsAddons
     WindowSystem
     XmlGui
 )
 
-if (QT_MAJOR_VERSION GREATER_EQUAL 6)
-  find_package(KF${QT_MAJOR_VERSION} ${KF_MIN_VERSION} REQUIRED COMPONENTS StatusNotifierItem)
-endif ()
 
-if (BUILD_DATAENGINE)
-  find_package(KF${QT_MAJOR_VERSION}Plasma ${KF_MIN_VERSION} REQUIRED)
-  set_package_properties(KF${QT_MAJOR_VERSION}Plasma PROPERTIES PURPOSE "Required to build the Plasma dataengine")
-endif ()
+# Needs at least porting to Plasma5Support as an intermediate step, or should be removed
+#if (BUILD_DATAENGINE)
+#  find_package(Plasma5Support 6.0 REQUIRED)
+#  set_package_properties(Plasma5Support PROPERTIES PURPOSE "Required to build the Plasma dataengine")
+#endif ()
+
 
 ####################################################################################################
 ########### sound backend support ##################################################################
@@ -227,7 +214,7 @@ add_subdirectory(pics)
 add_subdirectory(profiles)
 
 if (BUILD_DATAENGINE)
-  if (KF5Plasma_FOUND)
+  if (Plasma5Support_FOUND)
     add_subdirectory(plasma)
   endif ()
 endif ()
@@ -323,12 +310,12 @@ target_link_libraries(kmixcore
   PRIVATE
     Qt::Xml
     Qt::DBus
-    KF${QT_MAJOR_VERSION}::I18n
-    KF${QT_MAJOR_VERSION}::Solid
+    KF6::I18n
+    KF6::Solid
   PUBLIC
-    KF${QT_MAJOR_VERSION}::ConfigCore
-    KF${QT_MAJOR_VERSION}::ConfigGui
-    KF${QT_MAJOR_VERSION}::CoreAddons
+    KF6::ConfigCore
+    KF6::ConfigGui
+    KF6::CoreAddons
 )
 
 set_target_properties(kmixcore PROPERTIES VERSION ${KMIX_VERSION} SOVERSION ${KMIX_VERSION_MAJOR})
@@ -385,18 +372,15 @@ target_link_libraries(kmixgui
   kmixcore
   Qt::Core
   Qt::Widgets
-  KF${QT_MAJOR_VERSION}::I18n
-  KF${QT_MAJOR_VERSION}::ConfigCore
-  KF${QT_MAJOR_VERSION}::ConfigGui
-  KF${QT_MAJOR_VERSION}::GlobalAccel
-  KF${QT_MAJOR_VERSION}::Notifications
-  KF${QT_MAJOR_VERSION}::XmlGui
-  KF${QT_MAJOR_VERSION}::WindowSystem
+  KF6::I18n
+  KF6::ConfigCore
+  KF6::ConfigGui
+  KF6::GlobalAccel
+  KF6::Notifications
+  KF6::StatusNotifierItem
+  KF6::XmlGui
+  KF6::WindowSystem
 )
-
-if (QT_MAJOR_VERSION GREATER_EQUAL 6)
-  target_link_libraries(kmixgui KF${QT_MAJOR_VERSION}::StatusNotifierItem)
-endif ()
 
 ####################################################################################################
 ########### target: kmix ###########################################################################
@@ -417,13 +401,13 @@ add_executable(kmix ${kmix_SRCS})
 target_link_libraries(kmix
   kmixcore
   kmixgui
-  KF${QT_MAJOR_VERSION}::Crash
-  KF${QT_MAJOR_VERSION}::I18n
-  KF${QT_MAJOR_VERSION}::CoreAddons
-  KF${QT_MAJOR_VERSION}::Crash
-  KF${QT_MAJOR_VERSION}::DBusAddons
-  KF${QT_MAJOR_VERSION}::GlobalAccel
-  KF${QT_MAJOR_VERSION}::XmlGui
+  KF6::Crash
+  KF6::I18n
+  KF6::CoreAddons
+  KF6::Crash
+  KF6::DBusAddons
+  KF6::GlobalAccel
+  KF6::XmlGui
 )
 
 install(TARGETS kmix ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
@@ -446,8 +430,8 @@ set(kmixctrl_SRCS
 add_executable(kmixctrl ${kmixctrl_SRCS})
 target_link_libraries(kmixctrl
   kmixcore
-  KF${QT_MAJOR_VERSION}::I18n
-  KF${QT_MAJOR_VERSION}::CoreAddons
+  KF6::I18n
+  KF6::CoreAddons
 )
 
 install(TARGETS kmixctrl ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
@@ -459,7 +443,7 @@ install(TARGETS kmixctrl ${KDE_INSTALL_TARGETS_DEFAULT_ARGS})
 ####################################################################################################
 
 if (BUILD_TESTING)
-  find_package(Qt${QT_MAJOR_VERSION}Test ${QT_MIN_VERSION} CONFIG REQUIRED)
+  find_package(Qt6Test ${QT_MIN_VERSION} CONFIG REQUIRED)
   add_subdirectory(tests)
 endif()
 
