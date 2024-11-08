@@ -18,7 +18,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-11-05 00:39+0000\n"
-"PO-Revision-Date: 2024-08-16 11:11+0200\n"
+"PO-Revision-Date: 2024-11-06 08:48+0100\n"
 "Last-Translator: Xavier Besnard <xavier.besnard@kde.org>\n"
 "Language-Team: French <French <kde-francophone@kde.org>>\n"
 "Language: fr\n"
@@ -47,10 +47,10 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
-msgstr "KMixCtrl - utilitaire d'enregistrement / lecture des réglages de KMix"
+msgstr ""
+"KMixCtrl - Utilitaire d'enregistrement / restauration de volume pour KMix"
 
 #: apps/kmixctrl.cpp:43
 #, kde-format
@@ -83,10 +83,9 @@ msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix - mini-table de mixage pour KDE"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "(c) 1996-2013 Les auteurs de KMix"
+msgstr "(c) 1996-2014 les auteurs de KMix"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -138,12 +137,11 @@ msgid "Jonathan Marten"
 msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:74
-#, fuzzy, kde-format
-#| msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
+#, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
 msgstr ""
-"Insertion à chaud de modules externe « KF5 », retour de volume ALSA / OSS, "
-"améliorations de l'interface graphique utilisateur"
+"Insertion à chaud sous KF5, retour de volume ALSA / OSS, améliorations de "
+"l'interface graphique utilisateur, portage sous KF6"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -268,12 +266,9 @@ msgid "Enable the (experimental) multiple driver mode."
 msgstr "Activer le mode (expérimental) avec pilotes multiples"
 
 #: apps/kmixmain.cpp:126
-#, fuzzy, kde-format
-#| msgid "Set the orientation of the system tray volume control sliders"
+#, kde-format
 msgid "Do not show the system tray volume control."
-msgstr ""
-"Définir l'orientation des curseurs de contrôle de volume de la boîte à "
-"miniatures"
+msgstr "Ne pas afficher le contrôle de volume depuis la boîte à miniatures"
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -953,10 +948,9 @@ msgid "M&ute"
 msgstr "M&uet"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
-msgstr "Masquer la fenêtre de mixage"
+msgstr "Afficher la fenêtre de mixage"
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
