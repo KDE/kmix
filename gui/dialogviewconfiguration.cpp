@@ -96,11 +96,7 @@ DialogViewConfigurationWidget::DialogViewConfigurationWidget(QWidget *parent)
     setAlternatingRowColors(true);
 }
 
-#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
-QMimeData* DialogViewConfigurationWidget::mimeData(const QList<QListWidgetItem*> items) const
-#else
 QMimeData* DialogViewConfigurationWidget::mimeData(const QList<QListWidgetItem *> &items) const
-#endif
 {
     if (items.isEmpty()) return (nullptr);
     QMimeData* mimedata = new QMimeData();
@@ -139,14 +135,14 @@ DialogViewConfiguration::DialogViewConfiguration(QWidget *parent, ViewBase &view
    QWidget *frame = new QWidget( this );
    frame->setSizePolicy(QSizePolicy::MinimumExpanding,QSizePolicy::MinimumExpanding);
    setMainWidget( frame );
-   
+
    // The _layout will hold two items: The title and the Drag-n-Drop area
    QVBoxLayout *layout = new QVBoxLayout(frame);
-   
+
    // --- HEADER ---
    QLabel *qlb = new QLabel( i18n("Configure the visible channels. Drag icons between the lists to update."), frame );
    layout->addWidget(qlb);
-   
+
    _glayout = new QGridLayout();
    _glayout->setContentsMargins(0, 0, 0, 0);
    layout->addLayout(_glayout);
@@ -216,7 +212,7 @@ void DialogViewConfiguration::createPage()
 {
    QLabel *l1 = new QLabel( i18n("Visible channels:") );
    _glayout->addWidget(l1,0,0);
-      
+
    QLabel *l2 = new QLabel( i18n("Available channels:") );
    _glayout->addWidget(l2,0,6);
 
@@ -226,7 +222,7 @@ void DialogViewConfiguration::createPage()
    _qlwInactive->setActiveList(false);
    _glayout->addWidget(_qlwInactive,1,6);
    connect(_qlwInactive, &DialogViewConfigurationWidget::dropped, this, &DialogViewConfiguration::slotDropped);
-   
+
    addSpacer(1,1);
    const QIcon& icon = QIcon::fromTheme( QLatin1String( "arrow-left" ));
     moveLeftButton = new QPushButton(icon, "");
@@ -312,7 +308,7 @@ void DialogViewConfiguration::apply()
            newControlset.push_back(newCtl);
        }
    }
-	
+
 	prof->setControls(newControlset);
     prof->setDirty();
 

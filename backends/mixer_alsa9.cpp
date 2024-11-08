@@ -221,7 +221,7 @@ int Mixer_ALSA::open()
 
        	shared_ptr<MixDevice> md = mdNew->addToPool();
         m_mixDevices.append( md );
-         
+
 
         // --- Recommended master ----------------------------------------
         if ( md->playbackVolume().hasVolume() )
@@ -477,7 +477,7 @@ Volume* Mixer_ALSA::addVolume(snd_mixer_elem_t *elem, bool capture)
     if ( hasVolume || hasSwitch ) {
         //qCDebug(KMIX_LOG) << "Add somthing with chn=" << chn << ", capture=" << capture;
         vol = new Volume( maxVolume, minVolume, hasSwitch, capture);
-	
+
 	    // Add volumes
       if ( !capture && snd_mixer_selem_has_playback_volume(elem) ) {
 	  if ( snd_mixer_selem_has_playback_channel(elem,SND_MIXER_SCHN_FRONT_LEFT  )) vol->addVolumeChannel(VolumeChannel(Volume::LEFT));
@@ -855,7 +855,7 @@ Mixer_ALSA::readVolumeFromHW( const QString& id, shared_ptr<MixDevice> md )
     }
 
     // The state Mixer::OK_UNCHANGED is not implemented. It is not strictly required for
-    //  non-pollling backends. 
+    //  non-pollling backends.
     return Mixer::OK;
 }
 
@@ -997,11 +997,7 @@ int ALSA_acceptsHotplugId(const QString &id)
 
     const QRegularExpression rx("/card(\\d+)/controlC(\\d+)$");
     const QRegularExpressionMatch match = rx.match(id);	// match sound card control device
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
     if (!match.hasCaptured(2)) return (-1);		// UDI not recognised
-#else
-    if (match.captured(2).isEmpty()) return (-1);
-#endif
     return (match.captured(2).toInt());			// assume conversion succeeds
 }
 

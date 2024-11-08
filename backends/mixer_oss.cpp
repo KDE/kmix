@@ -474,11 +474,7 @@ int OSS_acceptsHotplugId(const QString &id)
 
     const QRegularExpression rx("/card(\\d+)/mixer(\\d+)$");
     const QRegularExpressionMatch match = rx.match(id);	// match sound card mixer device
-#if QT_VERSION >= QT_VERSION_CHECK(6, 3, 0)
     if (!match.hasCaptured(2)) return (-1);		// UDI not recognised
-#else
-    if (match.captured(2).isEmpty()) return (-1);
-#endif
     return (match.captured(2).toInt());			// assume conversion succeeds
 }
 
