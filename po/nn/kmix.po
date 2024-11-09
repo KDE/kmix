@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-11-05 00:39+0000\n"
+"POT-Creation-Date: 2024-11-09 00:39+0000\n"
 "PO-Revision-Date: 2023-07-30 14:49+0200\n"
 "Last-Translator: Karl Ove Hufthammer <karl@huftis.org>\n"
 "Language-Team: Norwegian Nynorsk <l10n-no@lister.huftis.org>\n"
@@ -863,52 +863,52 @@ msgstr ""
 msgid "Automatic (%1 recommendation)"
 msgstr "Automatisk (%1-anbefaling)"
 
-#: gui/dialogviewconfiguration.cpp:136
+#: gui/dialogviewconfiguration.cpp:132
 #, kde-format
 msgid "Configure Channels"
 msgstr "Set opp kanalar"
 
-#: gui/dialogviewconfiguration.cpp:147
+#: gui/dialogviewconfiguration.cpp:143
 #, kde-format
 msgid "Configure the visible channels. Drag icons between the lists to update."
 msgstr "Oppsett av synlege kanalar. Dra ikon mellom listene for å oppdatera."
 
-#: gui/dialogviewconfiguration.cpp:217
+#: gui/dialogviewconfiguration.cpp:213
 #, kde-format
 msgid "Visible channels:"
 msgstr "Synlege kanalar:"
 
-#: gui/dialogviewconfiguration.cpp:220
+#: gui/dialogviewconfiguration.cpp:216
 #, kde-format
 msgid "Available channels:"
 msgstr "Tilgjengelege kanalar:"
 
-#: gui/dialogviewconfiguration.cpp:234
+#: gui/dialogviewconfiguration.cpp:230
 #, kde-format
 msgid "Move the selected channel to the visible list"
 msgstr "Flytt den valde kanalen til synleg-lista"
 
-#: gui/dialogviewconfiguration.cpp:242
+#: gui/dialogviewconfiguration.cpp:238
 #, kde-format
 msgid "Move the selected channel to the available (hidden) list"
 msgstr "Flytt den valde kanalen til tilgjengeleg-lista (gøymd-lista)"
 
-#: gui/dialogviewconfiguration.cpp:282
+#: gui/dialogviewconfiguration.cpp:278
 #, kde-format
 msgid "Show the selected channel"
 msgstr "Vis den valde kanalen"
 
-#: gui/dialogviewconfiguration.cpp:283
+#: gui/dialogviewconfiguration.cpp:279
 #, kde-format
 msgid "Hide the selected channel"
 msgstr "Gøym den valde kanalen"
 
-#: gui/dialogviewconfiguration.cpp:284
+#: gui/dialogviewconfiguration.cpp:280
 #, kde-format
 msgid "Visible channels"
 msgstr "Synlege kanalar"
 
-#: gui/dialogviewconfiguration.cpp:285
+#: gui/dialogviewconfiguration.cpp:281
 #, kde-format
 msgid "Available channels"
 msgstr "Tilgjengelege kanalar"
@@ -1273,9 +1273,3 @@ msgstr "Det finst ingen opptakseiningar."
 #, kde-format
 msgid "There are no playback devices."
 msgstr "Det finst ingen avspelingseiningar."
-
-#~ msgid "Configure Channels..."
-#~ msgstr "Set opp kanalar …"
-
-#~ msgid "Device Settings"
-#~ msgstr "Einingsinnstillingar"

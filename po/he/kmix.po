@@ -17,8 +17,8 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-11-05 00:39+0000\n"
-"PO-Revision-Date: 2024-11-05 22:43+0200\n"
+"POT-Creation-Date: 2024-11-09 00:39+0000\n"
+"PO-Revision-Date: 2024-11-07 21:33+0200\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: צוות התרגום של KDE ישראל\n"
 "Language: he\n"
@@ -45,10 +45,9 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
-msgstr "kmixctrl - kmix כלי לשמירת\\טעינת עוצמות של"
+msgstr "kmixctrl - כלי לשמירה/שחזור עוצמת שמע של KMix"
 
 #: apps/kmixctrl.cpp:43
 #, kde-format
@@ -91,10 +90,9 @@ msgid "Christian Esken"
 msgstr "Christian Esken"
 
 #: apps/kmixmain.cpp:64
-#, fuzzy, kde-format
-#| msgid "Current maintainer"
+#, kde-format
 msgid "Original author and current maintainer"
-msgstr "מתחזק נוכחי"
+msgstr "יוצר מקורי מתחזק נוכחי"
 
 #: apps/kmixmain.cpp:65
 #, kde-format
@@ -112,10 +110,9 @@ msgid "Helio Chissini de Castro"
 msgstr "Helio Chissini de Castro"
 
 #: apps/kmixmain.cpp:66
-#, fuzzy, kde-format
-#| msgid "ALSA port"
+#, kde-format
 msgid "ALSA 0.9x port"
-msgstr "הסבה ל־ALSA"
+msgstr "הסבה ל־ALSA 0.9x"
 
 #: apps/kmixmain.cpp:67
 #, kde-format
@@ -546,13 +543,14 @@ msgid "unused"
 msgstr "לא בשימוש"
 
 #: backends/mixer_oss.cpp:240 backends/mixer_oss4.cpp:526
-#, fuzzy, kde-format
+#, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
 "Login as root and do a 'chmod a+rw /dev/mixer*' to allow the access."
 msgstr ""
-"אין לך הרשאות לגשת אל התקן המערבל.\n"
-"היכנס בתור root ובצע \"*chmod a+rw /dev/mixer\" כדי לאפשר את הגישה."
+"kmix: אין לך הרשאה לגשת להתקן המערבל.\n"
+"יש להיכנס כמשתמש על (root) ולהריץ ‚chmod a+rw /dev/mixer*‎’ כדי לאפשר את "
+"הגישה."
 
 #: backends/mixer_oss.cpp:244
 #, fuzzy, kde-format
@@ -856,59 +854,59 @@ msgstr ""
 msgid "Automatic (%1 recommendation)"
 msgstr "אוטומטי (המלצה %1)"
 
-#: gui/dialogviewconfiguration.cpp:136
+#: gui/dialogviewconfiguration.cpp:132
 #, fuzzy, kde-format
 #| msgid "Configure &Channels..."
 msgid "Configure Channels"
 msgstr "הגדר את ה&ערוצים..."
 
-#: gui/dialogviewconfiguration.cpp:147
+#: gui/dialogviewconfiguration.cpp:143
 #, fuzzy, kde-format
 #| msgid "Configuration of the channels."
 msgid "Configure the visible channels. Drag icons between the lists to update."
 msgstr "הגדרות הערוצים."
 
-#: gui/dialogviewconfiguration.cpp:217
+#: gui/dialogviewconfiguration.cpp:213
 #, fuzzy, kde-format
 #| msgid "Available mixers:"
 msgid "Visible channels:"
 msgstr "מערבלים זמינים:"
 
-#: gui/dialogviewconfiguration.cpp:220
+#: gui/dialogviewconfiguration.cpp:216
 #, fuzzy, kde-format
 #| msgid "Available mixers:"
 msgid "Available channels:"
 msgstr "מערבלים זמינים:"
 
-#: gui/dialogviewconfiguration.cpp:234
+#: gui/dialogviewconfiguration.cpp:230
 #, fuzzy, kde-format
 #| msgid "Select Master Channel"
 msgid "Move the selected channel to the visible list"
 msgstr "בחר ערוץ ראשי"
 
-#: gui/dialogviewconfiguration.cpp:242
+#: gui/dialogviewconfiguration.cpp:238
 #, kde-format
 msgid "Move the selected channel to the available (hidden) list"
 msgstr "העברת הערוץ הנבחר לרשימת הזמינים (נסתרים)"
 
-#: gui/dialogviewconfiguration.cpp:282
+#: gui/dialogviewconfiguration.cpp:278
 #, fuzzy, kde-format
 #| msgid "Select Master Channel"
 msgid "Show the selected channel"
 msgstr "בחר ערוץ ראשי"
 
-#: gui/dialogviewconfiguration.cpp:283
+#: gui/dialogviewconfiguration.cpp:279
 #, kde-format
 msgid "Hide the selected channel"
 msgstr "הסתרת הערוץ הנבחר"
 
-#: gui/dialogviewconfiguration.cpp:284
+#: gui/dialogviewconfiguration.cpp:280
 #, fuzzy, kde-format
 #| msgid "Available mixers:"
 msgid "Visible channels"
 msgstr "מערבלים זמינים:"
 
-#: gui/dialogviewconfiguration.cpp:285
+#: gui/dialogviewconfiguration.cpp:281
 #, fuzzy, kde-format
 #| msgid "Available mixers:"
 msgid "Available channels"
@@ -1178,7 +1176,7 @@ msgstr "&פצל ערוצים"
 #: gui/mdwslider.cpp:107 gui/mdwslider.cpp:626
 #, kde-format
 msgid "Capture"
-msgstr ""
+msgstr "הקלטה"
 
 #: gui/mdwslider.cpp:112
 #, kde-format
@@ -1225,16 +1223,18 @@ msgid ""
 "%1\n"
 "%2"
 msgstr ""
+"%1\n"
+"%2"
 
 #: gui/mdwslider.cpp:678
 #, kde-format
 msgid "%1 (capture)"
-msgstr ""
+msgstr "%1 (הקלטה)"
 
 #: gui/mdwslider.cpp:1101
 #, kde-format
 msgid "Automatic (according to category)"
-msgstr ""
+msgstr "אוטומטי (לפי הקטגוריה)"
 
 #: gui/mixdevicewidget.cpp:65
 #, fuzzy, kde-format
@@ -1257,27 +1257,27 @@ msgstr "הצג חלון מערבל"
 #: gui/viewdockareapopup.cpp:515
 #, kde-format
 msgid "Load volume profile %1"
-msgstr ""
+msgstr "טעינת פרופיל עוצמת שמע %1"
 
 #: gui/viewsliders.cpp:181
 #, kde-format
 msgid "Nothing is playing audio."
-msgstr ""
+msgstr "שום דבר לא מנגנן שמע."
 
 #: gui/viewsliders.cpp:184
 #, kde-format
 msgid "Nothing is capturing audio."
-msgstr ""
+msgstr "שום דבר לא מקליט שמע."
 
 #: gui/viewsliders.cpp:185
 #, kde-format
 msgid "There are no capture devices."
-msgstr ""
+msgstr "אין התקני הקלטה."
 
 #: gui/viewsliders.cpp:186
 #, kde-format
 msgid "There are no playback devices."
-msgstr ""
+msgstr "אין התקני נגינה."
 
 #, fuzzy
 #~| msgid "Configure &Channels..."

@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-11-05 00:39+0000\n"
+"POT-Creation-Date: 2024-11-09 00:39+0000\n"
 "PO-Revision-Date: 2006-03-20 00:08+0100\n"
 "Last-Translator: Mashrab Kuvatov <kmashrab@uni-bremen.de>\n"
 "Language-Team: Uzbek <floss-uz-l10n@googlegroups.com>\n"
@@ -820,57 +820,57 @@ msgstr ""
 msgid "Automatic (%1 recommendation)"
 msgstr ""
 
-#: gui/dialogviewconfiguration.cpp:136
+#: gui/dialogviewconfiguration.cpp:132
 #, fuzzy, kde-format
 #| msgid "&Channels"
 msgid "Configure Channels"
 msgstr "&Каналлар"
 
-#: gui/dialogviewconfiguration.cpp:147
+#: gui/dialogviewconfiguration.cpp:143
 #, fuzzy, kde-format
 #| msgid "&Channels"
 msgid "Configure the visible channels. Drag icons between the lists to update."
 msgstr "&Каналлар"
 
-#: gui/dialogviewconfiguration.cpp:217
+#: gui/dialogviewconfiguration.cpp:213
 #, fuzzy, kde-format
 #| msgid "Select Channel"
 msgid "Visible channels:"
 msgstr "Канални танлаш"
 
-#: gui/dialogviewconfiguration.cpp:220
+#: gui/dialogviewconfiguration.cpp:216
 #, fuzzy, kde-format
 #| msgid "Select Channel"
 msgid "Available channels:"
 msgstr "Канални танлаш"
 
-#: gui/dialogviewconfiguration.cpp:234
+#: gui/dialogviewconfiguration.cpp:230
 #, kde-format
 msgid "Move the selected channel to the visible list"
 msgstr ""
 
-#: gui/dialogviewconfiguration.cpp:242
+#: gui/dialogviewconfiguration.cpp:238
 #, kde-format
 msgid "Move the selected channel to the available (hidden) list"
 msgstr ""
 
-#: gui/dialogviewconfiguration.cpp:282
+#: gui/dialogviewconfiguration.cpp:278
 #, kde-format
 msgid "Show the selected channel"
 msgstr ""
 
-#: gui/dialogviewconfiguration.cpp:283
+#: gui/dialogviewconfiguration.cpp:279
 #, kde-format
 msgid "Hide the selected channel"
 msgstr ""
 
-#: gui/dialogviewconfiguration.cpp:284
+#: gui/dialogviewconfiguration.cpp:280
 #, fuzzy, kde-format
 #| msgid "Select Channel"
 msgid "Visible channels"
 msgstr "Канални танлаш"
 
-#: gui/dialogviewconfiguration.cpp:285
+#: gui/dialogviewconfiguration.cpp:281
 #, fuzzy, kde-format
 #| msgid "Select Channel"
 msgid "Available channels"

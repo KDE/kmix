@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-11-05 00:39+0000\n"
+"POT-Creation-Date: 2024-11-09 00:39+0000\n"
 "PO-Revision-Date: 2011-08-27 14:14-0700\n"
 "Last-Translator: Fumiaki Okushi <okushi@kde.gr.jp>\n"
 "Language-Team: Japanese <kde-jp@kde.org>\n"
@@ -875,58 +875,58 @@ msgid "Automatic (%1 recommendation)"
 msgstr ""
 
 # ACCELERATOR changed by translator
-#: gui/dialogviewconfiguration.cpp:136
+#: gui/dialogviewconfiguration.cpp:132
 #, fuzzy, kde-format
 #| msgid "Configure &Channels..."
 msgid "Configure Channels"
 msgstr "チャンネルを設定(&N)..."
 
-#: gui/dialogviewconfiguration.cpp:147
+#: gui/dialogviewconfiguration.cpp:143
 #, fuzzy, kde-format
 #| msgid "Configuration of the channels."
 msgid "Configure the visible channels. Drag icons between the lists to update."
 msgstr "チャンネルの設定"
 
-#: gui/dialogviewconfiguration.cpp:217
+#: gui/dialogviewconfiguration.cpp:213
 #, fuzzy, kde-format
 #| msgid "Visible channels"
 msgid "Visible channels:"
 msgstr "表示するチャンネル"
 
-#: gui/dialogviewconfiguration.cpp:220
+#: gui/dialogviewconfiguration.cpp:216
 #, fuzzy, kde-format
 #| msgid "Available channels"
 msgid "Available channels:"
 msgstr "利用可能なチャンネル"
 
-#: gui/dialogviewconfiguration.cpp:234
+#: gui/dialogviewconfiguration.cpp:230
 #, fuzzy, kde-format
 #| msgid "Select Master Channel"
 msgid "Move the selected channel to the visible list"
 msgstr "マスターチャンネルを選択"
 
-#: gui/dialogviewconfiguration.cpp:242
+#: gui/dialogviewconfiguration.cpp:238
 #, kde-format
 msgid "Move the selected channel to the available (hidden) list"
 msgstr ""
 
-#: gui/dialogviewconfiguration.cpp:282
+#: gui/dialogviewconfiguration.cpp:278
 #, fuzzy, kde-format
 #| msgid "Select Master Channel"
 msgid "Show the selected channel"
 msgstr "マスターチャンネルを選択"
 
-#: gui/dialogviewconfiguration.cpp:283
+#: gui/dialogviewconfiguration.cpp:279
 #, kde-format
 msgid "Hide the selected channel"
 msgstr ""
 
-#: gui/dialogviewconfiguration.cpp:284
+#: gui/dialogviewconfiguration.cpp:280
 #, kde-format
 msgid "Visible channels"
 msgstr "表示するチャンネル"
 
-#: gui/dialogviewconfiguration.cpp:285
+#: gui/dialogviewconfiguration.cpp:281
 #, kde-format
 msgid "Available channels"
 msgstr "利用可能なチャンネル"
