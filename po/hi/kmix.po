@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-11-05 00:39+0000\n"
+"POT-Creation-Date: 2024-11-09 02:30+0000\n"
 "PO-Revision-Date: 2021-06-29 20:35+0530\n"
 "Last-Translator: Raghavendra Kamath <raghu@raghukamath.com>\n"
 "Language-Team: kde-hindi\n"
@@ -870,59 +870,59 @@ msgstr ""
 msgid "Automatic (%1 recommendation)"
 msgstr ""
 
-#: gui/dialogviewconfiguration.cpp:136
+#: gui/dialogviewconfiguration.cpp:132
 #, fuzzy, kde-format
 #| msgid "Configure"
 msgid "Configure Channels"
 msgstr "कॉन्फ़िगर"
 
-#: gui/dialogviewconfiguration.cpp:147
+#: gui/dialogviewconfiguration.cpp:143
 #, fuzzy, kde-format
 #| msgid "Configure"
 msgid "Configure the visible channels. Drag icons between the lists to update."
 msgstr "कॉन्फ़िगर"
 
-#: gui/dialogviewconfiguration.cpp:217
+#: gui/dialogviewconfiguration.cpp:213
 #, fuzzy, kde-format
 #| msgid "Available mixers:"
 msgid "Visible channels:"
 msgstr "उपलब्ध मिक्सर्स"
 
-#: gui/dialogviewconfiguration.cpp:220
+#: gui/dialogviewconfiguration.cpp:216
 #, fuzzy, kde-format
 #| msgid "Available mixers:"
 msgid "Available channels:"
 msgstr "उपलब्ध मिक्सर्स"
 
-#: gui/dialogviewconfiguration.cpp:234
+#: gui/dialogviewconfiguration.cpp:230
 #, fuzzy, kde-format
 #| msgid "Select Master Channel"
 msgid "Move the selected channel to the visible list"
 msgstr "मास्टर चैनल चुनें"
 
-#: gui/dialogviewconfiguration.cpp:242
+#: gui/dialogviewconfiguration.cpp:238
 #, kde-format
 msgid "Move the selected channel to the available (hidden) list"
 msgstr ""
 
-#: gui/dialogviewconfiguration.cpp:282
+#: gui/dialogviewconfiguration.cpp:278
 #, fuzzy, kde-format
 #| msgid "Select Master Channel"
 msgid "Show the selected channel"
 msgstr "मास्टर चैनल चुनें"
 
-#: gui/dialogviewconfiguration.cpp:283
+#: gui/dialogviewconfiguration.cpp:279
 #, kde-format
 msgid "Hide the selected channel"
 msgstr ""
 
-#: gui/dialogviewconfiguration.cpp:284
+#: gui/dialogviewconfiguration.cpp:280
 #, fuzzy, kde-format
 #| msgid "Available mixers:"
 msgid "Visible channels"
 msgstr "उपलब्ध मिक्सर्स"
 
-#: gui/dialogviewconfiguration.cpp:285
+#: gui/dialogviewconfiguration.cpp:281
 #, fuzzy, kde-format
 #| msgid "Available mixers:"
 msgid "Available channels"
