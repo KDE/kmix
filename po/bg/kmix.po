@@ -9,14 +9,14 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-11-09 00:39+0000\n"
-"PO-Revision-Date: 2024-11-06 15:16+0100\n"
+"PO-Revision-Date: 2024-11-09 20:04+0100\n"
 "Last-Translator: Mincho Kondarev <mkondarev@yahoo.de>\n"
 "Language-Team: Bulgarian <kde-i18n-doc@kde.org>\n"
 "Language: bg\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 24.11.70\n"
+"X-Generator: Lokalize 24.08.2\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
 
 #, kde-format
@@ -352,12 +352,12 @@ msgstr "Файлът не може да се преименува — същес
 #: apps/kmixwindow.cpp:856
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr "Звуковата  карта \"%1\" е свързана."
+msgstr "Звуковата  карта „%1“ е свързана."
 
 #: apps/kmixwindow.cpp:909
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr "Звуковата  карта \"%1\" е изключена."
+msgstr "Звуковата  карта „%1“ е изключена."
 
 #: apps/kmixwindow.cpp:934
 #, kde-format

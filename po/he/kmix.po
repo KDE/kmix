@@ -18,16 +18,16 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-11-09 00:39+0000\n"
-"PO-Revision-Date: 2024-11-07 21:33+0200\n"
+"PO-Revision-Date: 2024-11-09 12:03+0200\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: צוות התרגום של KDE ישראל\n"
 "Language: he\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 24.08.1\n"
 "Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
 "n % 10 == 0) ? 2 : 3));\n"
+"X-Generator: Poedit 3.4.2\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -867,22 +867,19 @@ msgid "Configure the visible channels. Drag icons between the lists to update."
 msgstr "הגדרות הערוצים."
 
 #: gui/dialogviewconfiguration.cpp:213
-#, fuzzy, kde-format
-#| msgid "Available mixers:"
+#, kde-format
 msgid "Visible channels:"
-msgstr "מערבלים זמינים:"
+msgstr "ערוצים גלויים:"
 
 #: gui/dialogviewconfiguration.cpp:216
-#, fuzzy, kde-format
-#| msgid "Available mixers:"
+#, kde-format
 msgid "Available channels:"
-msgstr "מערבלים זמינים:"
+msgstr "ערוצים זמינים:"
 
 #: gui/dialogviewconfiguration.cpp:230
-#, fuzzy, kde-format
-#| msgid "Select Master Channel"
+#, kde-format
 msgid "Move the selected channel to the visible list"
-msgstr "בחר ערוץ ראשי"
+msgstr "העברת הערוץ הנבחר לרשימת הגלויים"
 
 #: gui/dialogviewconfiguration.cpp:238
 #, kde-format
@@ -890,10 +887,9 @@ msgid "Move the selected channel to the available (hidden) list"
 msgstr "העברת הערוץ הנבחר לרשימת הזמינים (נסתרים)"
 
 #: gui/dialogviewconfiguration.cpp:278
-#, fuzzy, kde-format
-#| msgid "Select Master Channel"
+#, kde-format
 msgid "Show the selected channel"
-msgstr "בחר ערוץ ראשי"
+msgstr "הצגת הערוץ הנבחר"
 
 #: gui/dialogviewconfiguration.cpp:279
 #, kde-format
@@ -901,22 +897,19 @@ msgid "Hide the selected channel"
 msgstr "הסתרת הערוץ הנבחר"
 
 #: gui/dialogviewconfiguration.cpp:280
-#, fuzzy, kde-format
-#| msgid "Available mixers:"
+#, kde-format
 msgid "Visible channels"
-msgstr "מערבלים זמינים:"
+msgstr "ערוצים גלויים"
 
 #: gui/dialogviewconfiguration.cpp:281
-#, fuzzy, kde-format
-#| msgid "Available mixers:"
+#, kde-format
 msgid "Available channels"
-msgstr "מערבלים זמינים:"
+msgstr "ערוצים זמינים"
 
 #: gui/kmixdockwidget.cpp:64 gui/kmixprefdlg.cpp:87
-#, fuzzy, kde-format
-#| msgid "Volume"
+#, kde-format
 msgid "Volume Control"
-msgstr "עצמת קול"
+msgstr "בקרת עוצמת שמע"
 
 #: gui/kmixdockwidget.cpp:186
 #, kde-format
@@ -924,10 +917,9 @@ msgid "M&ute"
 msgstr "ה&שתקה"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
-msgstr "הסתר חלון מערבל"
+msgstr "הצגת חלון מערבל"
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
@@ -1017,10 +1009,9 @@ msgid "Behavior"
 msgstr "התנהגות"
 
 #: gui/kmixprefdlg.cpp:228
-#, fuzzy, kde-format
-#| msgid "Volume"
+#, kde-format
 msgid "Volume overdrive"
-msgstr "עצמת קול"
+msgstr "דריסת עוצמת שמע"
 
 #: gui/kmixprefdlg.cpp:233
 #, kde-format
@@ -1067,10 +1058,9 @@ msgid ""
 msgstr ""
 
 #: gui/kmixprefdlg.cpp:293
-#, fuzzy, kde-format
-#| msgid "Volume"
+#, kde-format
 msgid "Volume step:"
-msgstr "עצמת קול"
+msgstr "פסיעת עוצמת שמע:"
 
 #: gui/kmixprefdlg.cpp:301
 #, kde-format
@@ -1078,16 +1068,14 @@ msgid "Visual"
 msgstr "חזותי"
 
 #: gui/kmixprefdlg.cpp:310
-#, fuzzy, kde-format
-#| msgid "Show &tickmarks"
+#, kde-format
 msgid "Show slider &tickmarks"
-msgstr "הצג &שנתות"
+msgstr "הצגת &שנתות על המחוון"
 
 #: gui/kmixprefdlg.cpp:313
-#, fuzzy, kde-format
-#| msgid "Enable/disable tickmark scales on the sliders"
+#, kde-format
 msgid "Show tick mark scales on sliders"
-msgstr "הצגה של שנתות על המחוונים"
+msgstr "הצגת שנתות על המחוונים"
 
 #: gui/kmixprefdlg.cpp:315
 #, kde-format
@@ -1133,10 +1121,9 @@ msgid "Set the orientation of the system tray volume control sliders"
 msgstr "אפשר בקרת עוצמה &ממגש המערכת"
 
 #: gui/kmixprefdlg.cpp:348
-#, fuzzy, kde-format
-#| msgid "&Dock in system tray"
+#, kde-format
 msgid "Dock in system tray"
-msgstr "&עגן בלוח המערכת"
+msgstr "עיגון בשורת המערכת"
 
 #: gui/kmixprefdlg.cpp:351
 #, kde-format
@@ -1151,10 +1138,9 @@ msgid "Mixers to show in the popup volume control:"
 msgstr ""
 
 #: gui/kmixprefdlg.cpp:365
-#, fuzzy, kde-format
-#| msgid "Select Mixer"
+#, kde-format
 msgid "Select Mixers"
-msgstr "בחר מערבל"
+msgstr "בחירת מערבלים"
 
 #: gui/kmixprefdlg.cpp:367
 #, kde-format
@@ -1168,10 +1154,9 @@ msgid "No sound devices are installed or are currently available."
 msgstr "אין התקני שמע מותקנים או שהם אינם זמינים כרגע."
 
 #: gui/mdwslider.cpp:95
-#, fuzzy, kde-format
-#| msgid "&Split Channels"
+#, kde-format
 msgid "Split Channels"
-msgstr "&פצל ערוצים"
+msgstr "פיצול ערוצים"
 
 #: gui/mdwslider.cpp:107 gui/mdwslider.cpp:626
 #, kde-format
@@ -1190,18 +1175,16 @@ msgid "Mute %2 on %1"
 msgstr "השתקת %2 ב־%1"
 
 #: gui/mdwslider.cpp:169
-#, fuzzy, kde-format
-#| msgid "Increase Volume"
+#, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Increase volume of %2 on %1"
-msgstr "הגבר עוצמת קול"
+msgstr "הגברת העוצמה של %2 ב־%1"
 
 #: gui/mdwslider.cpp:177
-#, fuzzy, kde-format
-#| msgid "Decrease Volume"
+#, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Decrease volume of %2 on %1"
-msgstr "החלש עוצמת קול"
+msgstr "הנמכת עוצמת שמע של %2 ב־%1"
 
 #: gui/mdwslider.cpp:327
 #, kde-format
@@ -1210,11 +1193,10 @@ msgid "Capture/Uncapture %1"
 msgstr ""
 
 #: gui/mdwslider.cpp:328
-#, fuzzy, kde-format
-#| msgid "Mute/Unmute %1"
+#, kde-format
 msgctxt "%1=channel"
 msgid "Mute/Unmute %1"
-msgstr "השתק/בטל השתקה של %1"
+msgstr "השתקה/ביטול השתקה של %1"
 
 #: gui/mdwslider.cpp:332 gui/mdwslider.cpp:333 gui/mdwslider.cpp:334
 #, kde-format
@@ -1237,22 +1219,19 @@ msgid "Automatic (according to category)"
 msgstr "אוטומטי (לפי הקטגוריה)"
 
 #: gui/mixdevicewidget.cpp:65
-#, fuzzy, kde-format
-#| msgid "C&onfigure Shortcuts..."
+#, kde-format
 msgid "Channel Shortcuts..."
-msgstr "הג&דר קיצורי מקשים..."
+msgstr "קיצורי דרך לערוצים…"
 
 #: gui/viewbase.cpp:88
-#, fuzzy, kde-format
-#| msgid "Configure &Channels..."
+#, kde-format
 msgid "Configure this view"
-msgstr "הגדר את ה&ערוצים..."
+msgstr "הגדרת התצוגה הזאת"
 
 #: gui/viewdockareapopup.cpp:483
-#, fuzzy, kde-format
-#| msgid "Show Mixer Window"
+#, kde-format
 msgid "Show the full mixer window"
-msgstr "הצג חלון מערבל"
+msgstr "הצגת חלון המערבל המלא"
 
 #: gui/viewdockareapopup.cpp:515
 #, kde-format
