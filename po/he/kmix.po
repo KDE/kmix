@@ -18,7 +18,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-11-09 00:39+0000\n"
-"PO-Revision-Date: 2024-11-09 12:03+0200\n"
+"PO-Revision-Date: 2024-11-10 08:10+0200\n"
 "Last-Translator: Yaron Shahrabani <sh.yaron@gmail.com>\n"
 "Language-Team: צוות התרגום של KDE ישראל\n"
 "Language: he\n"
@@ -27,7 +27,7 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=4; plural=(n == 1) ? 0 : ((n == 2) ? 1 : ((n > 10 && "
 "n % 10 == 0) ? 2 : 3));\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Lokalize 24.08.1\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -97,7 +97,7 @@ msgstr "יוצר מקורי מתחזק נוכחי"
 #: apps/kmixmain.cpp:65
 #, kde-format
 msgid "Colin Guthrie"
-msgstr ""
+msgstr "קולין גת׳רי"
 
 #: apps/kmixmain.cpp:65
 #, kde-format
@@ -131,12 +131,12 @@ msgstr "תמיכה בסולאריס"
 #: apps/kmixmain.cpp:74
 #, kde-format
 msgid "Jonathan Marten"
-msgstr ""
+msgstr "ג׳ונתן מרטן"
 
 #: apps/kmixmain.cpp:74
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
-msgstr ""
+msgstr "חיבור מהיר ב־KF5, משוב שמע ב־ALSA/OSS, שיפורי ממשק משתמש, הסבה ל־KF6"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -196,7 +196,7 @@ msgstr "ולנטין רוסו"
 #: apps/kmixmain.cpp:81
 #, kde-format
 msgid "TerraTec DMX6Fire support"
-msgstr ""
+msgstr "תמיכה ב־TerraTec DMX6Fire"
 
 #: apps/kmixmain.cpp:89
 #, kde-format
@@ -216,7 +216,7 @@ msgstr "ALSA"
 #: apps/kmixmain.cpp:96
 #, kde-format
 msgid "Advanced Linux Sound Architecture"
-msgstr ""
+msgstr "ארכיטקטורת שמע מתקדמת ללינוקס (ALSA)"
 
 #: apps/kmixmain.cpp:101
 #, kde-format
@@ -236,7 +236,7 @@ msgstr "OSS 4"
 #: apps/kmixmain.cpp:122
 #, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
-msgstr ""
+msgstr "למנוע את הצגת החלון הראשי של KMix אם KMix כבר פעיל."
 
 #: apps/kmixmain.cpp:123
 #, kde-format
@@ -251,7 +251,7 @@ msgstr "רשימה של מנגנונים לשימוש (לבדיקה בלבד)."
 #: apps/kmixmain.cpp:124
 #, kde-format
 msgid "name[,name...]"
-msgstr ""
+msgstr "שם[,שם…]"
 
 #: apps/kmixmain.cpp:125
 #, kde-format
@@ -271,7 +271,7 @@ msgstr "הסתרת חלון מערבל"
 #: apps/kmixwindow.cpp:176
 #, kde-format
 msgid "Audio Setup..."
-msgstr ""
+msgstr "הגדרות שמע…"
 
 #: apps/kmixwindow.cpp:181
 #, kde-format
@@ -346,7 +346,7 @@ msgstr "הוספת תצוגה חדשה"
 #: apps/kmixwindow.cpp:781
 #, kde-format
 msgid "Cannot add view - GUIProfile is invalid."
-msgstr ""
+msgstr "לא ניתן להוסיף תצוגה - GUIProfile שגוי."
 
 #: apps/kmixwindow.cpp:781 apps/kmixwindow.cpp:788
 #, kde-format
@@ -373,7 +373,7 @@ msgstr "התקן השמע ‚%1’ נותק."
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
-msgstr ""
+msgstr "ההתקן הראשי הנוכחי נותק. הראשי הוחלף ל־‚%1’ בהתקן ‚%2’."
 
 #: apps/kmixwindow.cpp:941
 #, kde-format
@@ -387,6 +387,9 @@ msgid ""
 "\n"
 "%1"
 msgstr ""
+"יישום העזר לא מותקן או שאינו עובד.\n"
+"\n"
+"%1"
 
 #: apps/kmixwindow.cpp:1236
 #, kde-format
@@ -553,7 +556,7 @@ msgstr ""
 "הגישה."
 
 #: backends/mixer_oss.cpp:244
-#, fuzzy, kde-format
+#, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"
 "Please check that the soundcard is installed and the\n"
@@ -561,20 +564,14 @@ msgid ""
 "On Linux you might need to use 'insmod' to load the driver.\n"
 "Use 'soundon' when using commercial OSS."
 msgstr ""
-"אין אפשרות למצוא את המערבל.\n"
-"בדוק שכרטיס הקול מותקן ושמנהל\n"
-"ההתקן של כרטיס הקול טעון.\n"
-"בלינוקס ייתכן שיהיה עליך להשתמש ב־\"insmod\" כדי לטעון את מנהל ההתקן.\n"
-"השתמש ב־\"soundon\" בעת בשימוש ב־OSS מסחרי."
+"kmix: אי אפשר למצוא מערבל.\n"
+"נא לבדוק שכרטיס הקול מותקן ושמנהל התקן\n"
+"כרטיס הקול נטען.\n"
+"בלינוקס כנראה שצריך להשתמש ב־‚insmod’ כדי לטעון את מנהל ההתקן.\n"
+"יש להשתמש ב־‚soundon’ בעת שימוש ב־OSS מסחרי."
 
 #: backends/mixer_oss4.cpp:530
-#, fuzzy, kde-format
-#| msgid ""
-#| "kmix: Mixer cannot be found.\n"
-#| "Please check that the soundcard is installed and the\n"
-#| "soundcard driver is loaded.\n"
-#| "On Linux you might need to use 'insmod' to load the driver.\n"
-#| "Use 'soundon' when using commercial OSS."
+#, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"
 "Please check that the soundcard is installed and the\n"
@@ -582,11 +579,11 @@ msgid ""
 "On Linux you might need to use 'insmod' to load the driver.\n"
 "Use 'soundon' when using OSS4 from 4front."
 msgstr ""
-"אין אפשרות למצוא את המערבל.\n"
-"בדוק שכרטיס הקול מותקן ושמנהל\n"
-"ההתקן של כרטיס הקול טעון.\n"
-"בלינוקס ייתכן שיהיה עליך להשתמש ב־\"insmod\" כדי לטעון את מנהל ההתקן.\n"
-"השתמש ב־\"soundon\" בעת בשימוש ב־OSS מסחרי."
+"kmix: אי אפשר למצוא מערבל.\n"
+"נא לבדוק שכרטיס הקול מותקן ושמנהל התקן\n"
+"כרטיס הקול נטען.\n"
+"בלינוקס כנראה שצריך להשתמש ב־‚insmod’ כדי לטעון את מנהל ההתקן.\n"
+"יש להשתמש ב־‚soundon’ בעת שימוש ב־OSS4 מבית 4front."
 
 #: backends/mixer_pulse.cpp:352 backends/mixer_pulse.cpp:409
 #, kde-format
@@ -649,22 +646,22 @@ msgid "Line In"
 msgstr "קו נכנס"
 
 #: backends/mixer_sun.cpp:241
-#, fuzzy, kde-format
+#, kde-format
 msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
 "Ask your system administrator to fix /dev/audioctl to allow access."
 msgstr ""
-"אין לך הרשאה לגשת אל התקן המערבל.\n"
-"בקש ממנהל המערכת שלך שיתקן את dev/audioctl/ כדי לאפשר את הגישה."
+"kmix: אין לך הרשאה לגשת להתקן המערבל.\n"
+"נא לבקש מהנהלת המערכת שלך לתקן את ‎/dev/audioctl כדי לאפשר גישה."
 
 #: backends/mixerbackend.cpp:324
-#, fuzzy, kde-format
+#, kde-format
 msgid ""
 "kmix:You do not have permission to access the mixer device.\n"
 "Please check your operating systems manual to allow the access."
 msgstr ""
-"אין לך הרשאה לגשת אל התקן המערבל.\n"
-"עיין בספר ההדרכה של מערכת ההפעלה שלך כדי לאפשר את הגישה."
+"kmix:אין לך הרשאה לגשת להתקן המערבל.\n"
+"נא לעיין במדריכי מערכת ההפעלה שלך בנוגע לאיך לאפשר גישה."
 
 #: backends/mixerbackend.cpp:328
 #, kde-format
@@ -677,15 +674,15 @@ msgid "kmix: Could not read from mixer."
 msgstr "kmix: לא ניתן לקרוא מהמערבל."
 
 #: backends/mixerbackend.cpp:334
-#, fuzzy, kde-format
+#, kde-format
 msgid ""
 "kmix: Mixer cannot be found.\n"
 "Please check that the soundcard is installed and that\n"
 "the soundcard driver is loaded.\n"
 msgstr ""
-"אין אפשרות למצוא את המערבל.\n"
-"בדוק שכרטיס הקול מותקן ושמנהל\n"
-"ההתקן של כרטיס הקול טעון.\n"
+"kmix: המערבל לא נמצא.\n"
+"נא לבדוק שכרטיס הכול מותקן ושמנהל כרטיס\n"
+"הקול נטען.\n"
 
 #: backends/mixerbackend.cpp:339
 #, kde-format
@@ -695,7 +692,7 @@ msgstr "kmix: שגיאה לא מוכרת. נא דווח כיצד גרמת לשג
 #: backends/mixerbackend.cpp:351
 #, kde-format
 msgid "Recording level of the microphone input."
-msgstr ""
+msgstr "רמת ההקלטה של קלט המיקרופון."
 
 #: backends/mixerbackend.cpp:352
 #, kde-format
@@ -705,6 +702,9 @@ msgid ""
 "other controls like ADC or DAC. For headphones, soundcards often supply a "
 "Headphone control."
 msgstr ""
+"שליטה בעוצמת השמע של הרמקולים הקדמיים (כתלות בדגם כרטיס הקול שלך). אם נעשה "
+"שימוש בפלט דיגיטלי, כנראה שכדאי להשתמש גם בבקרים אחרים כגון ADC או DAC. "
+"לאוזניות, כרטיסי הקול בדרך כלל מספקים בקרת אוזניות."
 
 #: backends/mixerbackend.cpp:353
 #, kde-format
@@ -713,6 +713,9 @@ msgid ""
 "As such, the playback volume of such media is controlled by both this and "
 "the Master or Headphone channels."
 msgstr ""
+"רוב קובצי המדיה, כגון MP3 או סרטונים, מנוגנים דרך ערוץ ה־PCM. עקב כך, עוצמת "
+"השמע של נגינת קובצי מדיה שכאלה נשלטת גם על ידי זה וגם הערוץ הראשי או "
+"האוזניות."
 
 #: backends/mixerbackend.cpp:354
 #, kde-format
@@ -720,6 +723,8 @@ msgid ""
 "Controls the headphone volume. Some soundcards include a switch that must be "
 "manually activated to enable the headphone output."
 msgstr ""
+"שליטה בעוצמת השמע באוזניות. חלק מכרטיסי הקול כוללים מתג שיש להפעיל ידנית כדי "
+"להפעיל את פלט האוזניות."
 
 #: backends/mixerbackend.cpp:355
 #, kde-format
@@ -766,19 +771,19 @@ msgstr "סראונד ימין"
 #, kde-format
 msgctxt "Channel name"
 msgid "Side Left"
-msgstr ""
+msgstr "צד שמאל"
 
 #: core/volume.cpp:65
 #, kde-format
 msgctxt "Channel name"
 msgid "Side Right"
-msgstr ""
+msgstr "צד ימין"
 
 #: core/volume.cpp:66
 #, kde-format
 msgctxt "Channel name"
 msgid "Rear Center"
-msgstr ""
+msgstr "מרכז אחורי"
 
 #: core/volume.cpp:68
 #, kde-format
@@ -794,12 +799,12 @@ msgstr "כל הפקדים"
 #: gui/dialogaddview.cpp:52
 #, kde-format
 msgid "Only playback controls"
-msgstr ""
+msgstr "רק פקדי נגינה"
 
 #: gui/dialogaddview.cpp:53
 #, kde-format
 msgid "Only capture controls"
-msgstr ""
+msgstr "רק פקדי הקלטה"
 
 #: gui/dialogaddview.cpp:60
 #, kde-format
@@ -832,11 +837,10 @@ msgid "Current mixer:"
 msgstr "מערבל נוכחי:"
 
 #: gui/dialogselectmaster.cpp:124
-#, fuzzy, kde-kuit-format
-#| msgid "Select the channel representing the master volume:"
+#, kde-kuit-format
 msgctxt "@info"
 msgid "Select the <link url=\"i\">master volume</link> channel:"
-msgstr "בחר ערוץ אשר ייצג את ערוץ העוצמה הראשי"
+msgstr "נא לבחור את ערוץ <link url=\"i\">עוצמת השמע הראשית</link>:"
 
 #: gui/dialogselectmaster.cpp:132
 #, kde-kuit-format
@@ -848,6 +852,10 @@ msgid ""
 "global shortcut keys, and the <interface>Mute</interface> action in the "
 "system tray popup menu.</para>"
 msgstr ""
+"<para>כאן אפשר לבחור את התקן השמע הראשי (אם יש יותר מאחד) ואת הערוץ הראשי "
+"שלו.</para><para>הערוץ הראשי הוא זה שמושפע על ידי בקרת השמע של שורת המערכת, "
+"מקשי הקיצור הגלובליים להגברה/הנמכה והשתקה ופעולת ה<interface>השתקה</"
+"interface> בתפריט הצץ בשורת המערכת.</para>"
 
 #: gui/dialogselectmaster.cpp:203
 #, kde-format
@@ -855,16 +863,14 @@ msgid "Automatic (%1 recommendation)"
 msgstr "אוטומטי (המלצה %1)"
 
 #: gui/dialogviewconfiguration.cpp:132
-#, fuzzy, kde-format
-#| msgid "Configure &Channels..."
+#, kde-format
 msgid "Configure Channels"
-msgstr "הגדר את ה&ערוצים..."
+msgstr "הגדרת ערוצים"
 
 #: gui/dialogviewconfiguration.cpp:143
-#, fuzzy, kde-format
-#| msgid "Configuration of the channels."
+#, kde-format
 msgid "Configure the visible channels. Drag icons between the lists to update."
-msgstr "הגדרות הערוצים."
+msgstr "הגדרת הערוצים הגלויים. יש לגרור סמלים בין הרשימות כדי לעדכן."
 
 #: gui/dialogviewconfiguration.cpp:213
 #, kde-format
@@ -959,12 +965,12 @@ msgstr "עלייה"
 #: gui/kmixprefdlg.cpp:124
 #, kde-format
 msgid "Start KMix on desktop startup"
-msgstr ""
+msgstr "הפעלת KMix עם עליית שולחן העבודה"
 
 #: gui/kmixprefdlg.cpp:128
 #, kde-format
 msgid "Start KMix automatically when the desktop starts"
-msgstr ""
+msgstr "הפעלת KMix אוטומטית כששולחן העבודה עולה"
 
 #: gui/kmixprefdlg.cpp:131
 #, kde-format
@@ -972,26 +978,28 @@ msgid ""
 "Autostart will not work, because the autostart file kmix_autostart.desktop "
 "is missing. Check that KMix is installed correctly."
 msgstr ""
+"הפעלה אוטומטית לא תעבוד, כיוון שקובץ ההפעלה האוטומטית kmix_autostart.desktop "
+"חסר. נא לבדוק ש־KMix מותקן כראוי."
 
 #: gui/kmixprefdlg.cpp:141
-#, fuzzy, kde-format
-#| msgid "Restore volumes on login"
+#, kde-format
 msgid "Restore previous volume settings on desktop startup"
-msgstr "שחזר עצמות קול בהתחברות"
+msgstr "שחזור הגדרות שמע קודמות עם עליית שולחן העבודה"
 
 #: gui/kmixprefdlg.cpp:145
-#, fuzzy, kde-format
-#| msgid "Restore volumes on login"
+#, kde-format
 msgid ""
 "Restore all mixer volume levels and switches to their last used settings "
 "when the desktop starts"
-msgstr "שחזר עצמות קול בהתחברות"
+msgstr ""
+"שחזור כל רמות עוצמת השמע והמתגים להגדרות האחרונות שהיו בשימוש עם הפעלת שולחן "
+"העבודה"
 
 #: gui/kmixprefdlg.cpp:148
 #, kde-format
 msgid ""
 "The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."
-msgstr ""
+msgstr "עוצמת השמע של פקדים דינמיים של PulseAudio או של MPRIS2 לא תשוחזר."
 
 #: gui/kmixprefdlg.cpp:166
 #, kde-format
@@ -1019,17 +1027,17 @@ msgctxt "@info:tooltip"
 msgid ""
 "Allow the volume to be raised above the recommended maximum (typically to "
 "150%)"
-msgstr ""
+msgstr "לאפשר להגביר את עוצמת השמע מעבר לסף העליון המומלץ (בדרך כלל עד 150%)"
 
 #: gui/kmixprefdlg.cpp:236
 #, kde-format
 msgid "Volume overdrive is only available for PulseAudio."
-msgstr ""
+msgstr "הגברת יתר זמינה רק עבור PulseAudio."
 
 #: gui/kmixprefdlg.cpp:246
 #, kde-format
 msgid "%1 must be restarted for the volume overdrive setting to take effect."
-msgstr ""
+msgstr "יש להפעיל את %1 מחדש כדי שהגדרות ההגברה היתרה יפעלו."
 
 #: gui/kmixprefdlg.cpp:256
 #, kde-format
@@ -1040,12 +1048,12 @@ msgstr "משוב שמע"
 #, kde-format
 msgctxt "@info:tooltip"
 msgid "Play a sample sound when the volume changes"
-msgstr ""
+msgstr "לנגן צליל לדוגמה עם שינוי עוצמת השמע"
 
 #: gui/kmixprefdlg.cpp:264
 #, kde-format
 msgid "Volume feedback is only available when configured with Canberra."
-msgstr ""
+msgstr "משוב השמע זמין רק כאשר מוגדר עם Canberra."
 
 #: gui/kmixprefdlg.cpp:286
 #, kde-kuit-format
@@ -1056,6 +1064,10 @@ msgid ""
 "wheel over the system tray icon, or moving sliders by a page step.</"
 "para><para>%1 must be restarted for this change to take effect.</para>"
 msgstr ""
+"<para>הגדרת פסיעת עוצמת השמע כאחוז מטווח עוצמת השמע.</para><para>משפיע על "
+"שינוי עוצמת השמע דרך מקשים חמים, גלגלת העכבר על גבי הסמל בשורת המשימות, או "
+"הזזת המחוונים לפי צעד עמוד.</para><para>יש להפעיל את %1 מחדש כדי שהשינוי "
+"יפעל.</para>"
 
 #: gui/kmixprefdlg.cpp:293
 #, kde-format
@@ -1090,12 +1102,12 @@ msgstr "הצגת תוויות תיאור למחוונים"
 #: gui/kmixprefdlg.cpp:321
 #, kde-format
 msgid "Show On Screen Display (&OSD)"
-msgstr ""
+msgstr "הצגת חלונית &צפה (OSD)"
 
 #: gui/kmixprefdlg.cpp:324
 #, kde-format
 msgid "Show an on-screen indicator when changing the volume via hotkeys"
-msgstr ""
+msgstr "הצגת מחוון צף על המסך כשעוצמת השמע משתנה בעזרת המקשים החמים"
 
 #: gui/kmixprefdlg.cpp:333
 #, kde-format
@@ -1103,22 +1115,19 @@ msgid "Slider orientation (main window): "
 msgstr "הצגת כיוון (החלון הראשי): "
 
 #: gui/kmixprefdlg.cpp:334
-#, fuzzy, kde-format
-#| msgid "Enable system tray &volume control"
+#, kde-format
 msgid "Slider orientation (system tray popup):"
-msgstr "אפשר בקרת עוצמה &ממגש המערכת"
+msgstr "כיוון מחוון (חלונית שורת מערכת):"
 
 #: gui/kmixprefdlg.cpp:335
-#, fuzzy, kde-format
-#| msgid "Enable system tray &volume control"
+#, kde-format
 msgid "Set the orientation of the main window control sliders"
-msgstr "אפשר בקרת עוצמה &ממגש המערכת"
+msgstr "הגדרת כיוון מחווני הבקרה בחלון הראשי"
 
 #: gui/kmixprefdlg.cpp:336
-#, fuzzy, kde-format
-#| msgid "Enable system tray &volume control"
+#, kde-format
 msgid "Set the orientation of the system tray volume control sliders"
-msgstr "אפשר בקרת עוצמה &ממגש המערכת"
+msgstr "הגדרת כיוון מחווני בקרת השמע של שורת המערכת"
 
 #: gui/kmixprefdlg.cpp:348
 #, kde-format
@@ -1131,11 +1140,12 @@ msgid ""
 "Dock the mixer into the system tray. Click on it to open the popup volume "
 "control."
 msgstr ""
+"עיגון המערבל לשורת המערכת. יש ללחוץ עליו כדי לפתוח את חלונית בקרת עוצמת השמע."
 
 #: gui/kmixprefdlg.cpp:355
 #, kde-format
 msgid "Mixers to show in the popup volume control:"
-msgstr ""
+msgstr "מערבלים להצגה בחלונית בקרתעעוצמת השמע:"
 
 #: gui/kmixprefdlg.cpp:365
 #, kde-format
@@ -1146,7 +1156,7 @@ msgstr "בחירת מערבלים"
 #, kde-format
 msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
-msgstr ""
+msgstr "המערבלים שמסומנים כאן יופיעו בחלונית בקרת עוצמת השמע."
 
 #: gui/kmixtoolbox.cpp:96
 #, kde-format
@@ -1190,7 +1200,7 @@ msgstr "הנמכת עוצמת שמע של %2 ב־%1"
 #, kde-format
 msgctxt "%1=channel"
 msgid "Capture/Uncapture %1"
-msgstr ""
+msgstr "הקלטה/הפסקת הקלטה על %1"
 
 #: gui/mdwslider.cpp:328
 #, kde-format
