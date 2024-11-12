@@ -7,20 +7,20 @@
 # pan93412 <pan93412@gmail.com>, 2018, 2019, 2020.
 # Frank Weng (a.k.a. Franklin) <franklin at goodhorse dot idv dot tw>, 2006, 2007, 2008, 2009, 2010.
 # Franklin Weng <franklin at goodhorse dot idv dot tw>, 2007, 2008.
-# SPDX-FileCopyrightText: 2023 Kisaragi Hiu <mail@kisaragi-hiu.com>
+# SPDX-FileCopyrightText: 2023, 2024 Kisaragi Hiu <mail@kisaragi-hiu.com>
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-11-09 02:30+0000\n"
-"PO-Revision-Date: 2023-12-02 20:19+0900\n"
+"PO-Revision-Date: 2024-11-11 16:25+0900\n"
 "Last-Translator: Kisaragi Hiu <mail@kisaragi-hiu.com>\n"
 "Language-Team: Traditional Chinese <zh-l10n@lists.slat.org>\n"
 "Language: zh_TW\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 23.08.3\n"
+"X-Generator: Lokalize 24.08.2\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
 #, kde-format
@@ -39,10 +39,9 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
-msgstr "kmixctrl - 音量 儲存/復原 工具"
+msgstr "kmixctrl - KMix 音量 儲存/復原 工具"
 
 #: apps/kmixctrl.cpp:43
 #, kde-format
@@ -75,10 +74,9 @@ msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix - KDE 的全功能小型混音器"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "(c) 1996-2013 KMix 作者群"
+msgstr "(c) 1996-2024 KMix 作者群"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -130,10 +128,9 @@ msgid "Jonathan Marten"
 msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:74
-#, fuzzy, kde-format
-#| msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
+#, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
-msgstr "KF5 熱插拔、ALSA/OSS 音量回饋、圖形介面改善"
+msgstr "KF5 熱插拔、ALSA/OSS 音量回饋、圖形介面改善、KF6 移植"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -256,10 +253,9 @@ msgid "Enable the (experimental) multiple driver mode."
 msgstr "啟用（實驗性的）多驅動模式。"
 
 #: apps/kmixmain.cpp:126
-#, fuzzy, kde-format
-#| msgid "Set the orientation of the system tray volume control sliders"
+#, kde-format
 msgid "Do not show the system tray volume control."
-msgstr "設定系統匣音量控制器的方向"
+msgstr "不要顯示系統匣音量控制。"
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -915,10 +911,9 @@ msgid "M&ute"
 msgstr "靜音(&U)"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
-msgstr "隱藏混音器視窗"
+msgstr "顯示混音器視窗"
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
