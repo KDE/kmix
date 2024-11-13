@@ -1,4 +1,5 @@
 # translation of kmix.po to Italian
+# SPDX-FileCopyrightText: 2014, 2017, 2018, 2019, 2020, 2021, 2023, 2024 Vincenzo Reale <smart2128vr@gmail.com>
 # Andrea Rizzi <rizzi@kde.org>, 2003.
 # Giuseppe Ravasio <gravasio@bglug.it>, 2003, 2004, 2005.
 # ./SuperbepS <superbeps@bglug.it>, 2005.
@@ -6,13 +7,12 @@
 # Giovanni Venturi <jumpyj@tiscali.it>, 2006.
 # Luciano Montanaro <mikelima@cirulla.net>, 2008.
 # Federico Zenith <federico.zenith@member.fsf.org>, 2011, 2012, 2013, 2014.
-# Vincenzo Reale <smart2128vr@gmail.com>, 2014, 2017, 2018, 2019, 2020, 2021, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-11-09 02:30+0000\n"
-"PO-Revision-Date: 2023-07-25 14:12+0200\n"
+"PO-Revision-Date: 2024-11-05 16:03+0100\n"
 "Last-Translator: Vincenzo Reale <smart2128vr@gmail.com>\n"
 "Language-Team: Italian <kde-i18n-it@kde.org>\n"
 "Language: it\n"
@@ -20,7 +20,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 23.04.3\n"
+"X-Generator: Lokalize 24.08.2\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -38,10 +38,9 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
-msgstr "kmixctrl - programma per salvare/ripristinare il volume di kmix"
+msgstr "kmixctrl - programma per salvare/ripristinare il volume di KMix"
 
 #: apps/kmixctrl.cpp:43
 #, kde-format
@@ -74,10 +73,9 @@ msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix - Il piccolo grande mixer di KDE"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "© 1996-2013 degli autori di KMix"
+msgstr "© 1996-2024 degli autori di KMix"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -129,10 +127,11 @@ msgid "Jonathan Marten"
 msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:74
-#, fuzzy, kde-format
-#| msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
+#, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
-msgstr "Hotplugging KF5, feedback del volume ALSA/OSS, miglioramenti della GUI"
+msgstr ""
+"Hotplugging KF5, feedback del volume ALSA/OSS, miglioramenti della GUI, "
+"conversione KF6"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -257,12 +256,9 @@ msgid "Enable the (experimental) multiple driver mode."
 msgstr "Abilita la modalità driver multipli (sperimentale)."
 
 #: apps/kmixmain.cpp:126
-#, fuzzy, kde-format
-#| msgid "Set the orientation of the system tray volume control sliders"
+#, kde-format
 msgid "Do not show the system tray volume control."
-msgstr ""
-"Imposta l'orientazione dei cursori di controllo del volume del vassoio di "
-"sistema"
+msgstr "Non mostrare il controllo del volume del vassoio di sistema"
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -936,10 +932,9 @@ msgid "M&ute"
 msgstr "Silen&zia"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
-msgstr "Nascondi la finestra del mixer"
+msgstr "Mostra la finestra del mixer"
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
