@@ -1,3 +1,4 @@
+# SPDX-FileCopyrightText: 2010, 2024 Johannes Obermayr <johannesobermayr@gmx.de>
 # Carsten Niehaus <cniehaus@kde.org>, 2002.
 # Thomas Diehl <thd@kde.org>, 2003, 2004.
 # Arnold Krille <arnold@arnoldarts.de>, 2003, 2004, 2005, 2006.
@@ -7,22 +8,21 @@
 # Martin Ereth <martin.ereth@arcor.de>, 2007, 2008.
 # Burkhard Lück <lueck@hube-lueck.de>, 2009, 2011, 2012, 2013, 2014, 2017, 2018, 2019, 2020, 2021.
 # Frederik Schwarzer <schwarzer@kde.org>, 2009, 2010, 2011, 2012, 2021, 2022, 2023.
-# Johannes Obermayr <johannesobermayr@gmx.de>, 2010.
 # Panagiotis Papadopoulos <pano_90@gmx.net>, 2010.
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-11-09 00:39+0000\n"
-"PO-Revision-Date: 2023-06-12 00:12+0200\n"
-"Last-Translator: Frederik Schwarzer <schwarzer@kde.org>\n"
-"Language-Team: German <kde-i18n-doc@kde.org>\n"
+"PO-Revision-Date: 2024-11-11 18:08+0100\n"
+"Last-Translator: Johannes Obermayr <johannesobermayr@gmx.de>\n"
+"Language-Team: German <kde-i18n-de@kde.org>\n"
 "Language: de\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 23.07.70\n"
+"X-Generator: Lokalize 24.08.2\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -42,8 +42,7 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
 msgstr "kmixctrl – Hilfsprogramm zum Speichern/Laden von KMix-Lautstärken"
 
@@ -78,10 +77,9 @@ msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix – Der vollständige Mini-Mixer für KDE"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "© 1996–2013, die KMix-Autoren"
+msgstr "© 1996–2024, die KMix-Autoren"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -136,6 +134,8 @@ msgstr "Jonathan Marten"
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
 msgstr ""
+"KF5-Hot-Plugging, ALSA/OSS-Lautstärkerückkopplung, Oberflächenverbesserung, "
+"KF6-Portierung"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -246,26 +246,23 @@ msgstr "KMix im abgesicherten Modus starten."
 #: apps/kmixmain.cpp:124
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "Eine Liste der verwendeten Module (nur zum Testen)."
 
 #: apps/kmixmain.cpp:124
 #, kde-format
 msgid "name[,name...]"
-msgstr ""
+msgstr "Name[,Name…]"
 
 #: apps/kmixmain.cpp:125
-#, fuzzy, kde-format
-#| msgid "Experimental multiple-Driver mode activated"
+#, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr "Experimenteller Modus für mehrfache Treiber aktiviert"
+msgstr "Den (experimentellen) Mehrfach-Treiber-Modus aktivieren."
 
 #: apps/kmixmain.cpp:126
-#, fuzzy, kde-format
-#| msgid "Set the orientation of the system tray volume control sliders"
+#, kde-format
 msgid "Do not show the system tray volume control."
 msgstr ""
-"Legt die Ausrichtung der Lautstärkeregler im Systemabschnitt der "
-"Kontrollleiste fest"
+"Den Lautstärkeregler im Systemabschnitt der Kontrollleiste nicht anzeigen."
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -368,30 +365,28 @@ msgstr ""
 #: apps/kmixwindow.cpp:856
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr ""
+msgstr "Das Audiogerät „%1“ ist angeschlossen."
 
 #: apps/kmixwindow.cpp:909
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr ""
+msgstr "Das Audiogerät „%1“ wurde getrennt."
 
 #: apps/kmixwindow.cpp:934
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
-"Die Soundkarte mit dem Hauptgerät wurde ausgesteckt. Es wird zu dem Regler "
-"%1 auf der Karte %2 gewechselt."
+"Das aktuelle Hauptgerät wurde getrennt. Es wird zum Hauptregler „%1“ des "
+"Gerätes „%2“ gewechselt."
 
 #: apps/kmixwindow.cpp:941
-#, fuzzy, kde-format
-#| msgid "No sound devices are installed or are currently available."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
-msgstr "Es sind keine Sound-Geräte installiert oder aktuell verfügbar."
+msgstr ""
+"Das letzte Audiogerät wurde getrennt. Es sind keine weiteren Audiogeräte "
+"verfügbar."
 
 #: apps/kmixwindow.cpp:1186
 #, kde-format
@@ -438,7 +433,7 @@ msgstr ""
 #: backends/mixer_mpris2.cpp:53
 #, kde-format
 msgid "Application Streams"
-msgstr ""
+msgstr "Anwendungsstreams"
 
 #: backends/mixer_oss.cpp:73
 msgid "Volume"
@@ -948,10 +943,9 @@ msgid "M&ute"
 msgstr "&Stummgeschaltet"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
-msgstr "Lautstärkeregler ausblenden"
+msgstr "Lautstärkeregler anzeigen"
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
