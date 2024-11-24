@@ -1,23 +1,23 @@
 # Translation of kmix.po to Spanish
-# translation of kmix.po to Spanish
-# Salvador Gimeno Zanón <salgiza@jazzfree.com>, 2003, 2004.
-# Salvador Gimeno Zanón <salgiza@ono.com>, 2004, 2005.
-# santi <santi@kde-es.org>, 2005.
-# Pablo de Vicente <pablo.devicente@gmail.com>, 2005.
-# Eloy Cuadra <ecuadra@eloihr.net>, 2006, 2007, 2013, 2014, 2023.
-# Jaime Robles <jaime@kde.org>, 2008.
-# Enrique Matias Sanchez (Quique) <cronopios@gmail.com>, 2008, 2009.
-# Enrique Matias Sanchez (aka Quique) <cronopios@gmail.com>, 2009, 2010, 2011, 2012.
-# Rocio Gallego <traducciones @rociogallego.com>, 2012.
-# Ayoze Hernández Díaz <ayoze12@gmail.com>, 2013.
-# David Paul <eodos0@gmail.com>, 2014.
-# Víctor Rodrigo Córdoba <vrcordoba@gmail.com>, 2017, 2018, 2019, 2020, 2021, 2023, %Y.
+#
+# SPDX-FileCopyrightText: 2003, 2004 Salvador Gimeno Zanón <salgiza@jazzfree.com>
+# SPDX-FileCopyrightText: 2004, 2005 Salvador Gimeno Zanón <salgiza@ono.com>
+# SPDX-FileCopyrightText: 2005 santi <santi@kde-es.org>
+# SPDX-FileCopyrightText: 2005 Pablo de Vicente <pablo.devicente@gmail.com>
+# SPDX-FileCopyrightText: 2006, 2007, 2013, 2014, 2023 Eloy Cuadra <ecuadra@eloihr.net>
+# SPDX-FileCopyrightText: 2008 Jaime Robles <jaime@kde.org>
+# SPDX-FileCopyrightText: 2008, 2009 Enrique Matias Sanchez (Quique) <cronopios@gmail.com>
+# SPDX-FileCopyrightText: 2009, 2010, 2011, 2012 Enrique Matias Sanchez (aka Quique) <cronopios@gmail.com>
+# SPDX-FileCopyrightText: 2012 Rocio Gallego <traducciones@rociogallego.com>
+# SPDX-FileCopyrightText: 2013 Ayoze Hernández Díaz <ayoze12@gmail.com>
+# SPDX-FileCopyrightText: 2014 David Paul <eodos0@gmail.com>
+# SPDX-FileCopyrightText: 2017, 2018, 2019, 2020, 2021, 2023, 2024, 2024 Víctor Rodrigo Córdoba <vrcordoba@gmail.com>
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-11-09 00:39+0000\n"
-"PO-Revision-Date: 2023-07-29 11:30+0200\n"
+"PO-Revision-Date: 2024-11-23 18:34+0100\n"
 "Last-Translator: Víctor Rodrigo Córdoba <vrcordoba@gmail.com>\n"
 "Language-Team: Spanish <kde-l10n-es@kde.org>\n"
 "Language: es\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 20.04.2\n"
+"X-Generator: Lokalize 22.12.3\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -47,8 +47,7 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
 msgstr "kmixctrl - utilidad para guardar/restaurar volúmenes de KMix"
 
@@ -83,10 +82,9 @@ msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix - El potente mezclador en miniatura de KDE"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "© 1996-2013 Los autores de KMix"
+msgstr "© 1996-2024 Los autores de KMix"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -138,12 +136,11 @@ msgid "Jonathan Marten"
 msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:74
-#, fuzzy, kde-format
-#| msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
+#, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
 msgstr ""
 "Conexión en caliente KF5, realimentación de volumen ALSA/OSS, mejoras en la "
-"interfaz gráfica de usuario"
+"interfaz gráfica de usuario, migración a KF6"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -267,12 +264,9 @@ msgid "Enable the (experimental) multiple driver mode."
 msgstr "Activar el modo (experimental) de controlador múltiple."
 
 #: apps/kmixmain.cpp:126
-#, fuzzy, kde-format
-#| msgid "Set the orientation of the system tray volume control sliders"
+#, kde-format
 msgid "Do not show the system tray volume control."
-msgstr ""
-"Establecer la orientación de los deslizadores de control de volumen en la "
-"bandeja de entrada"
+msgstr "No mostrar el control de volumen en la bandeja de entrada."
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -949,10 +943,9 @@ msgid "M&ute"
 msgstr "&Silenciar"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
-msgstr "Ocultar la ventana del mezclador"
+msgstr "Mostrar la ventana del mezclador"
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
@@ -1315,12 +1308,3 @@ msgstr "No hay dispositivos de captura."
 #, kde-format
 msgid "There are no playback devices."
 msgstr "No hay dispositivos de reproducción."
-
-#~ msgid "Configure Channels..."
-#~ msgstr "Configurar &canales..."
-
-#~ msgid "Device Settings"
-#~ msgstr "Preferencias del dispositivo"
-
-#~ msgid "The last soundcard was unplugged."
-#~ msgstr "La última tarjeta de sonido ha sido desconectada."
