@@ -2,19 +2,19 @@
 # KDE Finnish translation sprint participants:
 # Author: Artnay
 # Author: Lliehu
+# SPDX-FileCopyrightText: 2011, 2012, 2017, 2018, 2019, 2020, 2021, 2023, 2024 Tommi Nieminen <translator@legisign.org>
 # Teemu Rytilahti <teemu.rytilahti@d5k.net>, 2003.
 # Kim Enkovaara <kim.enkovaara@iki.fi>, 2003, 2006.
 # Mikko Ikola <ikola@iki.fi>, 2003, 2006.
 # Ilpo Kantonen <ilpo@iki.fi>, 2005.
 # Mikko Piippo <piippo@cc.helsinki.fi>, 2008.
 # Lasse Liehu <lasse.liehu@gmail.com>, 2010, 2011, 2012, 2013, 2014.
-# Tommi Nieminen <translator@legisign.org>, 2011, 2012, 2017, 2018, 2019, 2020, 2021, 2023.
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-11-09 02:30+0000\n"
-"PO-Revision-Date: 2023-07-27 15:15+0300\n"
+"PO-Revision-Date: 2024-11-06 20:48+0200\n"
 "Last-Translator: Tommi Nieminen <translator@legisign.org>\n"
 "Language-Team: Finnish <kde-i18n-doc@kde.org>\n"
 "Language: fi\n"
@@ -22,8 +22,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-POT-Import-Date: 2013-01-13 20:43:22+0000\n"
-"X-Generator: Lokalize 22.12.3\n"
+"X-Generator: Lokalize 23.08.5\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -46,10 +45,9 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
-msgstr "kmixctrl - kmix äänenvoimakkuuden tallennus-/palautustyökalu"
+msgstr "kmixctrl - KMixin äänenvoimakkuuden tallennus-/palautustyökalu"
 
 #: apps/kmixctrl.cpp:43
 #, kde-format
@@ -84,10 +82,9 @@ msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix – KDE:n täysverinen pienoismikseri"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "© 1996–2013 KMix-tekijät"
+msgstr "© 1996–2024 KMixin tekijät"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -139,12 +136,11 @@ msgid "Jonathan Marten"
 msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:74
-#, fuzzy, kde-format
-#| msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
+#, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
 msgstr ""
-"KF5-kuumakytkeminen, ALSA/OSS-äänenvoimakkuuspalaute, "
-"käyttöliittymäparannukset"
+"Kf5-kuumakytkentä, ALSA/OSS-äänenvoimakkuuspalaute, "
+"käyttöliittymäparannukset, Kf6-siirros"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -267,10 +263,9 @@ msgid "Enable the (experimental) multiple driver mode."
 msgstr "Ota käyttöön (kokeellinen) moniajuritila."
 
 #: apps/kmixmain.cpp:126
-#, fuzzy, kde-format
-#| msgid "Set the orientation of the system tray volume control sliders"
+#, kde-format
 msgid "Do not show the system tray volume control."
-msgstr "Aseta ilmoitusalueen äänenvoimakkuussäädinten suunta"
+msgstr "Älä näytä äänenvoimakkuudensäätöä ilmoitusalueella."
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -940,10 +935,9 @@ msgid "M&ute"
 msgstr "&Vaimennettu"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
-msgstr "Piilota mikseri-ikkuna"
+msgstr "Näytä mikseri-ikkuna"
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
