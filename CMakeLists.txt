@@ -91,6 +91,15 @@ find_package(KF6 ${KF_MIN_VERSION} REQUIRED COMPONENTS
 ########### sound backend support ##################################################################
 ####################################################################################################
 
+# sndio, only for that platform
+check_include_file("sndio.h" HAVE_SYS_SNDIO_H)
+if (HAVE_SYS_SNDIO_H)
+  message(STATUS "Building with sndio support")
+  set(HAVE_SNDIO_MIXER true)
+  add_definitions(-DHAVE_SNDIO_MIXER)
+  set(SUPPORTED_BACKENDS ${SUPPORTED_BACKENDS} "Sndio")
+endif ()
+
 # Sun Audio, only for that platform
 check_include_file("sys/audioio.h" HAVE_SYS_AUDIOIO_H)
 if (HAVE_SYS_AUDIOIO_H)
@@ -109,7 +118,7 @@ endif ()
 
 check_include_file("soundcard.h" HAVE_SOUNDCARD_H)
 check_include_file("sys/soundcard.h" HAVE_SYS_SOUNDCARD_H)
-if (HAVE_SOUNDCARD_H OR HAVE_SYS_SOUNDCARD_H)
+if ((HAVE_SOUNDCARD_H OR HAVE_SYS_SOUNDCARD_H) AND NOT HAVE_SYS_SNDIO_H)
   add_definitions(-DHAVE_OSS_MIXER)
   set(HAVE_OSS_MIXER true)
   if (HAVE_SOUNDCARD_H)
@@ -163,6 +172,10 @@ endif ()
 
 # PulseAudio, optional
 find_package(PulseAudio "${PA_MIN_VERSION}")
+set_package_properties(PulseAudio PROPERTIES
+    TYPE OPTIONAL
+    PURPOSE "Pulse audio support"
+)
 if (PulseAudio_FOUND)
   message(STATUS "Building with PulseAudio support")
   set(HAVE_PULSEAUDIO true)
@@ -265,6 +278,10 @@ if (HAVE_PULSEAUDIO)
   set(kmix_backend_SRCS ${kmix_backend_SRCS} backends/mixer_pulse.cpp)
 endif ()
 
+if (HAVE_SNDIO_MIXER)
+  set(kmix_backend_SRCS ${kmix_backend_SRCS} backends/mixer_sndio.cpp)
+endif ()
+
 if (HAVE_SUN_MIXER)
   set(kmix_backend_SRCS ${kmix_backend_SRCS} backends/mixer_sun.cpp)
 endif ()
@@ -327,6 +344,10 @@ endif ()
 
 if (HAVE_PULSEAUDIO)
   target_link_libraries(kmixcore PRIVATE PulseAudio::PulseAudio)
+endif ()
+
+if (HAVE_SNDIO_MIXER)
+  target_link_libraries(kmixcore PRIVATE sndio)
 endif ()
 
 if (CANBERRA_FOUND)
