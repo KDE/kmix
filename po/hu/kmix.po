@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: KDE 4.4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-11-09 00:39+0000\n"
+"POT-Creation-Date: 2024-12-09 00:40+0000\n"
 "PO-Revision-Date: 2021-12-09 11:05+0100\n"
 "Last-Translator: Kristof Kiszel <ulysses@fsf.hu>\n"
 "Language-Team: Hungarian <kde-l10n-hu@kde.org>\n"
@@ -601,17 +601,17 @@ msgstr "Ismeretlen alkalmazás"
 msgid "Event Sounds"
 msgstr "Eseményhangok"
 
-#: backends/mixer_pulse.cpp:1086
+#: backends/mixer_pulse.cpp:1086 backends/mixer_sndio.cpp:171
 #, kde-format
 msgid "Playback Devices"
 msgstr "Lejátszóeszközök"
 
-#: backends/mixer_pulse.cpp:1094
+#: backends/mixer_pulse.cpp:1094 backends/mixer_sndio.cpp:178
 #, kde-format
 msgid "Capture Devices"
 msgstr "Felvevőeszközök"
 
-#: backends/mixer_pulse.cpp:1102
+#: backends/mixer_pulse.cpp:1102 backends/mixer_sndio.cpp:185
 #, kde-format
 msgid "Playback Streams"
 msgstr "Lejátszási adatfolyam"
@@ -620,6 +620,12 @@ msgstr "Lejátszási adatfolyam"
 #, kde-format
 msgid "Capture Streams"
 msgstr "Felvételi adatfolyam"
+
+#: backends/mixer_sndio.cpp:164
+#, fuzzy, kde-format
+#| msgid "Capture Devices"
+msgid "Server Devices"
+msgstr "Felvevőeszközök"
 
 #: backends/mixer_sun.cpp:69
 #, kde-format

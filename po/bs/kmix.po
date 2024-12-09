@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: __kde__kdemultimedia__kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-11-09 00:39+0000\n"
+"POT-Creation-Date: 2024-12-09 00:40+0000\n"
 "PO-Revision-Date: 2014-12-18 05:14+0000\n"
 "Last-Translator: Dino Babahmetovic <dbabahmeto1@etf.unsa.ba>\n"
 "Language-Team: Bosanski <lokal@linux.org.ba>\n"
@@ -614,17 +614,17 @@ msgstr "Nepoznat program"
 msgid "Event Sounds"
 msgstr "Zvuci događaja"
 
-#: backends/mixer_pulse.cpp:1086
+#: backends/mixer_pulse.cpp:1086 backends/mixer_sndio.cpp:171
 #, kde-format
 msgid "Playback Devices"
 msgstr "Uređaji za reprodukciju"
 
-#: backends/mixer_pulse.cpp:1094
+#: backends/mixer_pulse.cpp:1094 backends/mixer_sndio.cpp:178
 #, kde-format
 msgid "Capture Devices"
 msgstr "Uređaji za hvatanje"
 
-#: backends/mixer_pulse.cpp:1102
+#: backends/mixer_pulse.cpp:1102 backends/mixer_sndio.cpp:185
 #, kde-format
 msgid "Playback Streams"
 msgstr "Tokovi puštanja"
@@ -633,6 +633,12 @@ msgstr "Tokovi puštanja"
 #, kde-format
 msgid "Capture Streams"
 msgstr "Tokovi hvatanja"
+
+#: backends/mixer_sndio.cpp:164
+#, fuzzy, kde-format
+#| msgid "Capture Devices"
+msgid "Server Devices"
+msgstr "Uređaji za hvatanje"
 
 #: backends/mixer_sun.cpp:69
 #, kde-format

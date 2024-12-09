@@ -2,7 +2,7 @@
 # Translation of kmix.po to Slovenian
 # KMIX TRANSLATION TO SLOVENIAN LANGUAGE.
 # Copyright (C) 2001, 2003, 2004, 2005, 2006 Free Software Foundation, Inc.
-# $Id: kmix.po 1694587 2024-11-09 01:16:26Z scripty $
+# $Id: kmix.po 1697089 2024-12-09 01:17:37Z scripty $
 # $Source$
 #
 # Rok Papez <rok@slo.net>, 2000.
@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-11-09 00:39+0000\n"
+"POT-Creation-Date: 2024-12-09 00:40+0000\n"
 "PO-Revision-Date: 2024-11-05 06:51+0100\n"
 "Last-Translator: Matjaž Jeran <matjaz.jeran@amis.net>\n"
 "Language-Team: Slovenian <lugos-slo@lugos.si>\n"
@@ -603,17 +603,17 @@ msgstr "Neznan program"
 msgid "Event Sounds"
 msgstr "Zvoki dogodkov"
 
-#: backends/mixer_pulse.cpp:1086
+#: backends/mixer_pulse.cpp:1086 backends/mixer_sndio.cpp:171
 #, kde-format
 msgid "Playback Devices"
 msgstr "Naprave za predvajanje"
 
-#: backends/mixer_pulse.cpp:1094
+#: backends/mixer_pulse.cpp:1094 backends/mixer_sndio.cpp:178
 #, kde-format
 msgid "Capture Devices"
 msgstr "Naprave za zajem"
 
-#: backends/mixer_pulse.cpp:1102
+#: backends/mixer_pulse.cpp:1102 backends/mixer_sndio.cpp:185
 #, kde-format
 msgid "Playback Streams"
 msgstr "Tokovi predvajanja"
@@ -622,6 +622,12 @@ msgstr "Tokovi predvajanja"
 #, kde-format
 msgid "Capture Streams"
 msgstr "Tokovi za zajem"
+
+#: backends/mixer_sndio.cpp:164
+#, fuzzy, kde-format
+#| msgid "Capture Devices"
+msgid "Server Devices"
+msgstr "Naprave za zajem"
 
 #: backends/mixer_sun.cpp:69
 #, kde-format

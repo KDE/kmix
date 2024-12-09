@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-11-09 00:39+0000\n"
+"POT-Creation-Date: 2024-12-09 00:40+0000\n"
 "PO-Revision-Date: 2023-06-12 19:20+0100\n"
 "Last-Translator: Pedro Morais <morais@kde.org>\n"
 "Language-Team: pt <kde-i18n-pt@kde.org>\n"
@@ -603,17 +603,17 @@ msgstr "Aplicação Desconhecida"
 msgid "Event Sounds"
 msgstr "Sons do Evento"
 
-#: backends/mixer_pulse.cpp:1086
+#: backends/mixer_pulse.cpp:1086 backends/mixer_sndio.cpp:171
 #, kde-format
 msgid "Playback Devices"
 msgstr "Dispositivos de Reprodução"
 
-#: backends/mixer_pulse.cpp:1094
+#: backends/mixer_pulse.cpp:1094 backends/mixer_sndio.cpp:178
 #, kde-format
 msgid "Capture Devices"
 msgstr "Dispositivos de Captura"
 
-#: backends/mixer_pulse.cpp:1102
+#: backends/mixer_pulse.cpp:1102 backends/mixer_sndio.cpp:185
 #, kde-format
 msgid "Playback Streams"
 msgstr "Sequências de Reprodução"
@@ -622,6 +622,12 @@ msgstr "Sequências de Reprodução"
 #, kde-format
 msgid "Capture Streams"
 msgstr "Sequências de Captura"
+
+#: backends/mixer_sndio.cpp:164
+#, fuzzy, kde-format
+#| msgid "Capture Devices"
+msgid "Server Devices"
+msgstr "Dispositivos de Captura"
 
 #: backends/mixer_sun.cpp:69
 #, kde-format

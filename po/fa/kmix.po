@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
-"POT-Creation-Date: 2024-11-09 00:39+0000\n"
+"POT-Creation-Date: 2024-12-09 00:40+0000\n"
 "PO-Revision-Date: 2007-08-22 16:11+0330\n"
 "Last-Translator: Nazanin Kazemi <kazemi@itland.ir>\n"
 "Language-Team: Persian <kde-i18n-fa@kde.org>\n"
@@ -603,17 +603,17 @@ msgstr ""
 msgid "Event Sounds"
 msgstr ""
 
-#: backends/mixer_pulse.cpp:1086
+#: backends/mixer_pulse.cpp:1086 backends/mixer_sndio.cpp:171
 #, kde-format
 msgid "Playback Devices"
 msgstr ""
 
-#: backends/mixer_pulse.cpp:1094
+#: backends/mixer_pulse.cpp:1094 backends/mixer_sndio.cpp:178
 #, fuzzy, kde-format
 msgid "Capture Devices"
 msgstr ")گیراندازی("
 
-#: backends/mixer_pulse.cpp:1102
+#: backends/mixer_pulse.cpp:1102 backends/mixer_sndio.cpp:185
 #, kde-format
 msgid "Playback Streams"
 msgstr ""
@@ -621,6 +621,11 @@ msgstr ""
 #: backends/mixer_pulse.cpp:1113
 #, fuzzy, kde-format
 msgid "Capture Streams"
+msgstr ")گیراندازی("
+
+#: backends/mixer_sndio.cpp:164
+#, fuzzy, kde-format
+msgid "Server Devices"
 msgstr ")گیراندازی("
 
 #: backends/mixer_sun.cpp:69
