@@ -1272,7 +1272,7 @@ msgstr "Automático (según la categoría)"
 #: gui/mixdevicewidget.cpp:65
 #, kde-format
 msgid "Channel Shortcuts..."
-msgstr "Accesos rápidos de canal..."
+msgstr "Atajos de teclado de canal..."
 
 #: gui/viewbase.cpp:88
 #, kde-format
