@@ -4,7 +4,7 @@
 # SPDX-FileCopyrightText: 2004, 2005 Salvador Gimeno Zanón <salgiza@ono.com>
 # SPDX-FileCopyrightText: 2005 santi <santi@kde-es.org>
 # SPDX-FileCopyrightText: 2005 Pablo de Vicente <pablo.devicente@gmail.com>
-# SPDX-FileCopyrightText: 2006, 2007, 2013, 2014, 2023 Eloy Cuadra <ecuadra@eloihr.net>
+# SPDX-FileCopyrightText: 2006, 2007, 2013, 2014, 2023, 2024 Eloy Cuadra <ecuadra@eloihr.net>
 # SPDX-FileCopyrightText: 2008 Jaime Robles <jaime@kde.org>
 # SPDX-FileCopyrightText: 2008, 2009 Enrique Matias Sanchez (Quique) <cronopios@gmail.com>
 # SPDX-FileCopyrightText: 2009, 2010, 2011, 2012 Enrique Matias Sanchez (aka Quique) <cronopios@gmail.com>
@@ -17,7 +17,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-12-09 00:40+0000\n"
-"PO-Revision-Date: 2024-11-23 18:34+0100\n"
+"PO-Revision-Date: 2024-12-10 00:51+0100\n"
 "Last-Translator: Víctor Rodrigo Córdoba <vrcordoba@gmail.com>\n"
 "Language-Team: Spanish <kde-l10n-es@kde.org>\n"
 "Language: es\n"
@@ -25,7 +25,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 22.12.3\n"
+"X-Generator: Lokalize 24.08.3\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -627,10 +627,9 @@ msgid "Capture Streams"
 msgstr "Flujos de captura"
 
 #: backends/mixer_sndio.cpp:164
-#, fuzzy, kde-format
-#| msgid "Capture Devices"
+#, kde-format
 msgid "Server Devices"
-msgstr "Dispositivos de captura"
+msgstr "Dispositivos de servidor"
 
 #: backends/mixer_sun.cpp:69
 #, kde-format
@@ -1278,7 +1277,7 @@ msgstr "Automático (según la categoría)"
 #: gui/mixdevicewidget.cpp:65
 #, kde-format
 msgid "Channel Shortcuts..."
-msgstr "Accesos rápidos de canal..."
+msgstr "Atajos de teclado de canal..."
 
 #: gui/viewbase.cpp:88
 #, kde-format

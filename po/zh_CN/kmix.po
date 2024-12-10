@@ -607,10 +607,9 @@ msgid "Capture Streams"
 msgstr "捕获流"
 
 #: backends/mixer_sndio.cpp:164
-#, fuzzy, kde-format
-#| msgid "Capture Devices"
+#, kde-format
 msgid "Server Devices"
-msgstr "捕获设备"
+msgstr ""
 
 #: backends/mixer_sun.cpp:69
 #, kde-format
