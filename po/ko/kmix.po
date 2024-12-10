@@ -1,14 +1,14 @@
 # Translation of kmix.po to Korean.
 # Copyright (C) 1999-2001, 2007-2008 Free Software Foundation, Inc.
 # Byeong-Chan Kim <redhands@linux.sarang.net>, 1999.
-# Shinjo Park <kde@peremen.name>, 2007, 2008, 2009, 2010, 2012, 2013, 2014, 2017, 2019, 2020, 2021, 2023.
+# SPDX-FileCopyrightText: 2007, 2008, 2009, 2010, 2012, 2013, 2014, 2017, 2019, 2020, 2021, 2023, 2024 Shinjo Park <kde@peremen.name>
 #
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-11-09 02:30+0000\n"
-"PO-Revision-Date: 2023-08-06 21:32+0200\n"
+"PO-Revision-Date: 2024-12-10 00:59+0100\n"
 "Last-Translator: Shinjo Park <kde@peremen.name>\n"
 "Language-Team: Korean <kde-kr@kde.org>\n"
 "Language: ko\n"
@@ -16,7 +16,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Lokalize 22.12.3\n"
+"X-Generator: Lokalize 23.08.5\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -34,10 +34,9 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
-msgstr "kmixctrl - kmix 음량 저장/복원 유틸리티"
+msgstr "kmixctrl - KMix 음량 저장/복원 유틸리티"
 
 #: apps/kmixctrl.cpp:43
 #, kde-format
@@ -70,10 +69,9 @@ msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix - KDE의 조그마한 믹서"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "(c) 1996-2013 The KMix Authors"
+msgstr "(c) 1996-2024 The KMix Authors"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -125,10 +123,9 @@ msgid "Jonathan Marten"
 msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:74
-#, fuzzy, kde-format
-#| msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
+#, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
-msgstr "KF5 핫플러그, ALSA/OSS 음량 피드백, GUI 개선"
+msgstr "KF5 핫플러그, ALSA/OSS 음량 피드백, GUI 개선, KF6 이식"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -251,10 +248,9 @@ msgid "Enable the (experimental) multiple driver mode."
 msgstr "실험적인 다중 드라이버 모드가 활성화되었습니다."
 
 #: apps/kmixmain.cpp:126
-#, fuzzy, kde-format
-#| msgid "Set the orientation of the system tray volume control sliders"
+#, kde-format
 msgid "Do not show the system tray volume control."
-msgstr "시스템 트레이 음량 제어 슬라이더 방향 설정"
+msgstr "시스템 트레이 음량 컨트롤을 표시하지 않습니다."
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -916,10 +912,9 @@ msgid "M&ute"
 msgstr "음소거(&U)"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
-msgstr "믹서 창 숨기기"
+msgstr "믹서 창 표시"
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
