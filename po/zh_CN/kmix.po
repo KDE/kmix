@@ -609,7 +609,7 @@ msgstr "捕获流"
 #: backends/mixer_sndio.cpp:164
 #, kde-format
 msgid "Server Devices"
-msgstr ""
+msgstr "服务器设备"
 
 #: backends/mixer_sun.cpp:69
 #, kde-format

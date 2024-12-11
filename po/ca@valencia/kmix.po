@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-12-09 00:40+0000\n"
-"PO-Revision-Date: 2024-11-05 10:41+0100\n"
+"PO-Revision-Date: 2024-12-09 09:14+0100\n"
 "Last-Translator: Josep M. Ferrer <txemaq@gmail.com>\n"
 "Language-Team: Catalan <kde-i18n-ca@kde.org>\n"
 "Language: ca@valencia\n"
@@ -76,7 +76,7 @@ msgstr "KMix - Mini mesclador ple de funcionalitats de KDE"
 #: apps/kmixmain.cpp:61
 #, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "(c) 1996-2024 The KMix Authors"
+msgstr "(c) 1996-2024 Els autors de KMix"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -618,10 +618,9 @@ msgid "Capture Streams"
 msgstr "Fluxos de la captura"
 
 #: backends/mixer_sndio.cpp:164
-#, fuzzy, kde-format
-#| msgid "Capture Devices"
+#, kde-format
 msgid "Server Devices"
-msgstr "Dispositius de captura"
+msgstr "Dispositius del servidor"
 
 #: backends/mixer_sun.cpp:69
 #, kde-format
