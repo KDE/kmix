@@ -18,7 +18,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-12-09 00:40+0000\n"
-"PO-Revision-Date: 2024-11-06 08:48+0100\n"
+"PO-Revision-Date: 2024-12-10 08:47+0100\n"
 "Last-Translator: Xavier Besnard <xavier.besnard@kde.org>\n"
 "Language-Team: French <French <kde-francophone@kde.org>>\n"
 "Language: fr\n"
@@ -26,7 +26,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 23.08.5\n"
+"X-Generator: Lokalize 24.11.90\n"
 "X-Environment: kde\n"
 "X-Accelerator-Marker: &\n"
 "X-Text-Markup: kde4\n"
@@ -629,10 +629,9 @@ msgid "Capture Streams"
 msgstr "Flux de capture"
 
 #: backends/mixer_sndio.cpp:164
-#, fuzzy, kde-format
-#| msgid "Capture Devices"
+#, kde-format
 msgid "Server Devices"
-msgstr "Périphériques de capture"
+msgstr "Périphériques de serveur"
 
 #: backends/mixer_sun.cpp:69
 #, kde-format
