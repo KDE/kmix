@@ -34,6 +34,7 @@
   <name xml:lang="pt-BR">KMix</name>
   <name xml:lang="ro">KMix</name>
   <name xml:lang="ru">KMix</name>
+  <name xml:lang="sa">केमिक्स</name>
   <name xml:lang="sk">KMix</name>
   <name xml:lang="sl">KMix</name>
   <name xml:lang="sr">К‑миксета</name>
@@ -77,6 +78,7 @@
   <summary xml:lang="pt-BR">Mixer de som</summary>
   <summary xml:lang="ro">Mixer de sunet</summary>
   <summary xml:lang="ru">Звуковой микшер</summary>
+  <summary xml:lang="sa">ध्वनिमिश्रकः</summary>
   <summary xml:lang="sk">Zvukový mixér</summary>
   <summary xml:lang="sl">Mešalnik zvoka</summary>
   <summary xml:lang="sr">Звучна миксета</summary>
@@ -121,6 +123,7 @@
     <p xml:lang="pt-BR">O KMix é um mixer de canais e som e controle de volume.</p>
     <p xml:lang="ro">KMix amestecă canale de sunet și controlează volume.</p>
     <p xml:lang="ru">KMIX — приложения для управлению громкостью каналов воспроизведения и записи звука.</p>
+    <p xml:lang="sa">KMix इति ध्वनिचैनलमिश्रकः, मात्रानियन्त्रणं च अस्ति ।</p>
     <p xml:lang="sk">KMix je mixér zvukových kanálov a ovládač hlasitosti.</p>
     <p xml:lang="sl">KMix je mešalnik zvočnih kanalov in nadzornik glasnosti.</p>
     <p xml:lang="sr">К‑миксета је миксета звучних канала и управљач јачином звука.</p>
