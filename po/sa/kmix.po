@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-12-09 00:40+0000\n"
-"PO-Revision-Date: 2024-12-13 20:20+0530\n"
+"PO-Revision-Date: 2024-12-14 09:37+0530\n"
 "Last-Translator: kali <skkalwar999@gmail.com>\n"
 "Language-Team: Sanskrit <kde-i18n-doc@kde.org>\n"
 "Language: sa\n"
@@ -17,17 +17,17 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 24.08.2\n"
+"X-Generator: Poedit 3.5\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
-msgstr ""
+msgstr "भवतः नामानि"
 
 #, kde-format
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
-msgstr ""
+msgstr "भवतः ईमेलपत्राणि"
 
 #: apps/kmixctrl.cpp:40
 #, kde-format
@@ -731,61 +731,61 @@ msgstr "--- ८."
 #, kde-format
 msgctxt "Channel name"
 msgid "Left"
-msgstr ""
+msgstr "वामः"
 
 #: core/volume.cpp:59
 #, kde-format
 msgctxt "Channel name"
 msgid "Right"
-msgstr ""
+msgstr "दक्षिणः"
 
 #: core/volume.cpp:60
 #, kde-format
 msgctxt "Channel name"
 msgid "Center"
-msgstr ""
+msgstr "केंद्र"
 
 #: core/volume.cpp:61
 #, kde-format
 msgctxt "Channel name"
 msgid "Subwoofer"
-msgstr ""
+msgstr "सबवूफर"
 
 #: core/volume.cpp:62
 #, kde-format
 msgctxt "Channel name"
 msgid "Surround Left"
-msgstr ""
+msgstr "Surround Left इति"
 
 #: core/volume.cpp:63
 #, kde-format
 msgctxt "Channel name"
 msgid "Surround Right"
-msgstr ""
+msgstr "Surround Right इति"
 
 #: core/volume.cpp:64
 #, kde-format
 msgctxt "Channel name"
 msgid "Side Left"
-msgstr ""
+msgstr "पार्श्व वाम"
 
 #: core/volume.cpp:65
 #, kde-format
 msgctxt "Channel name"
 msgid "Side Right"
-msgstr ""
+msgstr "पार्श्व दक्षिण"
 
 #: core/volume.cpp:66
 #, kde-format
 msgctxt "Channel name"
 msgid "Rear Center"
-msgstr ""
+msgstr "पृष्ठ केन्द्र"
 
 #: core/volume.cpp:68
 #, kde-format
 msgctxt "Channel name"
 msgid "Unknown"
-msgstr ""
+msgstr "अज्ञात"
 
 #: gui/dialogaddview.cpp:51
 #, kde-format
@@ -836,7 +836,7 @@ msgstr "वर्तमान मिश्रकः : १."
 #, kde-kuit-format
 msgctxt "@info"
 msgid "Select the <link url=\"i\">master volume</link> channel:"
-msgstr ""
+msgstr "इति चयनं कुर्वन्तु<link url=\"i\"> master volume</link> चैनलः : १."
 
 #: gui/dialogselectmaster.cpp:132
 #, kde-kuit-format
@@ -848,6 +848,10 @@ msgid ""
 "global shortcut keys, and the <interface>Mute</interface> action in the "
 "system tray popup menu.</para>"
 msgstr ""
+"<para>अत्र भवान् मुख्यध्वनियन्त्रं (यदि एकादशाधिकं भवति) तस्य मुख्यचैनलं च चिन्वतु ।</"
+"para><para>मास्टरचैनलः सः एव यः सिस्टम् ट्रे वॉल्यूम नियन्त्रणेन प्रभावितः भवति, वॉल्यूम "
+"अप /down तथा च वैश्विकशॉर्टकट् कीलानि, तथा च सिस्टम् ट्रे पॉपअप मेन्यू मध्ये "
+"<interface>Mute</interface> क्रिया ।</para>"
 
 #: gui/dialogselectmaster.cpp:203
 #, kde-format
@@ -1019,7 +1023,7 @@ msgctxt "@info:tooltip"
 msgid ""
 "Allow the volume to be raised above the recommended maximum (typically to "
 "150%)"
-msgstr ""
+msgstr "अनुशंसितस्य अधिकतमस्य (सामान्यतया १५०% यावत्) आयतनं वर्धयितुं अनुमन्यताम् ।"
 
 #: gui/kmixprefdlg.cpp:236
 #, kde-format
@@ -1040,7 +1044,7 @@ msgstr "मात्रा प्रतिक्रिया"
 #, kde-format
 msgctxt "@info:tooltip"
 msgid "Play a sample sound when the volume changes"
-msgstr ""
+msgstr "यदा मात्रा परिवर्तते तदा नमूनाध्वनिं वादयन्तु"
 
 #: gui/kmixprefdlg.cpp:264
 #, kde-format
@@ -1056,6 +1060,10 @@ msgid ""
 "wheel over the system tray icon, or moving sliders by a page step.</"
 "para><para>%1 must be restarted for this change to take effect.</para>"
 msgstr ""
+"<para>आयतनपदं आयतनपरिधिस्य प्रतिशतरूपेण सेट् कुर्वन्तु ।</para><para>एतत् हॉट् कीलद्वारा "
+"आयतनं परिवर्तयितुं, सिस्टम् ट्रे चिह्नस्य उपरि मूषकचक्रं कृत्वा, अथवा पृष्ठपदेन स्लाइडर् चालयितुं "
+"प्रभावितं करोति ।</para><para>%1 इत्यस्य पुनः आरम्भः करणीयः यत् एतत् परिवर्तनं प्रभावितुं "
+"शक्नोति ।</para>"
 
 #: gui/kmixprefdlg.cpp:293
 #, kde-format
@@ -1171,31 +1179,31 @@ msgstr "Device इत्यस्य उपयोगं कुर्वन्त
 #, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Mute %2 on %1"
-msgstr ""
+msgstr "%1 इत्यत्र %2 निःशब्दं कुर्वन्तु"
 
 #: gui/mdwslider.cpp:169
 #, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Increase volume of %2 on %1"
-msgstr ""
+msgstr "%1 इत्यत्र %2 इत्यस्य आयतनं वर्धयन्तु"
 
 #: gui/mdwslider.cpp:177
 #, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Decrease volume of %2 on %1"
-msgstr ""
+msgstr "%1 इत्यत्र %2 इत्यस्य आयतनं न्यूनीकरोतु"
 
 #: gui/mdwslider.cpp:327
 #, kde-format
 msgctxt "%1=channel"
 msgid "Capture/Uncapture %1"
-msgstr ""
+msgstr "कैप्चर/अनकैप्चर %1"
 
 #: gui/mdwslider.cpp:328
 #, kde-format
 msgctxt "%1=channel"
 msgid "Mute/Unmute %1"
-msgstr ""
+msgstr "म्यूट/अनम्यूट %1"
 
 #: gui/mdwslider.cpp:332 gui/mdwslider.cpp:333 gui/mdwslider.cpp:334
 #, kde-format
@@ -1204,6 +1212,8 @@ msgid ""
 "%1\n"
 "%2"
 msgstr ""
+"%1\n"
+"%2"
 
 #: gui/mdwslider.cpp:678
 #, kde-format
