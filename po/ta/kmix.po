@@ -1,13 +1,13 @@
 # translation of kmix.po to Tamil
 # Copyright (C) 2004 Free Software Foundation, Inc.
 #
-# Kishore G <kishore96@gmail.com>, 2023.
+# SPDX-FileCopyrightText: 2023, 2024 Kishore G <kishore96@gmail.com>
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-12-09 00:40+0000\n"
-"PO-Revision-Date: 2023-07-30 14:25+0530\n"
+"PO-Revision-Date: 2024-12-15 16:01+0530\n"
 "Last-Translator: Kishore G <kishore96@gmail.com>\n"
 "Language-Team: Tamil <kde-i18n-doc@kde.org>\n"
 "Language: ta\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 23.04.3\n"
+"X-Generator: Lokalize 24.12.0\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -51,27 +51,27 @@ msgstr "ஸ்டிபன் சிமான்ஸ்கி"
 #: apps/kmixctrl.cpp:51
 #, kde-format
 msgid "Save current volumes as default"
-msgstr "தற்போதுள்ள ஒலியை முன்பிருப்பாக சேமி"
+msgstr "தற்போதுள்ள ஒலியளவை முன்னிருப்பாக சேமி"
 
 #: apps/kmixctrl.cpp:53
 #, kde-format
 msgid "Restore default volumes"
-msgstr "முன்பிருப்பு ஒலியளவை மீட்டு எடு"
+msgstr "முன்னிருப்பு ஒலியளவை மீட்டு எடு"
 
 #: apps/kmixmain.cpp:59
 #, kde-format
 msgid "KMix"
-msgstr "KMix"
+msgstr "கேமிக்சு"
 
 #: apps/kmixmain.cpp:60
 #, kde-format
 msgid "KMix - KDE's full featured mini mixer"
-msgstr "KMix - KDEயின் முழு வசதியுள்ள சிறு கலவை"
+msgstr "கேமிக்சு - கே.டீ.யீ.யின் ஒலிக்கலப்பி"
 
 #: apps/kmixmain.cpp:61
 #, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr ""
+msgstr "(c) 1996-2024 கேமிக்சு நிரலாளர்கள்"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -253,26 +253,24 @@ msgid "Enable the (experimental) multiple driver mode."
 msgstr ""
 
 #: apps/kmixmain.cpp:126
-#, fuzzy, kde-format
-#| msgid "Enable system tray &volume control"
+#, kde-format
 msgid "Do not show the system tray volume control."
-msgstr "அமைப்பு தட்டு மற்றும் ஒலி கட்டுபாட்டை செயலாக்கு"
+msgstr "கணினித் தட்டில் ஒலிக் கட்டுப்படுத்தியைக் காட்டாதே."
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
 msgid "Hide Mixer Window"
-msgstr "கலவை சாளரத்தை மறை"
+msgstr "கலப்பி சாளரத்தை மறை"
 
 #: apps/kmixwindow.cpp:176
 #, kde-format
 msgid "Audio Setup..."
-msgstr "ஒலி அமைப்பு..."
+msgstr "ஒலியை அமை..."
 
 #: apps/kmixwindow.cpp:181
-#, fuzzy, kde-format
-#| msgid "&Channels"
+#, kde-format
 msgid "Configure &Channels..."
-msgstr "&வழிகள்"
+msgstr "ஒலித்தடங்களை அமை"
 
 #: apps/kmixwindow.cpp:186
 #, fuzzy, kde-format
