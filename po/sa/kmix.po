@@ -9,7 +9,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-12-09 00:40+0000\n"
-"PO-Revision-Date: 2024-12-14 09:37+0530\n"
+"PO-Revision-Date: 2024-12-20 22:06+0530\n"
 "Last-Translator: kali <skkalwar999@gmail.com>\n"
 "Language-Team: Sanskrit <kde-i18n-doc@kde.org>\n"
 "Language: sa\n"
@@ -17,7 +17,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n>2);\n"
-"X-Generator: Poedit 3.5\n"
+"X-Generator: Lokalize 24.08.2\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -241,7 +241,7 @@ msgstr "उपयोक्तुं पृष्ठभागस्य सूच�
 #: apps/kmixmain.cpp:124
 #, kde-format
 msgid "name[,name...]"
-msgstr "नाम[,नाम...] २."
+msgstr "नाम[,नाम...]"
 
 #: apps/kmixmain.cpp:125
 #, kde-format
@@ -385,7 +385,7 @@ msgstr ""
 #: apps/kmixwindow.cpp:1236
 #, kde-format
 msgid "Mixer (%1)"
-msgstr "मिश्रकः (%1) २."
+msgstr "मिश्रकः (%1)"
 
 #: apps/volumefeedback.cpp:280
 #, kde-format
@@ -725,7 +725,7 @@ msgstr ""
 #: backends/mixerbackend.cpp:355
 #, kde-format
 msgid "---"
-msgstr "--- ८."
+msgstr "---"
 
 #: core/volume.cpp:58
 #, kde-format
@@ -810,7 +810,7 @@ msgstr "दृश्यं योजयतु"
 #: gui/dialogaddview.cpp:89
 #, kde-format
 msgid "Select mixer:"
-msgstr "मिश्रकं चिनोतु : १."
+msgstr "मिश्रकं चिनोतु :"
 
 #: gui/dialogaddview.cpp:96
 #, kde-format
@@ -830,13 +830,13 @@ msgstr "Master Channel इति चिनोतु"
 #: gui/dialogselectmaster.cpp:74
 #, kde-format
 msgid "Current mixer:"
-msgstr "वर्तमान मिश्रकः : १."
+msgstr "वर्तमान मिश्रकः :"
 
 #: gui/dialogselectmaster.cpp:124
 #, kde-kuit-format
 msgctxt "@info"
 msgid "Select the <link url=\"i\">master volume</link> channel:"
-msgstr "इति चयनं कुर्वन्तु<link url=\"i\"> master volume</link> चैनलः : १."
+msgstr "इति चयनं कुर्वन्तु<link url=\"i\"> master volume</link> चैनलः :"
 
 #: gui/dialogselectmaster.cpp:132
 #, kde-kuit-format
@@ -856,7 +856,7 @@ msgstr ""
 #: gui/dialogselectmaster.cpp:203
 #, kde-format
 msgid "Automatic (%1 recommendation)"
-msgstr "स्वचालितम् (%1 अनुशंसनम्) २."
+msgstr "स्वचालितम् (%1 अनुशंसनम्)"
 
 #: gui/dialogviewconfiguration.cpp:132
 #, kde-format
@@ -871,12 +871,12 @@ msgstr "दृश्यमानं चैनल्स् विन्यस्�
 #: gui/dialogviewconfiguration.cpp:213
 #, kde-format
 msgid "Visible channels:"
-msgstr "दृश्यमानाः चैनलाः : १."
+msgstr "दृश्यमानाः चैनलाः :"
 
 #: gui/dialogviewconfiguration.cpp:216
 #, kde-format
 msgid "Available channels:"
-msgstr "उपलब्धाः चैनलाः : १."
+msgstr "उपलब्धाः चैनलाः :"
 
 #: gui/dialogviewconfiguration.cpp:230
 #, kde-format
@@ -1068,7 +1068,7 @@ msgstr ""
 #: gui/kmixprefdlg.cpp:293
 #, kde-format
 msgid "Volume step:"
-msgstr "आयतनपदम् : १."
+msgstr "आयतनपदम् :"
 
 #: gui/kmixprefdlg.cpp:301
 #, kde-format
@@ -1218,12 +1218,12 @@ msgstr ""
 #: gui/mdwslider.cpp:678
 #, kde-format
 msgid "%1 (capture)"
-msgstr "%1 (ग्रहणम्) २."
+msgstr "%1 (ग्रहणम्)"
 
 #: gui/mdwslider.cpp:1101
 #, kde-format
 msgid "Automatic (according to category)"
-msgstr "स्वचालितम् (वर्गानुसारम्) २."
+msgstr "स्वचालितम् (वर्गानुसारम्)"
 
 #: gui/mixdevicewidget.cpp:65
 #, kde-format
