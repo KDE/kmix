@@ -2,6 +2,7 @@
 IconName=kmix
 DesktopEntry=org.kde.kmix
 Comment=Sound Mixer
+Comment[ar]=مازج الصوت
 Comment[bg]=Звуков миксер
 Comment[bs]=Mikser zvuka
 Comment[ca]=Mesclador de so
@@ -60,6 +61,7 @@ Comment[zh_TW]=音效混音器
 
 [Event/MasterFallback]
 Name=Audio Device Fallback
+Name[ar]=جهاز الصوت البديل
 Name[bg]=Резервно звуково устройство
 Name[bs]=Rezervni zvučni uređaj
 Name[ca]=Dispositiu d'àudio alternatiu
@@ -115,6 +117,7 @@ Name[x-test]=xxAudio Device Fallbackxx
 Name[zh_CN]=音频设备备选
 Name[zh_TW]=預設音效裝置
 Comment=Automatic fallback if the preferred device is unavailable
+Comment[ar]=الرجوع آلي إذا كان الجهاز المفضل غير متاح
 Comment[bg]=Автоматично връщане към резервно устройство, ако предпочитаното устройство не е налично
 Comment[ca]=Canvi automàtic al dispositiu alternatiu si el dispositiu preferit no està disponible
 Comment[ca@valencia]=Canvi automàtic al dispositiu alternatiu si el dispositiu preferit no està disponible
@@ -151,6 +154,7 @@ Action=Popup
 
 [Event/CardHotplugged]
 Name=Audio Device Connected
+Name[ar]=جهاز الصوت متصل
 Name[bg]=Звуковото устройство е свързано
 Name[ca]=Dispositiu d'àudio connectat
 Name[ca@valencia]=Dispositiu d'àudio connectat
@@ -183,6 +187,7 @@ Name[x-test]=xxAudio Device Connectedxx
 Name[zh_CN]=音频设备已连接
 Name[zh_TW]=音效裝置已連線
 Comment=A sound device was connected
+Comment[ar]=وُصل جهاز صوت
 Comment[bg]=Свързана е звукова карта
 Comment[ca]=S'ha connectat un dispositiu de so
 Comment[ca@valencia]=S'ha connectat un dispositiu de so
@@ -219,6 +224,7 @@ Action=Popup
 
 [Event/CardUnplugged]
 Name=Audio Device Disconnected
+Name[ar]=فُصل جهاز الصوت
 Name[bg]=Връзка с аудио устройство е прекъсната
 Name[ca]=Dispositiu d'àudio desconnectat
 Name[ca@valencia]=Dispositiu d'àudio desconnectat
@@ -251,6 +257,7 @@ Name[x-test]=xxAudio Device Disconnectedxx
 Name[zh_CN]=音频设备已断开连接
 Name[zh_TW]=音效裝置已中斷連線
 Comment=A sound device was disconnected
+Comment[ar]=فُصل جهاز صوت
 Comment[bg]=Връзка с аудио устройство е прекъсната
 Comment[ca]=S'ha desconnectat un dispositiu de so
 Comment[ca@valencia]=S'ha desconnectat un dispositiu de so
