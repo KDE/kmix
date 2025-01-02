@@ -8,7 +8,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-11-09 02:30+0000\n"
-"PO-Revision-Date: 2023-07-25 22:32+0100\n"
+"PO-Revision-Date: 2024-12-27 17:40+0100\n"
 "Last-Translator: Oliver Kellogg <okellogg@users.sourceforge.net>\n"
 "Language-Team: Esperanto <kde-i18n-eo@kde.org>\n"
 "Language: eo\n"
@@ -35,10 +35,9 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
-msgstr "KMixCtrl - utilaĵo por sekurigi/restarigi laŭtecojn por Miksilo"
+msgstr "kmixctrl - utilaĵo por konservi/restarigi laŭtecojn de KMix"
 
 #: apps/kmixctrl.cpp:43
 #, kde-format
@@ -71,10 +70,9 @@ msgid "KMix - KDE's full featured mini mixer"
 msgstr "Miksilo - La plenfunkcia miksileto de KDE"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "(c) 1996-2013 La KMix-Aŭtoroj"
+msgstr "(c) 1996-2024 La KMix-Aŭtoroj"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -126,11 +124,11 @@ msgid "Jonathan Marten"
 msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:74
-#, fuzzy, kde-format
-#| msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
+#, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
 msgstr ""
-"Dumkura permuteblo en KF5, laŭteca respondreago en ALSA/OSS, GUI-plibonigoj"
+"Dumkura permuteblo en KF5, laŭteca respondreago en ALSA/OSS, GUI-plibonigoj, "
+"portado al KF6"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -254,10 +252,9 @@ msgid "Enable the (experimental) multiple driver mode."
 msgstr "Ebligi la (eksperimentan) plurpelilan reĝimon."
 
 #: apps/kmixmain.cpp:126
-#, fuzzy, kde-format
-#| msgid "Set the orientation of the system tray volume control sliders"
+#, kde-format
 msgid "Do not show the system tray volume control."
-msgstr "Agordi la orientiĝon de la sistempletaj ŝoviloj pri laŭtecmastrumo"
+msgstr "Ne montri la sistempletan laŭtecregilon."
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -925,10 +922,9 @@ msgid "M&ute"
 msgstr "&Mallaŭtigite"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
-msgstr "Kaŝi Miksilan Fenestron"
+msgstr "Montri Miksilan Fenestron"
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
@@ -1276,9 +1272,3 @@ msgstr "Ne ekzistas kaptaj aparatoj."
 #, kde-format
 msgid "There are no playback devices."
 msgstr "Ne ekzistas reproduktaj aparatoj."
-
-#~ msgid "Configure Channels..."
-#~ msgstr "Agordi Kanalojn..."
-
-#~ msgid "Device Settings"
-#~ msgstr "Aparatoagordo"
