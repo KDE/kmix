@@ -36,7 +36,6 @@ msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
 #, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
 msgid "kmixctrl - KMix volume save/restore utility"
 msgstr "kmixctrl – kmix jietnadássi vurke/máhcat reaidu"
 
@@ -892,7 +891,6 @@ msgstr "&Jaskkodahte"
 
 #: gui/kmixdockwidget.cpp:196
 #, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
 msgid "Show Mixer Window"
 msgstr "Čiega mixerlása"
 

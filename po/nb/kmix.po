@@ -44,7 +44,6 @@ msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
 #, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
 msgid "kmixctrl - KMix volume save/restore utility"
 msgstr "kmixctrl – kmix-verktøy for volum-lagring/-gjenoppretting"
 
@@ -80,7 +79,6 @@ msgstr "KMix – KDEs minimikser med alle egenskaper"
 
 #: apps/kmixmain.cpp:61
 #, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
 msgid "(c) 1996-2024 The KMix Authors"
 msgstr "© 2000–2013 KMix-utviklerne"
 
@@ -613,7 +611,6 @@ msgstr "Opptaksstrømmer"
 
 #: backends/mixer_sndio.cpp:164
 #, fuzzy, kde-format
-#| msgid "Capture Devices"
 msgid "Server Devices"
 msgstr "Opptaksenheter"
 
@@ -924,7 +921,6 @@ msgstr "&Dempet"
 
 #: gui/kmixdockwidget.cpp:196
 #, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
 msgid "Show Mixer Window"
 msgstr "Skjul mikservindu"
 
