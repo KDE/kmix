@@ -37,7 +37,6 @@ msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
 #, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
 msgid "kmixctrl - KMix volume save/restore utility"
 msgstr "KMixCtrl – Verktøy for lagring/henting av KMix-volum"
 
@@ -73,7 +72,6 @@ msgstr "KMix – KDE-minimiksar med mange funksjonar"
 
 #: apps/kmixmain.cpp:61
 #, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
 msgid "(c) 1996-2024 The KMix Authors"
 msgstr "© 1996–2013 KMix-utviklarane"
 
@@ -128,7 +126,6 @@ msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:74
 #, fuzzy, kde-format
-#| msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
 msgstr "KF5-hotplugging, lydstyrke­meldingar for ALSA/OSS, forbetra brukarflate"
 
@@ -254,7 +251,6 @@ msgstr "Slå på (eksperimentell) fleirdrivar-modus."
 
 #: apps/kmixmain.cpp:126
 #, fuzzy, kde-format
-#| msgid "Set the orientation of the system tray volume control sliders"
 msgid "Do not show the system tray volume control."
 msgstr "Vel retning på glidebrytarar i systemtrauet"
 
@@ -925,7 +921,6 @@ msgstr "&Demp"
 
 #: gui/kmixdockwidget.cpp:196
 #, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
 msgid "Show Mixer Window"
 msgstr "Gøym miksarvindauge"
 
