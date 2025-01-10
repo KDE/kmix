@@ -921,10 +921,9 @@ msgid "M&ute"
 msgstr "Ztl&umit"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
-msgstr "Skrýt okno se směšovačem"
+msgstr "Zobrazit okno se směšovačem"
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
