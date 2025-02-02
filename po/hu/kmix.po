@@ -1,12 +1,12 @@
 # Kristóf Kiszel <ulysses@kubuntu.org>, 2010, 2011, 2012, 2019, 2020.
 # Balázs Úr <urbalazs@gmail.com>, 2012, 2013, 2014.
-# Kristof Kiszel <kiszel.kristof@gmail.com>, 2021.
+# SPDX-FileCopyrightText: 2021, 2025 Kristof Kiszel <kiszel.kristof@gmail.com>
 msgid ""
 msgstr ""
 "Project-Id-Version: KDE 4.4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-11-09 02:30+0000\n"
-"PO-Revision-Date: 2021-12-09 11:05+0100\n"
+"PO-Revision-Date: 2025-02-01 22:28+0100\n"
 "Last-Translator: Kristof Kiszel <ulysses@fsf.hu>\n"
 "Language-Team: Hungarian <kde-l10n-hu@kde.org>\n"
 "Language: hu\n"
@@ -14,7 +14,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8-bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 21.12.0\n"
+"X-Generator: Lokalize 24.12.1\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -32,11 +32,10 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
 msgstr ""
-"kmixctrl - a kmix hangerő-beállítását mentő és visszatöltő segédprogram"
+"kmixctrl - a KMix hangerő-beállítását mentő és visszatöltő segédprogram"
 
 #: apps/kmixctrl.cpp:43
 #, kde-format
@@ -69,10 +68,9 @@ msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix - a KDE hangkeverője"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "© A KMix szerzői, 1996-2013."
+msgstr "© A KMix szerzői, 1996-2024."
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -121,12 +119,14 @@ msgstr "Solaris támogatás"
 #: apps/kmixmain.cpp:74
 #, kde-format
 msgid "Jonathan Marten"
-msgstr ""
+msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:74
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
 msgstr ""
+"KF5 működés közbeni cserélhetőség, ALSA/OSS hangerő-visszajelzés, GUI "
+"fejlesztések, KF6 port"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -189,77 +189,69 @@ msgid "TerraTec DMX6Fire support"
 msgstr "TerraTec DMX6Fire-támogatás"
 
 #: apps/kmixmain.cpp:89
-#, fuzzy, kde-format
-#| msgid "PulseAudio support"
+#, kde-format
 msgid "PulseAudio"
-msgstr "PulseAudio-támogatás"
+msgstr "PulseAudio"
 
 #: apps/kmixmain.cpp:90
-#, fuzzy, kde-format
-#| msgid "Sound drivers used:"
+#, kde-format
 msgid "Sound server"
-msgstr "Használt meghajtóprogramok:"
+msgstr "Hangkiszolgáló"
 
 #: apps/kmixmain.cpp:95
 #, kde-format
 msgid "ALSA"
-msgstr ""
+msgstr "ALSA"
 
 #: apps/kmixmain.cpp:96
 #, kde-format
 msgid "Advanced Linux Sound Architecture"
-msgstr ""
+msgstr "Advanced Linux Sound Architecture"
 
 #: apps/kmixmain.cpp:101
 #, kde-format
 msgid "OSS 3"
-msgstr ""
+msgstr "OSS 3"
 
 #: apps/kmixmain.cpp:102 apps/kmixmain.cpp:107
-#, fuzzy, kde-format
-#| msgid "Event Sounds"
+#, kde-format
 msgid "Open Sound System"
-msgstr "Eseményhangok"
+msgstr "Open Sound System"
 
 #: apps/kmixmain.cpp:106
 #, kde-format
 msgid "OSS 4"
-msgstr ""
+msgstr "OSS 4"
 
 #: apps/kmixmain.cpp:122
-#, fuzzy, kde-format
-#| msgid ""
-#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+#, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
-msgstr "Letiltja a KMix főablak felfedését, ha a KMix fut."
+msgstr "A KMix főablak megjelenítésének letiltása, ha a KMix már fut."
 
 #: apps/kmixmain.cpp:123
-#, fuzzy, kde-format
-#| msgid "Starts KMix in failsafe mode."
+#, kde-format
 msgid "Start KMix in failsafe mode."
-msgstr "Elindítja a KMix programot hibatűrő módban."
+msgstr "A KMix indítása hibatűrő módban."
 
 #: apps/kmixmain.cpp:124
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "A használandó háttérprogramok listája (csak teszteléshez)."
 
 #: apps/kmixmain.cpp:124
 #, kde-format
 msgid "name[,name...]"
-msgstr ""
+msgstr "név[,név…]"
 
 #: apps/kmixmain.cpp:125
-#, fuzzy, kde-format
-#| msgid "Experimental multiple-Driver mode activated"
+#, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr "A kísérleti többmeghajtós mód aktiválva"
+msgstr "A kísérleti többmeghajtós mód bekapcsolása."
 
 #: apps/kmixmain.cpp:126
-#, fuzzy, kde-format
-#| msgid "Set the orientation of the system tray volume control sliders"
+#, kde-format
 msgid "Do not show the system tray volume control."
-msgstr "A paneltálca hangerőszabályzó vezérlőcsúszkái tájolásának beállítása"
+msgstr "Ne jelenjen meg a rendszertálca hangerőszabályzója."
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -359,30 +351,26 @@ msgstr "Nem adható hozzá nézet - a nézet már létezik."
 #: apps/kmixwindow.cpp:856
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr ""
+msgstr "A(z) „%1” hangeszközt csatlakoztatták."
 
 #: apps/kmixwindow.cpp:909
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr ""
+msgstr "A(z) „%1” hangeszközt leválasztották."
 
 #: apps/kmixwindow.cpp:934
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
-"A mestereszközt tartalmazó hangkártya el lett távolítva. Váltás a másodlagos "
-"kártyára: %2 (vezérlő: %1)"
+"A jelenlegi mestereszközt leválasztották. Mester módosítása a(z) „%2” "
+"eszközön erre: „%1”."
 
 #: apps/kmixwindow.cpp:941
-#, fuzzy, kde-format
-#| msgid "No sound devices are installed or are currently available."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
-msgstr "Nincs hangkeszköz telepítve, vagy jelenleg nincs érhető el."
+msgstr "Az utolsó hangeszközt leválasztották. Nincs elérhető hangeszköz."
 
 #: apps/kmixwindow.cpp:1186
 #, kde-format
@@ -428,7 +416,7 @@ msgstr ""
 #: backends/mixer_mpris2.cpp:53
 #, kde-format
 msgid "Application Streams"
-msgstr ""
+msgstr "Alkalmazás-adatfolyamok"
 
 #: backends/mixer_oss.cpp:73
 msgid "Volume"
@@ -936,10 +924,9 @@ msgid "M&ute"
 msgstr "E&lnémítás"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
-msgstr "A keverőablak elrejtése"
+msgstr "Keverőablak megjelenítése"
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
