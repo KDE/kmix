@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: KDE 4.4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-11-09 02:30+0000\n"
-"PO-Revision-Date: 2025-02-01 22:28+0100\n"
+"PO-Revision-Date: 2025-02-06 20:51+0100\n"
 "Last-Translator: Kristof Kiszel <ulysses@fsf.hu>\n"
 "Language-Team: Hungarian <kde-l10n-hu@kde.org>\n"
 "Language: hu\n"
@@ -256,7 +256,7 @@ msgstr "Ne jelenjen meg a rendszertálca hangerőszabályzója."
 #: apps/kmixwindow.cpp:166
 #, kde-format
 msgid "Hide Mixer Window"
-msgstr "A keverőablak elrejtése"
+msgstr "Keverőablak elrejtése"
 
 #: apps/kmixwindow.cpp:176
 #, kde-format
@@ -986,7 +986,7 @@ msgstr ""
 #: gui/kmixprefdlg.cpp:141
 #, kde-format
 msgid "Restore previous volume settings on desktop startup"
-msgstr "Az előző hangbeállítások visszaállítása az asztal indulásakor"
+msgstr "Előző hangbeállítások visszaállítása az asztal indulásakor"
 
 #: gui/kmixprefdlg.cpp:145
 #, kde-format
