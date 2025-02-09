@@ -6,7 +6,7 @@ msgstr ""
 "Project-Id-Version: KDE 4.4\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-11-09 02:30+0000\n"
-"PO-Revision-Date: 2025-02-06 20:51+0100\n"
+"PO-Revision-Date: 2025-02-08 21:20+0100\n"
 "Last-Translator: Kristof Kiszel <ulysses@fsf.hu>\n"
 "Language-Team: Hungarian <kde-l10n-hu@kde.org>\n"
 "Language: hu\n"
@@ -271,7 +271,7 @@ msgstr "&Csatornabeállítás..."
 #: apps/kmixwindow.cpp:186
 #, kde-format
 msgid "Select Master Channel..."
-msgstr "A mestercsatorna kiválasztása..."
+msgstr "Mestercsatorna kiválasztása…"
 
 #: apps/kmixwindow.cpp:192
 #, kde-format
@@ -1049,7 +1049,7 @@ msgstr ""
 #: gui/kmixprefdlg.cpp:256
 #, kde-format
 msgid "Volume feedback"
-msgstr "Hangerő visszajelzés"
+msgstr "Hangerő-visszajelzés"
 
 #: gui/kmixprefdlg.cpp:260
 #, kde-format
@@ -1060,7 +1060,7 @@ msgstr "Hangminta lejátszása a hangerő változtatásakor"
 #: gui/kmixprefdlg.cpp:264
 #, kde-format
 msgid "Volume feedback is only available when configured with Canberra."
-msgstr "A hangerő visszajelzés csak Canberrával érhető el."
+msgstr "A hangerő-visszajelzés csak Canberrával érhető el."
 
 #: gui/kmixprefdlg.cpp:286
 #, kde-kuit-format
