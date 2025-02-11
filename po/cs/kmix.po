@@ -39,10 +39,9 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
-msgstr "kmixctrl - program pro ukládání/obnovení hlasitostí kmix"
+msgstr ""
 
 #: apps/kmixctrl.cpp:43
 #, kde-format
@@ -75,10 +74,9 @@ msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix - plnohodnotný mini směšovač prostředí KDE"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "(c) 1996 - 2013 autoři KMix"
+msgstr ""
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -611,10 +609,9 @@ msgid "Capture Streams"
 msgstr "Proudy zachytávání"
 
 #: backends/mixer_sndio.cpp:164
-#, fuzzy, kde-format
-#| msgid "Capture Devices"
+#, kde-format
 msgid "Server Devices"
-msgstr "Zachytávací zařízení"
+msgstr ""
 
 #: backends/mixer_sun.cpp:69
 #, kde-format
@@ -1260,9 +1257,3 @@ msgstr "Žádná nahrávací zařízení."
 #, kde-format
 msgid "There are no playback devices."
 msgstr "Žádná přehrávací zařízení."
-
-#~ msgid "Configure Channels..."
-#~ msgstr "Nastavit kanály..."
-
-#~ msgid "Device Settings"
-#~ msgstr "Nastavení zařízení"
