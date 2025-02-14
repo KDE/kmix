@@ -14,20 +14,21 @@
 # Luiz Fernando Ranghetti <elchevive@opensuse.org>, 2009, 2012, 2017, 2018, 2019, 2020, 2021, 2023.
 # Marcus Gama <marcus.gama@gmail.com>, 2012.
 # Geraldo Simiao <geraldosimiao@fedoraproject.org>, 2023.
+# SPDX-FileCopyrightText: 2025 Guilherme Marçal Silva <guimarcalsilva@gmail.com>
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-11-09 02:30+0000\n"
-"PO-Revision-Date: 2023-07-29 13:46-0300\n"
-"Last-Translator: Geraldo Simiao <geraldosimiao@fedoraproject.org>\n"
+"PO-Revision-Date: 2025-02-13 00:07-0300\n"
+"Last-Translator: Guilherme Marçal Silva <guimarcalsilva@gmail.com>\n"
 "Language-Team: Brazilian Portuguese <kde-i18n-pt_BR@kde.org>\n"
 "Language: pt_BR\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n > 1);\n"
-"X-Generator: Lokalize 23.04.3\n"
+"X-Generator: Lokalize 24.12.2\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -50,8 +51,7 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
 msgstr "kmixctrl - utilitário de salvamento/restauração de volumes do kmix"
 
@@ -86,10 +86,9 @@ msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix - Mini mixer cheio de recursos do KDE"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "(c) 1996-2013 dos autores do KMix"
+msgstr "(c) 1996-2024 dos autores do KMix"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -141,10 +140,9 @@ msgid "Jonathan Marten"
 msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:74
-#, fuzzy, kde-format
-#| msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements"
+#, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
-msgstr "Hotplugging KF5, feedback de volume ALSA/OSS, melhorias GUI"
+msgstr "Hotplugging KF5, feedback de volume ALSA/OSS, melhorias GUI, port KF6"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -268,10 +266,9 @@ msgid "Enable the (experimental) multiple driver mode."
 msgstr "Habilitar o modo (experimental) de múltiplos drivers."
 
 #: apps/kmixmain.cpp:126
-#, fuzzy, kde-format
-#| msgid "Set the orientation of the system tray volume control sliders"
+#, kde-format
 msgid "Do not show the system tray volume control."
-msgstr "Definir a orientação dos controles deslizantes da área de notificação"
+msgstr "Não mostrar o controle de volume da área de notificação."
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -947,10 +944,9 @@ msgid "M&ute"
 msgstr "&Mudo"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
-msgstr "Ocultar janela do mixer"
+msgstr "Mostrar janela do mixer"
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
