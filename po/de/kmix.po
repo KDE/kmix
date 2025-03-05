@@ -27,14 +27,12 @@ msgstr ""
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
-msgstr "Gregor Zumstein,Frank Schütte,Carsten Niehaus,Martin Ereth"
+msgstr "Deutsches KDE-Übersetzungsteam"
 
 #, kde-format
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
-msgstr ""
-"zumstein@ssd.ethz.ch,F.Schuette@t-online.de,cniehaus@kde.org,martin."
-"ereth@arcor.de"
+msgstr "kde-i18n-de@kde.org"
 
 #: apps/kmixctrl.cpp:40
 #, kde-format
