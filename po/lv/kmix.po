@@ -6,19 +6,20 @@
 # Viesturs Zarins <viesturs.zarins@mii.lu.lv>, 2007, 2008, 2010.
 # Viesturs Zariņš <viesturs.zarins@mii.lu.lv>, 2009.
 # Rūdofls Mazurs <rudolfs.mazurs@gmail.com>, 2012.
+# SPDX-FileCopyrightText: 2025 Toms Trasuns <toms.trasuns@posteo.net>
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-12-09 00:40+0000\n"
-"PO-Revision-Date: 2012-01-11 20:43+0200\n"
-"Last-Translator: Rūdofls Mazurs <rudolfs.mazurs@gmail.com>\n"
+"PO-Revision-Date: 2025-03-16 13:21+0200\n"
+"Last-Translator: Toms Trasuns <toms.trasuns@posteo.net>\n"
 "Language-Team: Latvian <kde-i18n-doc@kde.org>\n"
 "Language: lv\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 1.2\n"
+"X-Generator: Lokalize 24.12.3\n"
 "Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n != 0 ? 1 : "
 "2);\n"
 
@@ -30,7 +31,7 @@ msgstr "Andris Maziks, Māris Nartišs"
 #, kde-format
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
-msgstr "andris.m@delfi.lv, maris.kde@gmail.com"
+msgstr "andris.m@delfi.lv, maris.kde@gmail.com, toms.trasuns@posteo.net"
 
 #: apps/kmixctrl.cpp:40
 #, kde-format
@@ -38,10 +39,9 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
-msgstr "kmixctrl - kmix skaļuma saglabāšanas/atjaunošanas utilīta"
+msgstr "kmixctrl — „KMix“ skaļuma saglabāšanas/atjaunošanas utilītprogramma"
 
 #: apps/kmixctrl.cpp:43
 #, kde-format
@@ -56,12 +56,12 @@ msgstr "Stefan Schimanski"
 #: apps/kmixctrl.cpp:51
 #, kde-format
 msgid "Save current volumes as default"
-msgstr "Saglabāt pašreizējo skaļumu kā noklusējuma"
+msgstr "Saglabāt pašreizējos skaļumus kā noklusējumu"
 
 #: apps/kmixctrl.cpp:53
 #, kde-format
 msgid "Restore default volumes"
-msgstr "Atjaunot noklusējuma skaļumu"
+msgstr "Atjaunot noklusējuma skaļumus"
 
 #: apps/kmixmain.cpp:59
 #, kde-format
@@ -71,13 +71,12 @@ msgstr "KMix"
 #: apps/kmixmain.cpp:60
 #, kde-format
 msgid "KMix - KDE's full featured mini mixer"
-msgstr "KMix - KDE pilnvērtīgais mini mikseris"
+msgstr "„KMix“ — KDE pilnvērtīgais mazais mikseris"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2012 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "(c) 1996-2012 KMix autori"
+msgstr "(c) 1996—2024 „KMix“ autori"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -87,7 +86,7 @@ msgstr "Christian Esken"
 #: apps/kmixmain.cpp:64
 #, kde-format
 msgid "Original author and current maintainer"
-msgstr "Sākotnējais autors un pašreizējais uzturētājs"
+msgstr "Sākotnējās versijas autors un pašreizējais uzturētājs"
 
 #: apps/kmixmain.cpp:65
 #, kde-format
@@ -97,7 +96,7 @@ msgstr "Colin Guthrie"
 #: apps/kmixmain.cpp:65
 #, kde-format
 msgid "PulseAudio support"
-msgstr "PulseAudio atbalsts"
+msgstr "„PulseAudio“ atbalsts"
 
 #: apps/kmixmain.cpp:66
 #, kde-format
@@ -117,7 +116,7 @@ msgstr "Brian Hanson"
 #: apps/kmixmain.cpp:67
 #, kde-format
 msgid "Solaris support"
-msgstr "Solaris atbalsts"
+msgstr "„Solaris“ atbalsts"
 
 #. i18n("Helge Deller")      , i18n("HP/UX port"), "deller@gmx.de");
 #. The initial support was for ALSA 0.5. The new code is not based on it IIRC.
@@ -126,12 +125,14 @@ msgstr "Solaris atbalsts"
 #: apps/kmixmain.cpp:74
 #, kde-format
 msgid "Jonathan Marten"
-msgstr ""
+msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:74
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
 msgstr ""
+"KF5 ātrā pieslēgšana, ALSA/OSS skaļuma priekšskatījums, saskarnes "
+"uzlabojumi, KF6 ports"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -141,7 +142,7 @@ msgstr "Igor Poboiko"
 #: apps/kmixmain.cpp:75
 #, kde-format
 msgid "Plasma Dataengine"
-msgstr "Plasma datu dzinis"
+msgstr "„Plasma“ datu dzinis"
 
 #: apps/kmixmain.cpp:76
 #, kde-format
@@ -171,7 +172,7 @@ msgstr "Nadeem Hasan"
 #: apps/kmixmain.cpp:79
 #, kde-format
 msgid "Mute and volume preview, other fixes"
-msgstr "Apklusināšanas un skaļuma priekšskate, citi labojumi"
+msgstr "Apklusināšanas un skaļuma priekšskatījums, citi labojumi"
 
 #: apps/kmixmain.cpp:80
 #, kde-format
@@ -181,7 +182,7 @@ msgstr "Erwin Mascher"
 #: apps/kmixmain.cpp:80
 #, kde-format
 msgid "Improving support for emu10k1 based soundcards"
-msgstr "Uzlabots emu10k1 bāzēto skaņas karšu atbalsts"
+msgstr "Uzlabots „emu10k1“ bāzēto skaņas karšu atbalsts"
 
 #: apps/kmixmain.cpp:81
 #, kde-format
@@ -191,78 +192,72 @@ msgstr "Valentin Rusu"
 #: apps/kmixmain.cpp:81
 #, kde-format
 msgid "TerraTec DMX6Fire support"
-msgstr "TerraTec DMX6Fire atbalsts"
+msgstr "„TerraTec DMX6Fire“ atbalsts"
 
 #: apps/kmixmain.cpp:89
-#, fuzzy, kde-format
-#| msgid "PulseAudio support"
+#, kde-format
 msgid "PulseAudio"
-msgstr "PulseAudio atbalsts"
+msgstr "PulseAudio"
 
 #: apps/kmixmain.cpp:90
-#, fuzzy, kde-format
-#| msgid "Sound drivers used:"
+#, kde-format
 msgid "Sound server"
-msgstr "Izmantotie skaņas draiveri:"
+msgstr "Skaņas serveris"
 
 #: apps/kmixmain.cpp:95
 #, kde-format
 msgid "ALSA"
-msgstr ""
+msgstr "ALSA"
 
 #: apps/kmixmain.cpp:96
 #, kde-format
 msgid "Advanced Linux Sound Architecture"
-msgstr ""
+msgstr "Modernā „Linux“ skaņas sistēma"
 
 #: apps/kmixmain.cpp:101
 #, kde-format
 msgid "OSS 3"
-msgstr ""
+msgstr "OSS 3"
 
 #: apps/kmixmain.cpp:102 apps/kmixmain.cpp:107
-#, fuzzy, kde-format
-#| msgid "Event Sounds"
+#, kde-format
 msgid "Open Sound System"
-msgstr "Notikumu skaņas"
+msgstr "Atvērtā skaņas sistēma"
 
 #: apps/kmixmain.cpp:106
 #, kde-format
 msgid "OSS 4"
-msgstr ""
+msgstr "OSS 4"
 
 #: apps/kmixmain.cpp:122
-#, fuzzy, kde-format
-#| msgid ""
-#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+#, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
-msgstr "Parāda KMix galveno logu, ja KMix jau darbojas."
+msgstr "Liedz rādīt „KMix“ pamata logu, ja „KMix“ jau ir palaists."
 
 #: apps/kmixmain.cpp:123
 #, kde-format
 msgid "Start KMix in failsafe mode."
-msgstr ""
+msgstr "Sākt „KMix“ drošajā režīmā."
 
 #: apps/kmixmain.cpp:124
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "Izmantojamo aizmugursistēmu saraksts (tikai testēšanai)."
 
 #: apps/kmixmain.cpp:124
 #, kde-format
 msgid "name[,name...]"
-msgstr ""
+msgstr "nosaukums[,nosaukums...]"
 
 #: apps/kmixmain.cpp:125
 #, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr ""
+msgstr "Ieslēgt (eksperimentālo) vairāku draiveru režīmu."
 
 #: apps/kmixmain.cpp:126
-#, fuzzy, kde-format
-#| msgid "Enable system tray &volume control"
+#, kde-format
 msgid "Do not show the system tray volume control."
-msgstr "Ieslēgt sistēmas ikonu joslas &skaļuma vadību"
+msgstr "Nerādīt sistēmas ikonu joslas skaļuma vadīklas."
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -270,10 +265,9 @@ msgid "Hide Mixer Window"
 msgstr "Slēpt miksera logu"
 
 #: apps/kmixwindow.cpp:176
-#, fuzzy, kde-format
-#| msgid "Audio Setup"
+#, kde-format
 msgid "Audio Setup..."
-msgstr "Audio iestatījumi"
+msgstr "Audio iestatījumi..."
 
 #: apps/kmixwindow.cpp:181
 #, kde-format
@@ -283,7 +277,7 @@ msgstr "Konfigurēt &kanālus..."
 #: apps/kmixwindow.cpp:186
 #, kde-format
 msgid "Select Master Channel..."
-msgstr "Izvēlēties galveno kanālu..."
+msgstr "Atlasīt galveno kanālu..."
 
 #: apps/kmixwindow.cpp:192
 #, kde-format
@@ -341,15 +335,14 @@ msgid "Mute"
 msgstr "Apklusināt"
 
 #: apps/kmixwindow.cpp:264
-#, fuzzy, kde-format
-#| msgid "Add View"
+#, kde-format
 msgid "Add new view"
-msgstr "Pievienot skatu"
+msgstr "Pievienot jaunu skatu"
 
 #: apps/kmixwindow.cpp:781
 #, kde-format
 msgid "Cannot add view - GUIProfile is invalid."
-msgstr "Nevar pievienot skatu - GUIProfile nav derīgs."
+msgstr "Nevar pievienot skatu — „GUIProfile“ nav derīgs."
 
 #: apps/kmixwindow.cpp:781 apps/kmixwindow.cpp:788
 #, kde-format
@@ -357,59 +350,54 @@ msgid "Error"
 msgstr "Kļūda"
 
 #: apps/kmixwindow.cpp:788
-#, fuzzy, kde-format
-#| msgid "Cannot add view - GUIProfile is invalid."
+#, kde-format
 msgid "Cannot add view - View already exists."
-msgstr "Nevar pievienot skatu - GUIProfile nav derīgs."
+msgstr "Nevar pievienot skatu — skats jau pastāv."
 
 #: apps/kmixwindow.cpp:856
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr ""
+msgstr "Ir savienota skaņas ierīce „%1“."
 
 #: apps/kmixwindow.cpp:909
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr ""
+msgstr "Skaņas ierīce „%1“ ir atvienota."
 
 #: apps/kmixwindow.cpp:934
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
-"Galveno skaņas ierīci saturošā skaņas karte tika atvienota. Vadība tiek "
-"nodota %1 uz kartes %2."
+"Pašreizējā galvenā ierīce ar atvienota. Galvenās ierīces statuss tiek nodots "
+"„%1“, kas atrodas ierīcē „%2“."
 
 #: apps/kmixwindow.cpp:941
-#, fuzzy, kde-format
-#| msgid "No sound card is installed or currently plugged in."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
-msgstr "Nav uzstādītas vai pieslēgtas skaņas kartes."
+msgstr "Pēdējā skaņas ierīce ir atvienota. Nav pieejama neviena skaņas ierīce."
 
 #: apps/kmixwindow.cpp:1186
-#, fuzzy, kde-format
-#| msgid "The helper application is either not installed or not working."
+#, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
 "\n"
 "%1"
-msgstr "Palīdzības lietotne vai nu nav uzinstalēta vai nedarbojas."
+msgstr ""
+"Palīdzības programma vai nu nav uzinstalēta, vai arī nedarbojas.\n"
+"\n"
+"%1"
 
 #: apps/kmixwindow.cpp:1236
-#, fuzzy, kde-format
-#| msgid "Mixer"
+#, kde-format
 msgid "Mixer (%1)"
-msgstr "Mikseris"
+msgstr "Mikseris (%1)"
 
 #: apps/volumefeedback.cpp:280
-#, fuzzy, kde-format
-#| msgid "Volume Control"
+#, kde-format
 msgid "Volume Control Feedback Sound"
-msgstr "Skaļuma vadīkla"
+msgstr "Skaļuma vadīklas priekšskatījuma skaņa"
 
 #: backends/mixer_alsa9.cpp:964
 #, kde-format
@@ -417,8 +405,8 @@ msgid ""
 "You do not have permission to access the alsa mixer device.\n"
 "Please verify if all alsa devices are properly created."
 msgstr ""
-"Jums nav atļaujas piekļuvei pie alsa miksera ierīces.\n"
-"Lūdzu pārbaudiet, vai visas alsa ierīces ir pareizi izveidotas."
+"Jums nav atļaujas piekļuvei pie ALSA miksera ierīces.\n"
+"Pārbaudiet, vai visas ALSA ierīces ir pareizi izveidotas."
 
 #: backends/mixer_alsa9.cpp:968
 #, kde-format
@@ -427,14 +415,14 @@ msgid ""
 "Please check that the soundcard is installed and the\n"
 "soundcard driver is loaded.\n"
 msgstr ""
-"Alsa mikseris nav atrasts.\n"
-"Lūdzu pārbaudiet, ka skaņas karte ir instalēta un ka \n"
+"ALSA mikseris nav atrasts.\n"
+"Pārbaudiet, vai skaņas karte ir instalēta un vai \n"
 "skaņas kartes draiveris ir ielādēts.\n"
 
 #: backends/mixer_mpris2.cpp:53
 #, kde-format
 msgid "Application Streams"
-msgstr ""
+msgstr "Programmu straumes"
 
 #: backends/mixer_oss.cpp:73
 msgid "Volume"
@@ -450,7 +438,7 @@ msgstr "Augstie toņi"
 
 #: backends/mixer_oss.cpp:74
 msgid "Synth"
-msgstr "Sint"
+msgstr "Sintezators"
 
 #: backends/mixer_oss.cpp:74
 msgid "Pcm"
@@ -484,15 +472,15 @@ msgstr "Pcm2"
 
 #: backends/mixer_oss.cpp:76
 msgid "RecMon"
-msgstr "IerakstaMonitors"
+msgstr "Ier. mon."
 
 #: backends/mixer_oss.cpp:77
 msgid "IGain"
-msgstr "IePast"
+msgstr "Iev. past."
 
 #: backends/mixer_oss.cpp:77
 msgid "OGain"
-msgstr "IzPast"
+msgstr "Izv. past."
 
 #: backends/mixer_oss.cpp:77
 msgid "Line1"
@@ -561,9 +549,9 @@ msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
 "Login as root and do a 'chmod a+rw /dev/mixer*' to allow the access."
 msgstr ""
-"kmix: Jums nav tiesību piekļūt miksera iekārtai.\n"
-"Pieslēdzieties kā root un atļaujiet visiem piekļūt iekārtai\n"
-"ar 'chmod a+rw /dev/mixer*' palīdzību."
+"„kmix“: jums nav tiesību piekļūt miksera iekārtai.\n"
+"Pieslēdzieties kā saknes lietotājs un atļaujiet visiem piekļūt iekārtai\n"
+"ar „chmod a+rw /dev/mixer*“ palīdzību."
 
 #: backends/mixer_oss.cpp:244
 #, kde-format
@@ -574,11 +562,11 @@ msgid ""
 "On Linux you might need to use 'insmod' to load the driver.\n"
 "Use 'soundon' when using commercial OSS."
 msgstr ""
-"kmix: Neizdevās atrast miskeri.\n"
-"Lūdzu pārbaudiet vai jums ir skaņas karte un\n"
+"„kmix“: neizdevās atrast mikseri.\n"
+"Pārbaudiet, vai jums ir skaņas karte un\n"
 "ka tās draiveris ir ielādēts.\n"
-"Uz Linux draivera ielādēšanai lieto 'insmod' komandu.\n"
-"Lietojot komerciālu OSS, lietojiet 'soundon' komandu."
+"„Linux“ sistēmā draivera ielādēšanai lieto „insmod“ komandu.\n"
+"Lietojot komerciālu OSS, lietojiet „soundon“ komandu."
 
 #: backends/mixer_oss4.cpp:530
 #, kde-format
@@ -589,16 +577,16 @@ msgid ""
 "On Linux you might need to use 'insmod' to load the driver.\n"
 "Use 'soundon' when using OSS4 from 4front."
 msgstr ""
-"kmix: Neizdevās atrast miskeri.\n"
-"Lūdzu pārbaudiet vai jums ir skaņas karte un\n"
+"„kmix“: neizdevās atrast mikseri.\n"
+"Pārbaudiet, vai jums ir skaņas karte un\n"
 "ka tās draiveris ir ielādēts.\n"
-"Uz Linux draivera ielādēšanai lieto 'insmod' komandu.\n"
-"Lietojot OSS4 no 4front, lietojiet 'soundon' komandu."
+"„Linux“ draivera ielādēšanai lieto „insmod“ komandu.\n"
+"Lietojot OSS4 no „4front“, lietojiet „soundon“ komandu."
 
 #: backends/mixer_pulse.cpp:352 backends/mixer_pulse.cpp:409
 #, kde-format
 msgid "Unknown Application"
-msgstr "Nezināma lietotne"
+msgstr "Nezināma programma"
 
 #: backends/mixer_pulse.cpp:455
 #, kde-format
@@ -626,8 +614,7 @@ msgid "Capture Streams"
 msgstr "Tveršanas plūsmas"
 
 #: backends/mixer_sndio.cpp:164
-#, fuzzy, kde-format
-#| msgid "Capture Devices"
+#, kde-format
 msgid "Server Devices"
 msgstr "Tveršanas ierīces"
 
@@ -654,7 +641,7 @@ msgstr "Izvades līnija"
 #: backends/mixer_sun.cpp:73
 #, kde-format
 msgid "Record Monitor"
-msgstr "Ieraksta monitors"
+msgstr "Ieraksta pārraugs"
 
 #: backends/mixer_sun.cpp:75
 #, kde-format
@@ -667,8 +654,8 @@ msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
 "Ask your system administrator to fix /dev/audioctl to allow access."
 msgstr ""
-"kmix: Jums nav tiesību piekļūt miksera iekārtai.\n"
-"Palūdziet savas sistēmas administratoram pamainīt /dev/audioctl pieejas "
+"„kmix“: jums nav tiesību piekļūt miksera iekārtai.\n"
+"Palūdziet sistēmas administratoram izmainīt „/dev/audioctl“ piekļuves "
 "tiesības."
 
 #: backends/mixerbackend.cpp:324
@@ -677,18 +664,18 @@ msgid ""
 "kmix:You do not have permission to access the mixer device.\n"
 "Please check your operating systems manual to allow the access."
 msgstr ""
-"kmix: Jums nav tiesību izmantot miksera iekārtu.\n"
-"Lūdzu pārbaudiet piekļuves tiesības miksera iekārtai."
+"„kmix“: jums nav tiesību izmantot miksera iekārtu.\n"
+"Pārbaudiet piekļuves tiesības miksera iekārtai."
 
 #: backends/mixerbackend.cpp:328
 #, kde-format
 msgid "kmix: Could not write to mixer."
-msgstr "kmix: Nebija iespējams rakstīt mikserī."
+msgstr "„kmix“: neizdevās rakstīt mikserī."
 
 #: backends/mixerbackend.cpp:331
 #, kde-format
 msgid "kmix: Could not read from mixer."
-msgstr "kmix: Nebija iespējams nolasīt no miksera."
+msgstr "„kmix“: neizdevās nolasīt no miksera."
 
 #: backends/mixerbackend.cpp:334
 #, kde-format
@@ -697,15 +684,15 @@ msgid ""
 "Please check that the soundcard is installed and that\n"
 "the soundcard driver is loaded.\n"
 msgstr ""
-"kmix: Mikseris netika atrasts.\n"
-"Lūdzu pārbaudiet vai skaņas karte ir pareizi instalēta un\n"
+"„kmix“: mikseris nav atrasts.\n"
+"Pārbaudiet, vai skaņas karte ir pareizi instalēta un\n"
 "vai ir ielādēti tās draiveri.\n"
 
 #: backends/mixerbackend.cpp:339
 #, kde-format
 msgid "kmix: Unknown error. Please report how you produced this error."
 msgstr ""
-"kmix: Nezināma kļūda. Lūdzu ziņojiet par to, kā jums izdevās iegūt šo kļūdu."
+"„kmix“: nezināma kļūda. Ziņojiet par to, kā jums izdevās iegūt šo kļūdu."
 
 #: backends/mixerbackend.cpp:351
 #, kde-format
@@ -720,9 +707,10 @@ msgid ""
 "other controls like ADC or DAC. For headphones, soundcards often supply a "
 "Headphone control."
 msgstr ""
-"Vada skaļumu priekšējajos skaļruņos vai visos skaļruņos (atkarībā no skaņu "
-"kartes modeļa). Ja izmantojat digitālo izvadu, jums varētu noderēt arī citi "
-"kanāli kā ADC vai DAC. Austiņām parasti ir atsevišķs austiņu kanāls."
+"Pārvalda skaļumu priekšējajos skaļruņos vai visos skaļruņos (atkarībā no "
+"skaņu kartes modeļa). Ja izmantojat digitālo izvadi, jums varētu noderēt arī "
+"citi kanāli, piemēram, ADC vai DAC. Austiņām parasti ir atsevišķs austiņu "
+"kanāls."
 
 #: backends/mixerbackend.cpp:353
 #, kde-format
@@ -731,8 +719,8 @@ msgid ""
 "As such, the playback volume of such media is controlled by both this and "
 "the Master or Headphone channels."
 msgstr ""
-"Vairums multivides — MP3 un video — tiek atskaņoti PCM kanālā. Tāpēc šo "
-"darbu atskaņošanas skaļumu nosaka gan šis an Galvenais vai Austiņu kanāls."
+"Vairums multivides — MP3 un video — tiek atskaņots PCM kanālā. Tāpēc šo "
+"celiņu atskaņošanas skaļumu nosaka gan šis, gan galvenais un austiņu kanāls."
 
 #: backends/mixerbackend.cpp:354
 #, kde-format
@@ -740,8 +728,8 @@ msgid ""
 "Controls the headphone volume. Some soundcards include a switch that must be "
 "manually activated to enable the headphone output."
 msgstr ""
-"Kontrolē skaļumu austiņās. Dažām skaņas kartēm ir slēdzis, kas ir "
-"jāpārslēdz, lai ieslēgtu austiņu izvadu."
+"Kontrolē skaļumu austiņās. Dažām skaņas kartēm ir slēdzis, kas ir manuāli "
+"jāieslēdz, lai darbotos austiņu izvade."
 
 #: backends/mixerbackend.cpp:355
 #, kde-format
@@ -752,63 +740,61 @@ msgstr "---"
 #, kde-format
 msgctxt "Channel name"
 msgid "Left"
-msgstr ""
+msgstr "Kreisais"
 
 #: core/volume.cpp:59
 #, kde-format
 msgctxt "Channel name"
 msgid "Right"
-msgstr ""
+msgstr "Labais"
 
 #: core/volume.cpp:60
-#, fuzzy, kde-format
-#| msgid "3D-center"
+#, kde-format
 msgctxt "Channel name"
 msgid "Center"
-msgstr "3D centrs"
+msgstr "Vidējais"
 
 #: core/volume.cpp:61
 #, kde-format
 msgctxt "Channel name"
 msgid "Subwoofer"
-msgstr ""
+msgstr "Zemfrekvenču skaļrunis"
 
 #: core/volume.cpp:62
 #, kde-format
 msgctxt "Channel name"
 msgid "Surround Left"
-msgstr ""
+msgstr "Telpiskais kreisais"
 
 #: core/volume.cpp:63
 #, kde-format
 msgctxt "Channel name"
 msgid "Surround Right"
-msgstr ""
+msgstr "Telpiskais labais"
 
 #: core/volume.cpp:64
 #, kde-format
 msgctxt "Channel name"
 msgid "Side Left"
-msgstr ""
+msgstr "Sānu kreisais"
 
 #: core/volume.cpp:65
 #, kde-format
 msgctxt "Channel name"
 msgid "Side Right"
-msgstr ""
+msgstr "Sānu labais"
 
 #: core/volume.cpp:66
 #, kde-format
 msgctxt "Channel name"
 msgid "Rear Center"
-msgstr ""
+msgstr "Aizmugurējais vidējais"
 
 #: core/volume.cpp:68
-#, fuzzy, kde-format
-#| msgid "unknown"
+#, kde-format
 msgctxt "Channel name"
 msgid "Unknown"
-msgstr "nezināms"
+msgstr "Nezināms"
 
 #: gui/dialogaddview.cpp:51
 #, kde-format
@@ -856,11 +842,10 @@ msgid "Current mixer:"
 msgstr "Aktīvais mikseris:"
 
 #: gui/dialogselectmaster.cpp:124
-#, fuzzy, kde-kuit-format
-#| msgid "Select the channel representing the master volume:"
+#, kde-kuit-format
 msgctxt "@info"
 msgid "Select the <link url=\"i\">master volume</link> channel:"
-msgstr "Izvēlieties kanālu, kas reprezentē galveno skaļumu:"
+msgstr "Izvēlieties kanālu <link url=\"i\">galvenajam skaļumam</link>:"
 
 #: gui/dialogselectmaster.cpp:132
 #, kde-kuit-format
@@ -872,57 +857,58 @@ msgid ""
 "global shortcut keys, and the <interface>Mute</interface> action in the "
 "system tray popup menu.</para>"
 msgstr ""
+"<para>Te varat norādīt galveno skaņas ierīci (jābūt vairāk par vienu ierīci) "
+"un tās galveno kanālu.</para><para>Galvenais kanāls ir tas kanāls, ko "
+"ietekmē sistēmas ikonu joslas skaļuma vadīkla, skaļuma regulēšanas saīsnes "
+"un <interface>apklusināšanas</interface> darbība sistēmas ikonu joslas "
+"izlecošajā izvēlnē.</para>"
 
 #: gui/dialogselectmaster.cpp:203
 #, kde-format
 msgid "Automatic (%1 recommendation)"
-msgstr ""
+msgstr "Automātiski (%1 ieteikums)"
 
 #: gui/dialogviewconfiguration.cpp:132
-#, fuzzy, kde-format
-#| msgid "Configure &Channels..."
+#, kde-format
 msgid "Configure Channels"
-msgstr "Konfigurēt &kanālus..."
+msgstr "Konfigurēt kanālus"
 
 #: gui/dialogviewconfiguration.cpp:143
-#, fuzzy, kde-format
-#| msgid "Configuration of the channels."
+#, kde-format
 msgid "Configure the visible channels. Drag icons between the lists to update."
-msgstr "Kanālu konfigurācija"
+msgstr ""
+"Konfigurēt redzamos kanālus. Lai atjauninātu, velciet ikonas starp "
+"sarakstiem."
 
 #: gui/dialogviewconfiguration.cpp:213
-#, fuzzy, kde-format
-#| msgid "Visible channels"
+#, kde-format
 msgid "Visible channels:"
-msgstr "Redzamie kanāli"
+msgstr "Redzamie kanāli:"
 
 #: gui/dialogviewconfiguration.cpp:216
-#, fuzzy, kde-format
-#| msgid "Available channels"
+#, kde-format
 msgid "Available channels:"
-msgstr "Pieejamie kanāli"
+msgstr "Pieejamie kanāli:"
 
 #: gui/dialogviewconfiguration.cpp:230
-#, fuzzy, kde-format
-#| msgid "Select Master Channel"
+#, kde-format
 msgid "Move the selected channel to the visible list"
-msgstr "Izvēlieties galveno kanālu"
+msgstr "Pārvietot atlasīto kanālu uz redzamo kanālu sarakstu"
 
 #: gui/dialogviewconfiguration.cpp:238
 #, kde-format
 msgid "Move the selected channel to the available (hidden) list"
-msgstr ""
+msgstr "Pārvietot atlasīto kanālu uz pieejamo (paslēpto) kanālu sarakstu"
 
 #: gui/dialogviewconfiguration.cpp:278
-#, fuzzy, kde-format
-#| msgid "Select Master Channel"
+#, kde-format
 msgid "Show the selected channel"
-msgstr "Izvēlieties galveno kanālu"
+msgstr "Rādīt atlasīto kanālu"
 
 #: gui/dialogviewconfiguration.cpp:279
 #, kde-format
 msgid "Hide the selected channel"
-msgstr ""
+msgstr "Slēpt atlasīto kanālu"
 
 #: gui/dialogviewconfiguration.cpp:280
 #, kde-format
@@ -945,31 +931,29 @@ msgid "M&ute"
 msgstr "Apkl&usināt"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
-msgstr "Slēpt miksera logu"
+msgstr "Rādīt miksera logu"
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
 msgid "No mixer devices available"
-msgstr ""
+msgstr "Miksera ierīces nav pieejamas"
 
 #: gui/kmixdockwidget.cpp:230
-#, fuzzy, kde-format
-#| msgid "Volume Control"
+#, kde-format
 msgid "Volume muted"
-msgstr "Skaļuma vadīkla"
+msgstr "Skaņa ir apklusināta"
 
 #: gui/kmixdockwidget.cpp:231
 #, kde-format
 msgid "Volume at %1%"
-msgstr "Skaļums %1%"
+msgstr "Skaļums ir %1 %"
 
 #: gui/kmixdockwidget.cpp:233
 #, kde-format
 msgid "%1 - %2"
-msgstr ""
+msgstr "%1 — %2"
 
 #: gui/kmixprefdlg.cpp:53
 #, kde-format
@@ -979,22 +963,22 @@ msgstr "Konfigurēt"
 #: gui/kmixprefdlg.cpp:85
 #, kde-format
 msgid "General"
-msgstr ""
+msgstr "Pamata"
 
 #: gui/kmixprefdlg.cpp:86
 #, kde-format
 msgid "Startup"
-msgstr ""
+msgstr "Palaišana"
 
 #: gui/kmixprefdlg.cpp:124
 #, kde-format
 msgid "Start KMix on desktop startup"
-msgstr ""
+msgstr "Palaist „KMix“ līdz ar darbvirsmu"
 
 #: gui/kmixprefdlg.cpp:128
 #, kde-format
 msgid "Start KMix automatically when the desktop starts"
-msgstr ""
+msgstr "Automātiski palaist „KMix“, ierakstoties darbvirsmā"
 
 #: gui/kmixprefdlg.cpp:131
 #, kde-format
@@ -1002,26 +986,28 @@ msgid ""
 "Autostart will not work, because the autostart file kmix_autostart.desktop "
 "is missing. Check that KMix is installed correctly."
 msgstr ""
+"Automātiska palaišana nedarbosies, jo trūkst automātiskas palaišanas datnes "
+"„kmix_autostart.desktop“. Pārbaudiet, vai „KMix“ ir pareizi ieinstalēta."
 
 #: gui/kmixprefdlg.cpp:141
-#, fuzzy, kde-format
-#| msgid "Restore volumes on login"
+#, kde-format
 msgid "Restore previous volume settings on desktop startup"
-msgstr "Atjaunot skaļumu pie pieteikšanās"
+msgstr "Palaižot darbvirsmu, atjaunot iepriekšējos skaļuma iestatījumus"
 
 #: gui/kmixprefdlg.cpp:145
-#, fuzzy, kde-format
-#| msgid "Restore volumes on login"
+#, kde-format
 msgid ""
 "Restore all mixer volume levels and switches to their last used settings "
 "when the desktop starts"
-msgstr "Atjaunot skaļumu pie pieteikšanās"
+msgstr ""
+"Palaižot darbvirsmu, atjaunot miksera skaļuma līmeņus un slēdžus uz to "
+"pēdējiem iestatījumiem."
 
 #: gui/kmixprefdlg.cpp:148
 #, kde-format
 msgid ""
 "The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."
-msgstr ""
+msgstr "„PulseAudio“ vai MPRIS2 dinamisko vadīklu skaļumu „KMix“ neatjaunos."
 
 #: gui/kmixprefdlg.cpp:166
 #, kde-format
@@ -1039,10 +1025,9 @@ msgid "Behavior"
 msgstr "Izturēšanās"
 
 #: gui/kmixprefdlg.cpp:228
-#, fuzzy, kde-format
-#| msgid "Volume Control"
+#, kde-format
 msgid "Volume overdrive"
-msgstr "Skaļuma vadīkla"
+msgstr "Skaļuma pārsniegšana"
 
 #: gui/kmixprefdlg.cpp:233
 #, kde-format
@@ -1050,34 +1035,33 @@ msgctxt "@info:tooltip"
 msgid ""
 "Allow the volume to be raised above the recommended maximum (typically to "
 "150%)"
-msgstr ""
+msgstr "Ļauj skaļumu palielināt virs ieteiktā maksimuma (parasti līdz 150 %)"
 
 #: gui/kmixprefdlg.cpp:236
 #, kde-format
 msgid "Volume overdrive is only available for PulseAudio."
-msgstr ""
+msgstr "Skaļuma pārsniegšana ir pieejama tikai „PulseAudio“ sistēmā"
 
 #: gui/kmixprefdlg.cpp:246
 #, kde-format
 msgid "%1 must be restarted for the volume overdrive setting to take effect."
-msgstr ""
+msgstr "Lai skaļuma pārsniegšana stātos spēkā, „%1“ ir jāpārstartē."
 
 #: gui/kmixprefdlg.cpp:256
-#, fuzzy, kde-format
-#| msgid "Volume Control"
+#, kde-format
 msgid "Volume feedback"
-msgstr "Skaļuma vadīkla"
+msgstr "Skaļuma priekšskatījums"
 
 #: gui/kmixprefdlg.cpp:260
 #, kde-format
 msgctxt "@info:tooltip"
 msgid "Play a sample sound when the volume changes"
-msgstr ""
+msgstr "Atskaņo norādītu skaņu, izmainot skaļumu"
 
 #: gui/kmixprefdlg.cpp:264
 #, kde-format
 msgid "Volume feedback is only available when configured with Canberra."
-msgstr ""
+msgstr "Skaļuma priekšskatījums ir pieejams tikai konfigurācijā ar „Canberra“."
 
 #: gui/kmixprefdlg.cpp:286
 #, kde-kuit-format
@@ -1088,12 +1072,15 @@ msgid ""
 "wheel over the system tray icon, or moving sliders by a page step.</"
 "para><para>%1 must be restarted for this change to take effect.</para>"
 msgstr ""
+"<para>Nosaka skaļuma izmaiņas soli kā procentuālo izteiksmi no skaļuma "
+"diapazona.</para><para>Šis ietekmē skaļuma izmainīšanu ar saīšņu taustiņiem, "
+"ar peles rullīti sistēmas ikonu joslā vai ar slīdņa pārvietošanu pa soļiem.</"
+"para><para>Lai tas stātos spēkā, „%1“ ir jāpārstartē.</para>"
 
 #: gui/kmixprefdlg.cpp:293
-#, fuzzy, kde-format
-#| msgid "Volume Control"
+#, kde-format
 msgid "Volume step:"
-msgstr "Skaļuma vadīkla"
+msgstr "Skaļuma pārmaiņu solis:"
 
 #: gui/kmixprefdlg.cpp:301
 #, kde-format
@@ -1101,68 +1088,61 @@ msgid "Visual"
 msgstr "Vizuāli"
 
 #: gui/kmixprefdlg.cpp:310
-#, fuzzy, kde-format
-#| msgid "Show &tickmarks"
+#, kde-format
 msgid "Show slider &tickmarks"
-msgstr "Rādīt a&tzīmes"
+msgstr "Rādīt slīdņa a&tzīmes"
 
 #: gui/kmixprefdlg.cpp:313
-#, fuzzy, kde-format
-#| msgid "Enable/disable tickmark scales on the sliders"
+#, kde-format
 msgid "Show tick mark scales on sliders"
-msgstr "Ieslēdz/izslēdz slīdņu skalu atzīmju rādīšanu"
+msgstr "Uz slīdņiem rādīt atzīmes"
 
 #: gui/kmixprefdlg.cpp:315
-#, fuzzy, kde-format
-#| msgid "Show &labels"
+#, kde-format
 msgid "Show control &labels"
-msgstr "Rādīt &birkas"
+msgstr "Rādīt vadīklu &etiķetes"
 
 #: gui/kmixprefdlg.cpp:318
-#, fuzzy, kde-format
-#| msgid "Enables/disables description labels above the sliders"
+#, kde-format
 msgid "Show description labels for sliders"
-msgstr "Ieslēdz/izslēdz apraksta birku rādīšanu pie slīdņiem"
+msgstr "Rādīt slīdņu apraksta etiķetes"
 
 #: gui/kmixprefdlg.cpp:321
 #, kde-format
 msgid "Show On Screen Display (&OSD)"
-msgstr ""
+msgstr "Rādīt virslogu paziņojumu (&OSD)"
 
 #: gui/kmixprefdlg.cpp:324
 #, kde-format
 msgid "Show an on-screen indicator when changing the volume via hotkeys"
 msgstr ""
+"Rādīt virs logiem izlecošu indikatoru, kad maināt skaļumu ar saīšņu "
+"taustiņiem"
 
 #: gui/kmixprefdlg.cpp:333
-#, fuzzy, kde-format
-#| msgid "Slider orientation: "
+#, kde-format
 msgid "Slider orientation (main window): "
-msgstr "Slīdņa orientācija: "
+msgstr "Slīdņa orientācija (pamata logā): "
 
 #: gui/kmixprefdlg.cpp:334
-#, fuzzy, kde-format
-#| msgid "Enable system tray &volume control"
+#, kde-format
 msgid "Slider orientation (system tray popup):"
-msgstr "Ieslēgt sistēmas ikonu joslas &skaļuma vadību"
+msgstr "Slīdņu orientācija (sistēmas ikonu joslas izlecošajā lodziņā):"
 
 #: gui/kmixprefdlg.cpp:335
-#, fuzzy, kde-format
-#| msgid "Slider orientation: "
+#, kde-format
 msgid "Set the orientation of the main window control sliders"
-msgstr "Slīdņa orientācija: "
+msgstr "Iestata vadīklu slīdņu orientāciju pamata logā"
 
 #: gui/kmixprefdlg.cpp:336
-#, fuzzy, kde-format
-#| msgid "Enable system tray &volume control"
+#, kde-format
 msgid "Set the orientation of the system tray volume control sliders"
-msgstr "Ieslēgt sistēmas ikonu joslas &skaļuma vadību"
+msgstr "Iestata sistēmas ikonu joslas skaļuma vadīklu slīdņu orientāciju"
 
 #: gui/kmixprefdlg.cpp:348
-#, fuzzy, kde-format
-#| msgid "&Dock in system tray"
+#, kde-format
 msgid "Dock in system tray"
-msgstr "&Pietauvot sistēmas ikonu joslā"
+msgstr "Dokot sistēmas ikonu joslā"
 
 #: gui/kmixprefdlg.cpp:351
 #, kde-format
@@ -1170,35 +1150,34 @@ msgid ""
 "Dock the mixer into the system tray. Click on it to open the popup volume "
 "control."
 msgstr ""
+"Mikseri dokot sistēmas ikonu joslā. Klikšķinot uz tā, atvērsies izlecošais "
+"logs ar skaļuma vadīklām."
 
 #: gui/kmixprefdlg.cpp:355
 #, kde-format
 msgid "Mixers to show in the popup volume control:"
-msgstr ""
+msgstr "Izlecošajā skaļuma lodziņā parādāmie mikseri:"
 
 #: gui/kmixprefdlg.cpp:365
-#, fuzzy, kde-format
-#| msgid "Select mixer:"
+#, kde-format
 msgid "Select Mixers"
-msgstr "Izvēlieties mikseri:"
+msgstr "Atlasiet mikserus"
 
 #: gui/kmixprefdlg.cpp:367
 #, kde-format
 msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
-msgstr ""
+msgstr "Atzīmētie mikseri būs redzami skaļuma vadīklu izlecošajā logā."
 
 #: gui/kmixtoolbox.cpp:96
-#, fuzzy, kde-format
-#| msgid "No sound card is installed or currently plugged in."
+#, kde-format
 msgid "No sound devices are installed or are currently available."
-msgstr "Nav uzstādītas vai pieslēgtas skaņas kartes."
+msgstr "Šobrīd nav instalēta vai pieejama neviena audio ierīce."
 
 #: gui/mdwslider.cpp:95
-#, fuzzy, kde-format
-#| msgid "&Split Channels"
+#, kde-format
 msgid "Split Channels"
-msgstr "&Sadalīt kanālus"
+msgstr "Sadalīt kanālus"
 
 #: gui/mdwslider.cpp:107 gui/mdwslider.cpp:626
 #, kde-format
@@ -1206,44 +1185,39 @@ msgid "Capture"
 msgstr "Tvert"
 
 #: gui/mdwslider.cpp:112
-#, fuzzy, kde-format
-#| msgid "Capture Devices"
+#, kde-format
 msgid "Use Device"
-msgstr "Tveršanas ierīces"
+msgstr "Izmantot ierīci"
 
 #: gui/mdwslider.cpp:157
 #, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Mute %2 on %1"
-msgstr ""
+msgstr "Apklusināt „%2“, kas nāk no „%1“"
 
 #: gui/mdwslider.cpp:169
-#, fuzzy, kde-format
-#| msgid "Increase Volume"
+#, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Increase volume of %2 on %1"
-msgstr "Palielināt skaļumu"
+msgstr "Palielināt „%2“ skaļumu, kas nāk no „%1“"
 
 #: gui/mdwslider.cpp:177
-#, fuzzy, kde-format
-#| msgid "Decrease Volume"
+#, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Decrease volume of %2 on %1"
-msgstr "Samazināt skaļumu"
+msgstr "Samazināt „%2“ skaļumu, kas nāk no „%1“"
 
 #: gui/mdwslider.cpp:327
-#, fuzzy, kde-format
-#| msgid "Capture/Uncapture %1"
+#, kde-format
 msgctxt "%1=channel"
 msgid "Capture/Uncapture %1"
-msgstr "Tvert/netvert %1"
+msgstr "Tvert/netvert „%1“"
 
 #: gui/mdwslider.cpp:328
-#, fuzzy, kde-format
-#| msgid "Mute/Unmute %1"
+#, kde-format
 msgctxt "%1=channel"
 msgid "Mute/Unmute %1"
-msgstr "Apklusināt/neapklusināt %1"
+msgstr "Apklusināt/neapklusināt „%1“"
 
 #: gui/mdwslider.cpp:332 gui/mdwslider.cpp:333 gui/mdwslider.cpp:334
 #, kde-format
@@ -1252,6 +1226,8 @@ msgid ""
 "%1\n"
 "%2"
 msgstr ""
+"%1\n"
+"%2"
 
 #: gui/mdwslider.cpp:678
 #, kde-format
@@ -1259,56 +1235,49 @@ msgid "%1 (capture)"
 msgstr "%1 (tvert)"
 
 #: gui/mdwslider.cpp:1101
-#, fuzzy, kde-format
-#| msgid "Automatic According to Category"
+#, kde-format
 msgid "Automatic (according to category)"
-msgstr "Automātiski pēc kategorijas"
+msgstr "Automātiski (pēc kategorijas)"
 
 #: gui/mixdevicewidget.cpp:65
-#, fuzzy, kde-format
-#| msgid "C&onfigure Shortcuts..."
+#, kde-format
 msgid "Channel Shortcuts..."
-msgstr "K&onfigurēt īsceļus..."
+msgstr "Konfigurēt saīsnes..."
 
 #: gui/viewbase.cpp:88
-#, fuzzy, kde-format
-#| msgid "Configure &Channels..."
+#, kde-format
 msgid "Configure this view"
-msgstr "Konfigurēt &kanālus..."
+msgstr "Konfigurēt šo skatu"
 
 #: gui/viewdockareapopup.cpp:483
-#, fuzzy, kde-format
-#| msgid "Show Mixer Window"
+#, kde-format
 msgid "Show the full mixer window"
-msgstr "Rādīt miksera logu"
+msgstr "Rādīt pilnu miksera logu"
 
 #: gui/viewdockareapopup.cpp:515
-#, fuzzy, kde-format
-#| msgid "Load volume profile 1"
+#, kde-format
 msgid "Load volume profile %1"
-msgstr "Ielādēt skaļuma profilu 1"
+msgstr "Ielādēt skaļuma profilu „%1“"
 
 #: gui/viewsliders.cpp:181
 #, kde-format
 msgid "Nothing is playing audio."
-msgstr ""
+msgstr "Nekas netiek atskaņots"
 
 #: gui/viewsliders.cpp:184
 #, kde-format
 msgid "Nothing is capturing audio."
-msgstr ""
+msgstr "Nekas netver skaņu."
 
 #: gui/viewsliders.cpp:185
-#, fuzzy, kde-format
-#| msgid "Capture Devices"
+#, kde-format
 msgid "There are no capture devices."
-msgstr "Tveršanas ierīces"
+msgstr "Tveršanas ierīces nav pieejamas."
 
 #: gui/viewsliders.cpp:186
-#, fuzzy, kde-format
-#| msgid "Playback Devices"
+#, kde-format
 msgid "There are no playback devices."
-msgstr "Atskaņošanas ierīces"
+msgstr "Nav pieejamas ierīces atskaņošanai."
 
 #, fuzzy
 #~| msgid "Configure &Channels..."
