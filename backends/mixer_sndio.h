@@ -30,13 +30,13 @@ struct DevInfo
         , maxval(d->maxval)
         , curval(curval)
     {
-        if (!group.isEmpty() && group.contains(QLatin1String("app")))
+        if (!group.isEmpty() && group.contains(QLatin1StringView("app")))
             devType = SndioDevTyp::APP_PLAYBACK;
-        else if (group.isEmpty() && QString(node0.name).contains(QLatin1String("output")))
+        else if (group.isEmpty() && QString(node0.name).contains(QLatin1StringView("output")))
             devType = SndioDevTyp::PLAYBACK;
-        else if (group.isEmpty() && QString(node0.name).contains(QLatin1String("input")))
+        else if (group.isEmpty() && QString(node0.name).contains(QLatin1StringView("input")))
             devType = SndioDevTyp::CAPTURE;
-        else if (!name.isEmpty() && QString(node0.name).contains(QLatin1String("server")))
+        else if (!name.isEmpty() && QString(node0.name).contains(QLatin1StringView("server")))
             devType = SndioDevTyp::SERVER;
     }
 
