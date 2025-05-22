@@ -7,20 +7,21 @@
 # Giovanni Venturi <jumpyj@tiscali.it>, 2006.
 # Luciano Montanaro <mikelima@cirulla.net>, 2008.
 # Federico Zenith <federico.zenith@member.fsf.org>, 2011, 2012, 2013, 2014.
+# SPDX-FileCopyrightText: 2025 Paolo Zamponi <feus73@gmail.com>
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-12-09 00:40+0000\n"
-"PO-Revision-Date: 2024-12-09 13:15+0100\n"
-"Last-Translator: Vincenzo Reale <smart2128vr@gmail.com>\n"
+"PO-Revision-Date: 2025-05-18 09:34+0200\n"
+"Last-Translator: Paolo Zamponi <feus73@gmail.com>\n"
 "Language-Team: Italian <kde-i18n-it@kde.org>\n"
 "Language: it\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
-"X-Generator: Lokalize 24.08.3\n"
+"X-Generator: Lokalize 25.04.1\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -1087,9 +1088,9 @@ msgid ""
 msgstr ""
 "<para>Imposta l'incremento del volume come percentuale dell'intervallo del "
 "volume.</para><para>Ciò influisce sulla modifica del volume tramite i tasti "
-"di scelta rapida, con la rotella del mouse sull'icona della barra delle "
-"applicazioni o spostando i cursori di un passo di pagina.</para><para>%1 "
-"deve essere riavviato affinché questa modifica abbia effetto.</para>"
+"di scelta rapida, con la rotella del mouse sull'icona del vassoio di sistema "
+"o spostando i cursori di un passo di pagina.</para><para>%1 deve essere "
+"riavviato affinché questa modifica abbia effetto.</para>"
 
 #: gui/kmixprefdlg.cpp:293
 #, kde-format
