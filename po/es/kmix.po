@@ -1,4 +1,6 @@
-# Translation of kmix.po to Spanish
+# Spanish translations for kmix.po package.
+# Copyright (C) 2003-2025 This file is copyright:
+# This file is distributed under the same license as the kmix package.
 #
 # SPDX-FileCopyrightText: 2003, 2004 Salvador Gimeno Zanón <salgiza@jazzfree.com>
 # SPDX-FileCopyrightText: 2004, 2005 Salvador Gimeno Zanón <salgiza@ono.com>
@@ -6,18 +8,17 @@
 # SPDX-FileCopyrightText: 2005 Pablo de Vicente <pablo.devicente@gmail.com>
 # SPDX-FileCopyrightText: 2006, 2007, 2013, 2014, 2023, 2024 Eloy Cuadra <ecuadra@eloihr.net>
 # SPDX-FileCopyrightText: 2008 Jaime Robles <jaime@kde.org>
-# SPDX-FileCopyrightText: 2008, 2009 Enrique Matias Sanchez (Quique) <cronopios@gmail.com>
-# SPDX-FileCopyrightText: 2009, 2010, 2011, 2012 Enrique Matias Sanchez (aka Quique) <cronopios@gmail.com>
+# SPDX-FileCopyrightText: 2008, 2009, 2010, 2011, 2012 Enrique Matias Sanchez (Quique) <cronopios@gmail.com>
 # SPDX-FileCopyrightText: 2012 Rocio Gallego <traducciones@rociogallego.com>
 # SPDX-FileCopyrightText: 2013 Ayoze Hernández Díaz <ayoze12@gmail.com>
 # SPDX-FileCopyrightText: 2014 David Paul <eodos0@gmail.com>
-# SPDX-FileCopyrightText: 2017, 2018, 2019, 2020, 2021, 2023, 2024, 2024 Víctor Rodrigo Córdoba <vrcordoba@gmail.com>
+# SPDX-FileCopyrightText: 2017, 2018, 2019, 2020, 2021, 2023, 2024, 2025 Víctor Rodrigo Córdoba <vrcordoba@gmail.com>
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-12-09 00:40+0000\n"
-"PO-Revision-Date: 2024-12-10 00:51+0100\n"
+"PO-Revision-Date: 2025-06-09 02:06+0100\n"
 "Last-Translator: Víctor Rodrigo Córdoba <vrcordoba@gmail.com>\n"
 "Language-Team: Spanish <kde-l10n-es@kde.org>\n"
 "Language: es\n"
@@ -256,7 +257,7 @@ msgstr "Una lista de motores a usar (solo para tests)."
 #: apps/kmixmain.cpp:124
 #, kde-format
 msgid "name[,name...]"
-msgstr "nombre[,nombre...]"
+msgstr "nombre[,nombre…]"
 
 #: apps/kmixmain.cpp:125
 #, kde-format
@@ -276,17 +277,17 @@ msgstr "Ocultar la ventana del mezclador"
 #: apps/kmixwindow.cpp:176
 #, kde-format
 msgid "Audio Setup..."
-msgstr "Configuración de audio..."
+msgstr "Configuración de audio…"
 
 #: apps/kmixwindow.cpp:181
 #, kde-format
 msgid "Configure &Channels..."
-msgstr "Configurar los &canales..."
+msgstr "Configurar los &canales…"
 
 #: apps/kmixwindow.cpp:186
 #, kde-format
 msgid "Select Master Channel..."
-msgstr "Seleccione el canal maestro..."
+msgstr "Seleccione el canal maestro…"
 
 #: apps/kmixwindow.cpp:192
 #, kde-format
@@ -1277,7 +1278,7 @@ msgstr "Automático (según la categoría)"
 #: gui/mixdevicewidget.cpp:65
 #, kde-format
 msgid "Channel Shortcuts..."
-msgstr "Atajos de teclado de canal..."
+msgstr "Atajos de teclado de canal…"
 
 #: gui/viewbase.cpp:88
 #, kde-format
