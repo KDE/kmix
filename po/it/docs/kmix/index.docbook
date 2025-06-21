@@ -421,7 +421,7 @@ soundcards.</para
     <para
 >Imposta la scala del volume come percentuale della sua estensione. </para>
     <para
->Ciò influisce sulla modifica del volume tramite i tasti di scelta rapida, con la rotella del mouse sull'icona della barra delle applicazioni o spostando i cursori di un passo di pagina. </para>
+>Ciò influisce sulla modifica del volume tramite i tasti di scelta rapida, con la rotella del mouse sull'icona del vassoio di sistema o spostando i cursori di un passo di pagina. </para>
     <para
 >&kmix; va riavviato affinché questa modifica abbia effetto. </para>
 </listitem>
@@ -614,7 +614,7 @@ soundcards.</para
 <varlistentry>
 <term
 ><guilabel
->Inserisci nel vassoio</guilabel>
+>Aggancia al vassoio di sistema</guilabel>
 </term>
 <listitem
 ><para
