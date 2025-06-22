@@ -1286,9 +1286,3 @@ msgstr "Няма устройства за запис."
 #, kde-format
 msgid "There are no playback devices."
 msgstr "Няма устройства за възпроизвеждане."
-
-#~ msgid "Configure Channels..."
-#~ msgstr "Настройване на каналите..."
-
-#~ msgid "Device Settings"
-#~ msgstr "Настройки на устройство"
