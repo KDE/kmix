@@ -51,12 +51,12 @@ msgstr "Stefan Schimanski"
 #: apps/kmixctrl.cpp:51
 #, kde-format
 msgid "Save current volumes as default"
-msgstr "მიმდინარე ხმის დონეების ნაგულისხმებად შენახვა"
+msgstr "მიმდინარე ხმის დონეების ნაგულისხმევად შენახვა"
 
 #: apps/kmixctrl.cpp:53
 #, kde-format
 msgid "Restore default volumes"
-msgstr "ნაგულისხმები ხმების აღდგენა"
+msgstr "ნაგულისხმევი ხმების აღდგენა"
 
 #: apps/kmixmain.cpp:59
 #, kde-format
@@ -993,7 +993,7 @@ msgid ""
 "Restore all mixer volume levels and switches to their last used settings "
 "when the desktop starts"
 msgstr ""
-"სამუშაო მაგიდის გაშვებისას მიქსერის ყველა დონის აღდგენა და ნაგულისხმები "
+"სამუშაო მაგიდის გაშვებისას მიქსერის ყველა დონის აღდგენა და ნაგულისხმევი "
 "მნიშვნელობების ჩატვირთვა"
 
 #: gui/kmixprefdlg.cpp:148
