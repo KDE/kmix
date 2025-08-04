@@ -232,7 +232,7 @@ msgstr "OSS 4"
 #: apps/kmixmain.cpp:122
 #, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
-msgstr "يمنع إظهار نافذة مازج.ك الرئيسية ، إذا كان مازج.ك يعمل بالفعل."
+msgstr "يمنع إظهار نافذة مازج.ك الرئيسة ، إذا كان مازج.ك يعمل بالفعل."
 
 #: apps/kmixmain.cpp:123
 #, kde-format
@@ -277,7 +277,7 @@ msgstr "اضبط ال&قنوات..."
 #: apps/kmixwindow.cpp:186
 #, kde-format
 msgid "Select Master Channel..."
-msgstr "اختر القناة الرئيسية..."
+msgstr "اختر القناة الرئيسة..."
 
 #: apps/kmixwindow.cpp:192
 #, kde-format
@@ -829,7 +829,7 @@ msgstr "اختر التصميم للعرض الجديد"
 #: gui/dialogselectmaster.cpp:44 gui/dialogselectmaster.cpp:140
 #, kde-format
 msgid "Select Master Channel"
-msgstr "اختر القناة الرئيسية"
+msgstr "اختر القناة الرئيسة"
 
 #: gui/dialogselectmaster.cpp:74
 #, kde-format
