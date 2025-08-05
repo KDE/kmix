@@ -5,14 +5,14 @@
 # Usamah Ali Al-Maqdad <msareehi@kacst.edu.sa>, 2004.
 # محمد سعد  Mohamed SAAD <metehyi@free.fr>, 2006.
 # Youssef Chahibi <chahibi@gmail.com>, 2007.
-# SPDX-FileCopyrightText: 2008, 2021, 2022, 2024 zayed <zayed.alsaidi@gmail.com>
+# SPDX-FileCopyrightText: 2008, 2021, 2022, 2024, 2025 zayed <zayed.alsaidi@gmail.com>
 # Yaser Ammar (Waraqa) <waraqa@mail.com>, 2014.
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-12-09 00:40+0000\n"
-"PO-Revision-Date: 2024-12-19 08:04+0400\n"
+"PO-Revision-Date: 2025-08-04 15:14+0400\n"
 "Last-Translator: Zayed Al-Saidi <zayed.alsaidi@gmail.com>\n"
 "Language-Team: ar\n"
 "Language: ar\n"
@@ -56,12 +56,12 @@ msgstr "ستيفان شيمانسكي"
 #: apps/kmixctrl.cpp:51
 #, kde-format
 msgid "Save current volumes as default"
-msgstr "اجعل مستوى الأصوات الحالي هو الافتراضي"
+msgstr "اجعل مستوى الأصوات الحالي هو المبدئي"
 
 #: apps/kmixctrl.cpp:53
 #, kde-format
 msgid "Restore default volumes"
-msgstr "أعد المستويات الافتراضية"
+msgstr "أعد المستويات المبدئية"
 
 #: apps/kmixmain.cpp:59
 #, kde-format
@@ -252,7 +252,7 @@ msgstr "الاسم[,الاسم...]"
 #: apps/kmixmain.cpp:125
 #, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr "فعّل وضع تعدد التعريفات (التجريبي)"
+msgstr "مكّن وضع تعدد المشغلات (التجريبي)"
 
 #: apps/kmixmain.cpp:126
 #, kde-format
@@ -861,7 +861,7 @@ msgstr ""
 #: gui/dialogselectmaster.cpp:203
 #, kde-format
 msgid "Automatic (%1 recommendation)"
-msgstr "آلي (توصية بنسبة %1)"
+msgstr "آليّ (توصية بنسبة %1)"
 
 #: gui/dialogviewconfiguration.cpp:132
 #, kde-format
@@ -971,7 +971,7 @@ msgstr "بدء تشغيل مازج.ك عند بدء تشغيل سطح المكت
 #: gui/kmixprefdlg.cpp:128
 #, kde-format
 msgid "Start KMix automatically when the desktop starts"
-msgstr "بدء تشغيل مازج.ك آليًا عند بدء تشغيل سطح المكتب"
+msgstr "بدء تشغيل مازج.ك آليًّا عند بدء تشغيل سطح المكتب"
 
 #: gui/kmixprefdlg.cpp:131
 #, kde-format
@@ -979,8 +979,8 @@ msgid ""
 "Autostart will not work, because the autostart file kmix_autostart.desktop "
 "is missing. Check that KMix is installed correctly."
 msgstr ""
-"لن يعمل التشغيل التلقائي، لأن ملف التشغيل التلقائي kmix_autostart.desktop "
-"مفقود. تأكد من تثبيت مازج.ك بشكل صحيح."
+"لن يعمل التشغيل الآليّ، لأن ملف التشغيل الآليّ kmix_autostart.desktop مفقود. "
+"تأكد من تثبيت مازج.ك بشكل صحيح."
 
 #: gui/kmixprefdlg.cpp:141
 #, kde-format
@@ -1228,7 +1228,7 @@ msgstr "%1 (التقاط)"
 #: gui/mdwslider.cpp:1101
 #, kde-format
 msgid "Automatic (according to category)"
-msgstr "تلقائياً (وفقاً للتصنيف)"
+msgstr "آليّاً (وفقاً للتصنيف)"
 
 #: gui/mixdevicewidget.cpp:65
 #, kde-format
