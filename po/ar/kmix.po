@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-12-09 00:40+0000\n"
-"PO-Revision-Date: 2025-08-04 15:14+0400\n"
+"PO-Revision-Date: 2025-08-05 21:44+0400\n"
 "Last-Translator: Zayed Al-Saidi <zayed.alsaidi@gmail.com>\n"
 "Language-Team: ar\n"
 "Language: ar\n"
@@ -511,7 +511,7 @@ msgstr "هاتف استقبال"
 
 #: backends/mixer_oss.cpp:80
 msgid "PhoneOut"
-msgstr "هاتف ارسال"
+msgstr "هاتف إرسال"
 
 #: backends/mixer_oss.cpp:80
 msgid "Video"
@@ -563,7 +563,7 @@ msgstr ""
 "مازج.ك: تعذر وجود المازج.\n"
 "الرجاء التأكد من تثبيت بطاقة الصوت\n"
 "وتحميل تعريفه.\n"
-"في لينكس رببما تحتاج لاستخدام 'insmod' لتحميل التعريف.\n"
+"في لينكس ربما تحتاج لاستخدام 'insmod' لتحميل التعريف.\n"
 "استخدم 'soundon' حينما تستعمل OSS التجارية."
 
 #: backends/mixer_oss4.cpp:530
@@ -703,9 +703,9 @@ msgid ""
 "other controls like ADC or DAC. For headphones, soundcards often supply a "
 "Headphone control."
 msgstr ""
-"يتحكم بصوت السماعات الأمامية أو جميع السماعات (بحسب نوعبطاقة الصوت). إذا كنت "
-"تستخدم مخرجاً رقمياً فقد تحتاج أيضاًإلى استخدام عناصر تحكم أخرى مثل ADC أو DAC. "
-"ومن أجل سماعة الرأسغالباً ما تقدم بطاقات الصوت تحكماً خاصاً بها."
+"يتحكم بصوت السماعات الأمامية أو جميع السماعات (بحسب نوع بطاقة الصوت). إذا "
+"كنت تستخدم مخرجاً رقمياً فقد تحتاج أيضاً إلى استخدام عناصر تحكم أخرى مثل ADC أو "
+"DAC. ومن أجل سماعة الرأس غالباً ما تقدم بطاقات الصوت تحكماً خاصاً بها."
 
 #: backends/mixerbackend.cpp:353
 #, kde-format
@@ -723,7 +723,7 @@ msgid ""
 "Controls the headphone volume. Some soundcards include a switch that must be "
 "manually activated to enable the headphone output."
 msgstr ""
-"يتحكم بمستوى سماعة الرأس. بعض بطاقات الصوت تتضمن زراً يجبتفعيله يدوياً لتشغيل "
+"يتحكم بمستوى سماعة الرأس. بعض بطاقات الصوت تتضمن زراً يجب تفعيله يدوياً لتشغيل "
 "مخرج سماعة الرأس."
 
 #: backends/mixerbackend.cpp:355
@@ -993,8 +993,8 @@ msgid ""
 "Restore all mixer volume levels and switches to their last used settings "
 "when the desktop starts"
 msgstr ""
-"استعد جميع مستويات صوت الخلاط والتبديل إلى آخر إعدادات تم استخدامها عند بدء "
-"تشغيل سطح المكتب"
+"استعد جميع مستويات صوت الخلاط والتبديل إلى آخر إعدادات مستخدمة عند بدء تشغيل "
+"سطح المكتب"
 
 #: gui/kmixprefdlg.cpp:148
 #, kde-format
@@ -1141,7 +1141,7 @@ msgid ""
 "Dock the mixer into the system tray. Click on it to open the popup volume "
 "control."
 msgstr ""
-"أرسي الخلاط في علبة النظام. انقر فوقه لفتح نافذة التحكم في مستوى الصوت "
+"أرسِ الخلاط في علبة النظام. انقر فوقه لفتح نافذة التحكم في مستوى الصوت "
 "المنبثقة."
 
 #: gui/kmixprefdlg.cpp:355
