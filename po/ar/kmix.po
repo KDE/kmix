@@ -12,7 +12,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-12-09 00:40+0000\n"
-"PO-Revision-Date: 2025-08-09 13:59+0400\n"
+"PO-Revision-Date: 2025-08-13 19:36+0400\n"
 "Last-Translator: Zayed Al-Saidi <zayed.alsaidi@gmail.com>\n"
 "Language-Team: ar\n"
 "Language: ar\n"
@@ -96,7 +96,7 @@ msgstr "كولين غوثري"
 #: apps/kmixmain.cpp:65
 #, kde-format
 msgid "PulseAudio support"
-msgstr "دعم PulseAudio"
+msgstr "إتاحة PulseAudio"
 
 #: apps/kmixmain.cpp:66
 #, kde-format
@@ -116,7 +116,7 @@ msgstr "بريان هانسون"
 #: apps/kmixmain.cpp:67
 #, kde-format
 msgid "Solaris support"
-msgstr "دعم سولاريز"
+msgstr "إتاحة الحزمة للنظام التشغيلي سولاريز"
 
 #. i18n("Helge Deller")      , i18n("HP/UX port"), "deller@gmx.de");
 #. The initial support was for ALSA 0.5. The new code is not based on it IIRC.
@@ -182,7 +182,7 @@ msgstr "إروين ماشر"
 #: apps/kmixmain.cpp:80
 #, kde-format
 msgid "Improving support for emu10k1 based soundcards"
-msgstr "تحسين دعم بطاقات الصوت المعتمدة على emu10k1"
+msgstr "تحسين عمل بطاقات الصوت المعتمدة على emu10k1"
 
 #: apps/kmixmain.cpp:81
 #, kde-format
@@ -192,7 +192,7 @@ msgstr "فالنتين روسو"
 #: apps/kmixmain.cpp:81
 #, kde-format
 msgid "TerraTec DMX6Fire support"
-msgstr "دعم TerraTec DMX6Fire"
+msgstr "العمل مع TerraTec DMX6Fire"
 
 #: apps/kmixmain.cpp:89
 #, kde-format
@@ -232,7 +232,7 @@ msgstr "OSS 4"
 #: apps/kmixmain.cpp:122
 #, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
-msgstr "يمنع إظهار نافذة مازج.ك الرئيسة ، إذا كان مازج.ك يعمل بالفعل."
+msgstr "يمنع إظهار نافذة مازج.ك الرئيسة، إذا كان مازج.ك يعمل بالفعل."
 
 #: apps/kmixmain.cpp:123
 #, kde-format
