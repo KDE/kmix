@@ -232,7 +232,7 @@ msgstr "OSS 4"
 #: apps/kmixmain.cpp:122
 #, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
-msgstr "يمنع إظهار نافذة مازج.ك الرئيسة، إذا كان مازج.ك يعمل بالفعل."
+msgstr "يمنع إظهار نافذة مازج.ك الرئيسة، إذا كان مازج.ك يعمل فعلًا."
 
 #: apps/kmixmain.cpp:123
 #, kde-format
@@ -352,7 +352,7 @@ msgstr "خطأ"
 #: apps/kmixwindow.cpp:788
 #, kde-format
 msgid "Cannot add view - View already exists."
-msgstr "لا يمكن إضافة عرض - موجودة بالفعل"
+msgstr "لا يمكن إضافة عرض - موجودة فعلًا"
 
 #: apps/kmixwindow.cpp:856
 #, kde-format
