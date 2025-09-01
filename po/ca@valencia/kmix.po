@@ -279,7 +279,7 @@ msgstr "Configura els &canals…"
 #: apps/kmixwindow.cpp:186
 #, kde-format
 msgid "Select Master Channel..."
-msgstr "Seleccioneu el canal mestre…"
+msgstr "Trieu el canal mestre…"
 
 #: apps/kmixwindow.cpp:192
 #, kde-format
@@ -825,7 +825,7 @@ msgstr "Afig una vista"
 #: gui/dialogaddview.cpp:89
 #, kde-format
 msgid "Select mixer:"
-msgstr "Seleccioneu un mesclador:"
+msgstr "Trieu un mesclador:"
 
 #: gui/dialogaddview.cpp:96
 #, kde-format
@@ -835,12 +835,12 @@ msgstr "Mesclador actual"
 #: gui/dialogaddview.cpp:116
 #, kde-format
 msgid "Select the design for the new view:"
-msgstr "Seleccioneu el disseny per a la vista nova:"
+msgstr "Trieu el disseny per a la vista nova:"
 
 #: gui/dialogselectmaster.cpp:44 gui/dialogselectmaster.cpp:140
 #, kde-format
 msgid "Select Master Channel"
-msgstr "Seleccioneu el canal mestre"
+msgstr "Trieu el canal mestre"
 
 #: gui/dialogselectmaster.cpp:74
 #, kde-format
@@ -851,7 +851,7 @@ msgstr "Mesclador actual:"
 #, kde-kuit-format
 msgctxt "@info"
 msgid "Select the <link url=\"i\">master volume</link> channel:"
-msgstr "Seleccioneu el canal del <link url=\"i\">volum mestre</link>:"
+msgstr "Trieu el canal del <link url=\"i\">volum mestre</link>:"
 
 #: gui/dialogselectmaster.cpp:132
 #, kde-kuit-format
@@ -1176,7 +1176,7 @@ msgstr "Mescladors que s'han de mostrar en el control de volum emergent:"
 #: gui/kmixprefdlg.cpp:365
 #, kde-format
 msgid "Select Mixers"
-msgstr "Seleccioneu els mescladors"
+msgstr "Trieu els mescladors"
 
 #: gui/kmixprefdlg.cpp:367
 #, kde-format
