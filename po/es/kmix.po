@@ -966,7 +966,7 @@ msgstr "Volumen silenciado"
 #: gui/kmixdockwidget.cpp:231
 #, kde-format
 msgid "Volume at %1%"
-msgstr "Volumen al %1%"
+msgstr "Volumen al %1 %"
 
 #: gui/kmixdockwidget.cpp:233
 #, kde-format
