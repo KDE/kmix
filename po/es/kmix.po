@@ -6,7 +6,7 @@
 # SPDX-FileCopyrightText: 2004, 2005 Salvador Gimeno Zanón <salgiza@ono.com>
 # SPDX-FileCopyrightText: 2005 santi <santi@kde-es.org>
 # SPDX-FileCopyrightText: 2005 Pablo de Vicente <pablo.devicente@gmail.com>
-# SPDX-FileCopyrightText: 2006, 2007, 2013, 2014, 2023, 2024 Eloy Cuadra <ecuadra@eloihr.net>
+# SPDX-FileCopyrightText: 2006, 2007, 2013, 2014, 2023, 2024, 2025 Eloy Cuadra <ecuadra@eloihr.net>
 # SPDX-FileCopyrightText: 2008 Jaime Robles <jaime@kde.org>
 # SPDX-FileCopyrightText: 2008, 2009, 2010, 2011, 2012 Enrique Matias Sanchez (Quique) <cronopios@gmail.com>
 # SPDX-FileCopyrightText: 2012 Rocio Gallego <traducciones@rociogallego.com>
@@ -18,7 +18,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2024-12-09 00:40+0000\n"
-"PO-Revision-Date: 2025-06-09 02:06+0100\n"
+"PO-Revision-Date: 2025-09-20 16:39+0100\n"
 "Last-Translator: Víctor Rodrigo Córdoba <vrcordoba@gmail.com>\n"
 "Language-Team: Spanish <kde-l10n-es@kde.org>\n"
 "Language: es\n"
@@ -26,7 +26,7 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=n != 1;\n"
-"X-Generator: Lokalize 24.08.3\n"
+"X-Generator: Lokalize 25.08.1\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
@@ -1058,7 +1058,7 @@ msgid ""
 "150%)"
 msgstr ""
 "Permitir subir el volumen por encima del máximo recomendado (típicamente al "
-"150%)."
+"150 %)."
 
 #: gui/kmixprefdlg.cpp:236
 #, kde-format

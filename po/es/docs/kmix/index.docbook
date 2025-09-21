@@ -695,12 +695,12 @@ soundcards.</para
 </para>
 
 <para
->Obtener nivel de volumen (0-100%): <programlisting
+>Obtener nivel de volumen (0-100 %): <programlisting
 >qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Get org.kde.KMix.Control volume</programlisting>
 </para>
 
 <para
->Configurar nivel de volumen (0-100%): <programlisting
+>Configurar nivel de volumen (0-100 %): <programlisting
 >qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Set org.kde.KMix.Control volume 70</programlisting>
 </para>
 
