@@ -268,7 +268,7 @@ msgstr "Activer le mode (expérimental) avec pilotes multiples"
 #: apps/kmixmain.cpp:126
 #, kde-format
 msgid "Do not show the system tray volume control."
-msgstr "Ne pas afficher le contrôle de volume depuis la boîte à miniatures"
+msgstr "Ne pas afficher le contrôle de volume depuis la boite à miniatures"
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -879,9 +879,9 @@ msgid ""
 msgstr ""
 "<para> Ici, vous pouvez sélection le périphérique principal de son (s'il y "
 "en a plus d'un) et son canal principal.</para><para> Le canal principal est "
-"celui affecté au contrôle de volume de la boîte à miniatures, les raccourcis "
+"celui affecté au contrôle de volume de la boite à miniatures, les raccourcis "
 "clavier pour l'augmentation / diminution du volume et l'action de "
-"<interface>Mise en sourdine</interface> dans le menu contextuel de la boîte "
+"<interface>Mise en sourdine</interface> dans le menu contextuel de la boite "
 "à miniatures.</para>"
 
 #: gui/dialogselectmaster.cpp:203
@@ -1103,7 +1103,7 @@ msgstr ""
 "<para>Définit le pas de volume comme un pourcentage de l'intervalle de "
 "volume.</para><para> Ceci affecte les modifications de volume par les "
 "raccourcis de clavier, par la molette de souris au dessus de l'icône de la "
-"boîte à miniatures ou par le déplacement des curseurs avec un pas de une "
+"boite à miniatures ou par le déplacement des curseurs avec un pas de une "
 "page.</para><para>%1 doit être relancé pour que cette modification prenne "
 "effet.</para>"
 
@@ -1157,7 +1157,7 @@ msgstr "Orientation des curseurs (fenêtre principale) : "
 #: gui/kmixprefdlg.cpp:334
 #, kde-format
 msgid "Slider orientation (system tray popup):"
-msgstr "Orientation des curseurs (menu contextuel de la boîte à miniatures) :"
+msgstr "Orientation des curseurs (menu contextuel de la boite à miniatures) :"
 
 #: gui/kmixprefdlg.cpp:335
 #, kde-format
@@ -1169,13 +1169,13 @@ msgstr ""
 #, kde-format
 msgid "Set the orientation of the system tray volume control sliders"
 msgstr ""
-"Définir l'orientation des curseurs de contrôle de volume de la boîte à "
+"Définir l'orientation des curseurs de contrôle de volume de la boite à "
 "miniatures"
 
 #: gui/kmixprefdlg.cpp:348
 #, kde-format
 msgid "Dock in system tray"
-msgstr "Intégrer dans la boîte à miniatures"
+msgstr "Intégrer dans la boite à miniatures"
 
 #: gui/kmixprefdlg.cpp:351
 #, kde-format
@@ -1183,7 +1183,7 @@ msgid ""
 "Dock the mixer into the system tray. Click on it to open the popup volume "
 "control."
 msgstr ""
-"Placer le mixeur dans la boîte à miniatures. Cliquez dessus pour ouvrir le "
+"Placer le mixeur dans la boite à miniatures. Cliquez dessus pour ouvrir le "
 "menu contextuel de contrôle du volume."
 
 #: gui/kmixprefdlg.cpp:355
