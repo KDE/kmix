@@ -385,7 +385,7 @@ soundcards.</para
     <para
 >Définit le pas de volume comme un pourcentage de l'intervalle de volume. </para>
     <para
->Ceci affecte les modifications par les raccourcis clavier, par la molette de souris, sur l'icône de la boîte à miniatures ou par le déplacement des curseurs d'un saut de page. </para>
+>Ceci affecte les modifications par les raccourcis clavier, par la molette de souris, sur l'icône de la boite à miniatures ou par le déplacement des curseurs d'un saut de page. </para>
     <para
 >&kmix; doit être re-démarré pour que cette modification prenne effet. </para>
 </listitem>
@@ -437,7 +437,7 @@ soundcards.</para
 <listitem
 ><para
 ><action
->Veuillez cocher cette case pour activer l'affichage « OSD » lors du survol du composant graphique de &kmix; dans la boîte à miniatures.</action
+>Veuillez cocher cette case pour activer l'affichage « OSD » lors du survol du composant graphique de &kmix; dans la boite à miniatures.</action
 ></para
 ></listitem>
 </varlistentry>
@@ -480,14 +480,14 @@ soundcards.</para
 <term
 ><menuchoice
 ><guimenu
->Orientation des curseurs (Menu contextuel depuis la boîte à miniatures)</guimenu
+>Orientation des curseurs (Menu contextuel depuis la boite à miniatures)</guimenu
 > <guimenuitem
 >Horizontal / vertical</guimenuitem
 > </menuchoice
 ></term>
 <listitem
 ><para
->comme les deux boutons radio précédents, mais pour le contrôle du volume depuis la boîte à miniatures (le panneau qui s'affiche après un clic gauche sur l'icône de &kmix; dans la boîte à miniatures).</para
+>comme les deux boutons radio précédents, mais pour le contrôle du volume depuis la boite à miniatures (le panneau qui s'affiche après un clic gauche sur l'icône de &kmix; dans la boite à miniatures).</para
 ></listitem>
 </varlistentry>
 </variablelist>
@@ -578,12 +578,12 @@ soundcards.</para
 <varlistentry>
 <term
 ><guilabel
->Insérer dans la boîte à miniatures</guilabel>
+>Insérer dans la boite à miniatures</guilabel>
 </term>
 <listitem
 ><para
 ><action
->Cochez cette case pour incruster &kmix; dans la boîte à miniatures.</action
+>Cochez cette case pour incruster &kmix; dans la boite à miniatures.</action
 ></para
 ></listitem>
 </varlistentry>
