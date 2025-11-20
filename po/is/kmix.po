@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2025-11-17 11:51+0000\n"
-"PO-Revision-Date: 2025-11-13 15:24+0000\n"
+"PO-Revision-Date: 2025-11-19 18:51+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language-Team: Icelandic\n"
 "Language: is\n"
@@ -1026,6 +1026,7 @@ msgid ""
 "Allow the volume to be raised above the recommended maximum (typically to "
 "150%)"
 msgstr ""
+"Leyfa hljóðstyrk að fara upp fyrir ráðlagt hámark (venjulega upp í 150%)"
 
 #: gui/kmixprefdlg.cpp:236
 #, kde-format
