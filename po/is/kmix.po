@@ -10,7 +10,7 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2025-11-17 11:51+0000\n"
-"PO-Revision-Date: 2025-11-19 18:51+0000\n"
+"PO-Revision-Date: 2025-11-25 09:58+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language-Team: Icelandic\n"
 "Language: is\n"
@@ -131,6 +131,8 @@ msgstr "Jonathan Marten"
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
 msgstr ""
+"Tenging á meðan keyrslu stendur í KF5 (hotplugging), ALSA/OSS "
+"hljóðstyrksviðbrögð, betrumbætur á notendaviðmóti, KF6 yfirfærsla"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -240,7 +242,7 @@ msgstr "Ræsa KMix í villuvörðu umhverfi."
 #: apps/kmixmain.cpp:124
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "Listi yfir bakenda til að nota (einungis til prófana)."
 
 #: apps/kmixmain.cpp:124
 #, kde-format
@@ -854,6 +856,11 @@ msgid ""
 "global shortcut keys, and the <interface>Mute</interface> action in the "
 "system tray popup menu.</para>"
 msgstr ""
+"<para>Hér geturðu valið aðalhljóðtækið - master (ef þau eru fleiri en eitt) "
+"og aðalrás þess.</para><para>Aðalhljóðrásin er sú sem stýrt er af "
+"hljóðstýringunni í kerfisbakkanum, víðværum flýtilyklum til að auka/minnka "
+"hljóðstyrk og þagga niður, auk <interface>Þagga</interface> aðgerðarinnar í "
+"valmynd í sprettglugga kerfisbakkans.</para>"
 
 #: gui/dialogselectmaster.cpp:203
 #, kde-format
@@ -1052,7 +1059,7 @@ msgstr "Spila hljóðsýni við breytingar á hljóðstyrk"
 #: gui/kmixprefdlg.cpp:264
 #, kde-format
 msgid "Volume feedback is only available when configured with Canberra."
-msgstr ""
+msgstr "Hljóðstyrksviðbrögð eru eigöngu tiltæk þegar stillt er með Canberra."
 
 #: gui/kmixprefdlg.cpp:286
 #, kde-kuit-format
@@ -1063,6 +1070,11 @@ msgid ""
 "wheel over the system tray icon, or moving sliders by a page step.</"
 "para><para>%1 must be restarted for this change to take effect.</para>"
 msgstr ""
+"<para>Stilla hljóðstyrksþrep sem prósentuhlutfall af heildarsviði "
+"hljóðstyrks.</para><para>Þetta hefur áhrif á þegar hljóðstyrk er breytt með "
+"flýtilyklum, þegar músarhjólið er notað yfir táknmynd í kerfisbakka, eða "
+"þegar hljóðsleðar eru hreyfðir í skrefum.</para><para>Endurræsa þarf %1 til "
+"að breytingar taki gildi.</para>"
 
 #: gui/kmixprefdlg.cpp:293
 #, kde-format
@@ -1102,7 +1114,7 @@ msgstr "Birta stjórntexta á skjá (&OSD)"
 #: gui/kmixprefdlg.cpp:324
 #, kde-format
 msgid "Show an on-screen indicator when changing the volume via hotkeys"
-msgstr ""
+msgstr " Sýna skjámerki þegar hljóðstyrk er breytt með flýtilyklum"
 
 #: gui/kmixprefdlg.cpp:333
 #, kde-format
@@ -1135,6 +1147,8 @@ msgid ""
 "Dock the mixer into the system tray. Click on it to open the popup volume "
 "control."
 msgstr ""
+"Festa hljóðblandarann í kerfisbakkanum. Smelltu á hann til að opna "
+"sprettglugga hljóðstýringar."
 
 #: gui/kmixprefdlg.cpp:355
 #, kde-format
@@ -1151,6 +1165,8 @@ msgstr "Veldu hljóðblandara"
 msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
 msgstr ""
+"Hljóðblandararnir sem merkt er við hér munu birtast í sprettglugga "
+"hljóðstýringar."
 
 #: gui/kmixtoolbox.cpp:96
 #, kde-format
