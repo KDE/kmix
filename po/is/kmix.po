@@ -4,20 +4,20 @@
 # Logi Ragnarsson <logir@imf.au.dk>, 1998.
 # Arnar Leosson <leosson@frisurf.no>, 2004.
 # Þröstur Svanbergsson <throstur@bylur.net>, 2004.
-# Sveinn í Felli <sveinki@nett.is>, 2009, 2010, 2011, 2013, 2018, 2022, 2024.
+# SPDX-FileCopyrightText: 2009, 2010, 2011, 2013, 2018, 2022, 2024, 2025 Sveinn í Felli <sveinki@nett.is>
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2025-11-17 14:40+0000\n"
-"PO-Revision-Date: 2024-07-02 21:34+0000\n"
+"PO-Revision-Date: 2025-12-06 12:57+0000\n"
 "Last-Translator: Sveinn í Felli <sv1@fellsnet.is>\n"
 "Language-Team: Icelandic\n"
 "Language: is\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Lokalize 22.04.3\n"
+"X-Generator: Lokalize 23.08.5\n"
 "Plural-Forms: Plural-Forms: nplurals=2; plural=n != 1;\n"
 "\n"
 "\n"
@@ -39,10 +39,9 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
-msgstr "kmixctrl - græja til að vista/endurheimta styrk hljóðrása"
+msgstr "kmixctrl - KMix-græja til að vista/endurheimta hljóðstyrk"
 
 #: apps/kmixctrl.cpp:43
 #, kde-format
@@ -75,10 +74,9 @@ msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix - Litli fullkomni hljóðblandari KDE"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "(c) 1996 - 2013 KMix höfundarnir"
+msgstr "(c) 1996 - 2024 KMix höfundarnir"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -133,6 +131,8 @@ msgstr "Jonathan Marten"
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
 msgstr ""
+"Tenging á meðan keyrslu stendur í KF5 (hotplugging), ALSA/OSS "
+"hljóðstyrksviðbrögð, betrumbætur á notendaviðmóti, KF6 yfirfærsla"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -242,7 +242,7 @@ msgstr "Ræsa KMix í villuvörðu umhverfi."
 #: apps/kmixmain.cpp:124
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "Listi yfir bakenda til að nota (einungis til prófana)."
 
 #: apps/kmixmain.cpp:124
 #, kde-format
@@ -252,13 +252,12 @@ msgstr "nafn[,name...]"
 #: apps/kmixmain.cpp:125
 #, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr ""
+msgstr "Virkjaðu marg-rekla haminn (á tilraunastigi)."
 
 #: apps/kmixmain.cpp:126
-#, fuzzy, kde-format
-#| msgid "Set the orientation of the system tray volume control sliders"
+#, kde-format
 msgid "Do not show the system tray volume control."
-msgstr "Stilla stefnu stýrisleða í kerfisbakka"
+msgstr "Ekki birta hljóðstyrksstýringu í kerfisbakka"
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -366,21 +365,18 @@ msgid "The sound device '%1' was disconnected."
 msgstr "Hljóðtækið '%1' var aftengt."
 
 #: apps/kmixwindow.cpp:934
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
-"Hljóðkortið sem var með aðaltækið var aftengt. Skipti yfir á %1 í korti %2."
+"Fyrirliggjandi aðaltæki var aftengt. Skipti aðaltæki yfir á %1' á tækinu "
+"'%2'."
 
 #: apps/kmixwindow.cpp:941
-#, fuzzy, kde-format
-#| msgid "No sound devices are installed or are currently available."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
-msgstr "Ekkert hljóðtæki er uppsett eða tengt."
+msgstr "Síðasta hljóðtæki var aftengt. Engin hljóðtæki eru tiltæk."
 
 #: apps/kmixwindow.cpp:1186
 #, kde-format
@@ -399,10 +395,9 @@ msgid "Mixer (%1)"
 msgstr "Hljóðblandari (%1)"
 
 #: apps/volumefeedback.cpp:280
-#, fuzzy, kde-format
-#| msgid "Volume Control"
+#, kde-format
 msgid "Volume Control Feedback Sound"
-msgstr "Hljóðstyrkur"
+msgstr "Hljóð fyrir hljóðstyrksviðbrögð"
 
 #: backends/mixer_alsa9.cpp:964
 #, kde-format
@@ -619,10 +614,9 @@ msgid "Capture Streams"
 msgstr "Upptökustraumar"
 
 #: backends/mixer_sndio.cpp:164
-#, fuzzy, kde-format
-#| msgid "Capture Devices"
+#, kde-format
 msgid "Server Devices"
-msgstr "Upptökutæki"
+msgstr "Tæki þjóns"
 
 #: backends/mixer_sun.cpp:69
 #, kde-format
@@ -862,6 +856,11 @@ msgid ""
 "global shortcut keys, and the <interface>Mute</interface> action in the "
 "system tray popup menu.</para>"
 msgstr ""
+"<para>Hér geturðu valið aðalhljóðtækið - master (ef þau eru fleiri en eitt) "
+"og aðalrás þess.</para><para>Aðalhljóðrásin er sú sem stýrt er af "
+"hljóðstýringunni í kerfisbakkanum, víðværum flýtilyklum til að auka/minnka "
+"hljóðstyrk og þagga niður, auk <interface>Þagga</interface> aðgerðarinnar í "
+"valmynd í sprettglugga kerfisbakkans.</para>"
 
 #: gui/dialogselectmaster.cpp:203
 #, kde-format
@@ -889,15 +888,14 @@ msgid "Available channels:"
 msgstr "Tiltækar hljóðrásir:"
 
 #: gui/dialogviewconfiguration.cpp:230
-#, fuzzy, kde-format
-#| msgid "Select Master Channel"
+#, kde-format
 msgid "Move the selected channel to the visible list"
-msgstr "Veldu aðalrás"
+msgstr "Færa valda hljóðrás á sýnilega listann"
 
 #: gui/dialogviewconfiguration.cpp:238
 #, kde-format
 msgid "Move the selected channel to the available (hidden) list"
-msgstr ""
+msgstr "Færa valda hljóðrás á tiltæka (falda) listann"
 
 #: gui/dialogviewconfiguration.cpp:278
 #, kde-format
@@ -930,10 +928,9 @@ msgid "M&ute"
 msgstr "&Þagga niður"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
-msgstr "Fela hljóðblandara"
+msgstr "Sýna hljóðblandara"
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
@@ -981,37 +978,33 @@ msgid "Start KMix automatically when the desktop starts"
 msgstr "Ræsa KMix sjálfkrafa þegar skjáborðsumhverfið ræsist"
 
 #: gui/kmixprefdlg.cpp:131
-#, fuzzy, kde-format
-#| msgid ""
-#| "Autostart can not be enabled, as the autostart file kmix_autostart."
-#| "desktop is not installed."
+#, kde-format
 msgid ""
 "Autostart will not work, because the autostart file kmix_autostart.desktop "
 "is missing. Check that KMix is installed correctly."
 msgstr ""
-"Ekki var hægt að virkja KMix sjálfræsiþjónustuna, þar sem kmix_autostart."
-"desktop er ekki uppsett."
+"Sjálfræsing mun ekki virka, þar sem sjálfræsiskrána kmix_autostart.desktop "
+"vantar. Athugaðu hvort KMix sé rétt uppsett."
 
 #: gui/kmixprefdlg.cpp:141
-#, fuzzy, kde-format
-#| msgid "Restore volumes on login"
+#, kde-format
 msgid "Restore previous volume settings on desktop startup"
-msgstr "Endurheimta hljóðstyrk við innskráningu"
+msgstr "Endurheimta fyrri hljóðstyrksstillingar við ræsingu skjáborðs"
 
 #: gui/kmixprefdlg.cpp:145
-#, fuzzy, kde-format
-#| msgid "Restore all volume levels and switches."
+#, kde-format
 msgid ""
 "Restore all mixer volume levels and switches to their last used settings "
 "when the desktop starts"
-msgstr "Endurheimta hljóðstyrk og alla rofa."
+msgstr ""
+"Endurheimta síðustu stillingar á öllum hljóðstyrk og rofum hljóðblöndunar "
+"þegar skjáborðið ræsist."
 
 #: gui/kmixprefdlg.cpp:148
-#, fuzzy, kde-format
-#| msgid "Dynamic controls from Pulseaudio and MPRIS2 will not be restored."
+#, kde-format
 msgid ""
 "The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."
-msgstr "Kvikar stýringar frá Pulseaudio og MPRIS2 verða ekki endurheimtar."
+msgstr "Hljóð á kvikum Pulseaudio og MPRIS2 stýringum verður ekki endurheimt."
 
 #: gui/kmixprefdlg.cpp:166
 #, kde-format
@@ -1040,6 +1033,7 @@ msgid ""
 "Allow the volume to be raised above the recommended maximum (typically to "
 "150%)"
 msgstr ""
+"Leyfa hljóðstyrk að fara upp fyrir ráðlagt hámark (venjulega upp í 150%)"
 
 #: gui/kmixprefdlg.cpp:236
 #, kde-format
@@ -1060,12 +1054,12 @@ msgstr "Hljóðstyrksviðbrögð"
 #, kde-format
 msgctxt "@info:tooltip"
 msgid "Play a sample sound when the volume changes"
-msgstr ""
+msgstr "Spila hljóðsýni við breytingar á hljóðstyrk"
 
 #: gui/kmixprefdlg.cpp:264
 #, kde-format
 msgid "Volume feedback is only available when configured with Canberra."
-msgstr ""
+msgstr "Hljóðstyrksviðbrögð eru eigöngu tiltæk þegar stillt er með Canberra."
 
 #: gui/kmixprefdlg.cpp:286
 #, kde-kuit-format
@@ -1076,6 +1070,11 @@ msgid ""
 "wheel over the system tray icon, or moving sliders by a page step.</"
 "para><para>%1 must be restarted for this change to take effect.</para>"
 msgstr ""
+"<para>Stilla hljóðstyrksþrep sem prósentuhlutfall af heildarsviði "
+"hljóðstyrks.</para><para>Þetta hefur áhrif á þegar hljóðstyrk er breytt með "
+"flýtilyklum, þegar músarhjólið er notað yfir táknmynd í kerfisbakka, eða "
+"þegar hljóðsleðar eru hreyfðir í skrefum.</para><para>Endurræsa þarf %1 til "
+"að breytingar taki gildi.</para>"
 
 #: gui/kmixprefdlg.cpp:293
 #, kde-format
@@ -1115,7 +1114,7 @@ msgstr "Birta stjórntexta á skjá (&OSD)"
 #: gui/kmixprefdlg.cpp:324
 #, kde-format
 msgid "Show an on-screen indicator when changing the volume via hotkeys"
-msgstr ""
+msgstr " Sýna skjámerki þegar hljóðstyrk er breytt með flýtilyklum"
 
 #: gui/kmixprefdlg.cpp:333
 #, kde-format
@@ -1148,6 +1147,8 @@ msgid ""
 "Dock the mixer into the system tray. Click on it to open the popup volume "
 "control."
 msgstr ""
+"Festa hljóðblandarann í kerfisbakkanum. Smelltu á hann til að opna "
+"sprettglugga hljóðstýringar."
 
 #: gui/kmixprefdlg.cpp:355
 #, kde-format
@@ -1164,6 +1165,8 @@ msgstr "Veldu hljóðblandara"
 msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
 msgstr ""
+"Hljóðblandararnir sem merkt er við hér munu birtast í sprettglugga "
+"hljóðstýringar."
 
 #: gui/kmixtoolbox.cpp:96
 #, kde-format
