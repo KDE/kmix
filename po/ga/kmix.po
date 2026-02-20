@@ -33,10 +33,9 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
-msgstr "kmixctrl - uirlis sábhála/athshocraithe airde"
+msgstr ""
 
 #: apps/kmixctrl.cpp:43
 #, kde-format
@@ -69,10 +68,9 @@ msgid "KMix - KDE's full featured mini mixer"
 msgstr "KMix - mionmheascthóir KDE le go leor gnéithe"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "© 1996-2013 Údair KMix"
+msgstr ""
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -189,16 +187,14 @@ msgid "TerraTec DMX6Fire support"
 msgstr "Tacaíocht DMX6Fire TerraTec"
 
 #: apps/kmixmain.cpp:89
-#, fuzzy, kde-format
-#| msgid "PulseAudio support"
+#, kde-format
 msgid "PulseAudio"
-msgstr "Tacaíocht PulseAudio"
+msgstr ""
 
 #: apps/kmixmain.cpp:90
-#, fuzzy, kde-format
-#| msgid "Sound drivers used:"
+#, kde-format
 msgid "Sound server"
-msgstr "Tiománaithe fuaime a úsáidtear:"
+msgstr ""
 
 #: apps/kmixmain.cpp:95
 #, kde-format
@@ -216,10 +212,9 @@ msgid "OSS 3"
 msgstr ""
 
 #: apps/kmixmain.cpp:102 apps/kmixmain.cpp:107
-#, fuzzy, kde-format
-#| msgid "Event Sounds"
+#, kde-format
 msgid "Open Sound System"
-msgstr "Fuaimeanna Teagmhas"
+msgstr ""
 
 #: apps/kmixmain.cpp:106
 #, kde-format
@@ -227,13 +222,9 @@ msgid "OSS 4"
 msgstr ""
 
 #: apps/kmixmain.cpp:122
-#, fuzzy, kde-format
-#| msgid ""
-#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+#, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
 msgstr ""
-"Cuireann sé seo cosc ar phríomhfhuinneog KMix a thaispeáint, má tá KMix ag "
-"rith cheana."
 
 #: apps/kmixmain.cpp:123
 #, kde-format
@@ -256,10 +247,9 @@ msgid "Enable the (experimental) multiple driver mode."
 msgstr ""
 
 #: apps/kmixmain.cpp:126
-#, fuzzy, kde-format
-#| msgid "Enable system tray &volume control"
+#, kde-format
 msgid "Do not show the system tray volume control."
-msgstr "Cumasaigh &rialú na hairde i dtráidire an chórais"
+msgstr ""
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -267,10 +257,9 @@ msgid "Hide Mixer Window"
 msgstr "Folaigh Fuinneog an Mheascthóra"
 
 #: apps/kmixwindow.cpp:176
-#, fuzzy, kde-format
-#| msgid "Audio Setup"
+#, kde-format
 msgid "Audio Setup..."
-msgstr "Socrú Fuaime"
+msgstr ""
 
 #: apps/kmixwindow.cpp:181
 #, kde-format
@@ -338,10 +327,9 @@ msgid "Mute"
 msgstr "Gan fuaim"
 
 #: apps/kmixwindow.cpp:264
-#, fuzzy, kde-format
-#| msgid "Add View"
+#, kde-format
 msgid "Add new view"
-msgstr "Cuir Amharc Leis"
+msgstr ""
 
 #: apps/kmixwindow.cpp:781
 #, kde-format
@@ -354,10 +342,9 @@ msgid "Error"
 msgstr "Earráid"
 
 #: apps/kmixwindow.cpp:788
-#, fuzzy, kde-format
-#| msgid "Cannot add view - GUIProfile is invalid."
+#, kde-format
 msgid "Cannot add view - View already exists."
-msgstr "Ní féidir an tAmharc a chur leis - GUIProfile neamhbhailí."
+msgstr ""
 
 #: apps/kmixwindow.cpp:856
 #, kde-format
@@ -370,38 +357,29 @@ msgid "The sound device '%1' was disconnected."
 msgstr ""
 
 #: apps/kmixwindow.cpp:934
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
-"Díphlugáladh an cárta fuaime ar a bhfuil an máistirghléas. Athrófar go dtí "
-"rialtán %1 ar chárta %2."
 
 #: apps/kmixwindow.cpp:941
-#, fuzzy, kde-format
-#| msgid "No sound card is installed or currently plugged in."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
-msgstr "Níl aon chárta fuaime suiteáilte nó níl sé plugáilte isteach."
+msgstr ""
 
 #: apps/kmixwindow.cpp:1186
-#, fuzzy, kde-format
-#| msgid "The helper application is either not installed or not working."
+#, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
 "\n"
 "%1"
 msgstr ""
-"Níl an feidhmchlár cabhrach suiteáilte, nó níl sé ag obair mar is ceart."
 
 #: apps/kmixwindow.cpp:1236
-#, fuzzy, kde-format
-#| msgid "Mixer"
+#, kde-format
 msgid "Mixer (%1)"
-msgstr "Meascthóir"
+msgstr ""
 
 #: apps/volumefeedback.cpp:280
 #, kde-format
@@ -623,10 +601,9 @@ msgid "Capture Streams"
 msgstr "Sruthanna Gabhála"
 
 #: backends/mixer_sndio.cpp:164
-#, fuzzy, kde-format
-#| msgid "Capture Devices"
+#, kde-format
 msgid "Server Devices"
-msgstr "Gléasanna Gabhála"
+msgstr ""
 
 #: backends/mixer_sun.cpp:69
 #, kde-format
@@ -760,11 +737,10 @@ msgid "Right"
 msgstr ""
 
 #: core/volume.cpp:60
-#, fuzzy, kde-format
-#| msgid "3D-center"
+#, kde-format
 msgctxt "Channel name"
 msgid "Center"
-msgstr "Lár-3T"
+msgstr ""
 
 #: core/volume.cpp:61
 #, kde-format
@@ -773,18 +749,16 @@ msgid "Subwoofer"
 msgstr ""
 
 #: core/volume.cpp:62
-#, fuzzy, kde-format
-#| msgid "Surround"
+#, kde-format
 msgctxt "Channel name"
 msgid "Surround Left"
-msgstr "Timpeallú"
+msgstr ""
 
 #: core/volume.cpp:63
-#, fuzzy, kde-format
-#| msgid "Surround"
+#, kde-format
 msgctxt "Channel name"
 msgid "Surround Right"
-msgstr "Timpeallú"
+msgstr ""
 
 #: core/volume.cpp:64
 #, kde-format
@@ -805,11 +779,10 @@ msgid "Rear Center"
 msgstr ""
 
 #: core/volume.cpp:68
-#, fuzzy, kde-format
-#| msgid "unknown"
+#, kde-format
 msgctxt "Channel name"
 msgid "Unknown"
-msgstr "anaithnid"
+msgstr ""
 
 #: gui/dialogaddview.cpp:51
 #, kde-format
@@ -857,11 +830,10 @@ msgid "Current mixer:"
 msgstr "Meascthóir reatha:"
 
 #: gui/dialogselectmaster.cpp:124
-#, fuzzy, kde-kuit-format
-#| msgid "Select the channel representing the master volume:"
+#, kde-kuit-format
 msgctxt "@info"
 msgid "Select the <link url=\"i\">master volume</link> channel:"
-msgstr "Roghnaigh an cainéal a léiríonn an máistirairde:"
+msgstr ""
 
 #: gui/dialogselectmaster.cpp:132
 #, kde-kuit-format
@@ -885,28 +857,24 @@ msgid "Configure Channels"
 msgstr "Cumraigh Cainéil"
 
 #: gui/dialogviewconfiguration.cpp:143
-#, fuzzy, kde-format
-#| msgid "Configuration of the channels. Drag icon to update."
+#, kde-format
 msgid "Configure the visible channels. Drag icons between the lists to update."
-msgstr "Cumraíocht na gcainéal. Tarraing deilbhín chun nuashonrú."
+msgstr ""
 
 #: gui/dialogviewconfiguration.cpp:213
-#, fuzzy, kde-format
-#| msgid "Visible channels"
+#, kde-format
 msgid "Visible channels:"
-msgstr "Cainéil infheicthe"
+msgstr ""
 
 #: gui/dialogviewconfiguration.cpp:216
-#, fuzzy, kde-format
-#| msgid "Available channels"
+#, kde-format
 msgid "Available channels:"
-msgstr "Cainéil le fáil"
+msgstr ""
 
 #: gui/dialogviewconfiguration.cpp:230
-#, fuzzy, kde-format
-#| msgid "Hide the selected channel"
+#, kde-format
 msgid "Move the selected channel to the visible list"
-msgstr "Folaigh an cainéal roghnaithe"
+msgstr ""
 
 #: gui/dialogviewconfiguration.cpp:238
 #, kde-format
@@ -944,10 +912,9 @@ msgid "M&ute"
 msgstr "G&an fuaim"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
-msgstr "Folaigh Fuinneog an Mheascthóra"
+msgstr ""
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
@@ -955,10 +922,9 @@ msgid "No mixer devices available"
 msgstr ""
 
 #: gui/kmixdockwidget.cpp:230
-#, fuzzy, kde-format
-#| msgid "Volume Feedback"
+#, kde-format
 msgid "Volume muted"
-msgstr "Aischothú Airde"
+msgstr ""
 
 #: gui/kmixdockwidget.cpp:231
 #, kde-format
@@ -996,37 +962,29 @@ msgid "Start KMix automatically when the desktop starts"
 msgstr ""
 
 #: gui/kmixprefdlg.cpp:131
-#, fuzzy, kde-format
-#| msgid ""
-#| "Autostart can not be enabled, as the autostart file kmix_autostart."
-#| "desktop is not installed."
+#, kde-format
 msgid ""
 "Autostart will not work, because the autostart file kmix_autostart.desktop "
 "is missing. Check that KMix is installed correctly."
 msgstr ""
-"Ní féidir uath-thosú a chumasú, toisc nach bhfuil an comhad kmix_autostart."
-"desktop suiteáilte."
 
 #: gui/kmixprefdlg.cpp:141
-#, fuzzy, kde-format
-#| msgid "Restore volumes on login"
+#, kde-format
 msgid "Restore previous volume settings on desktop startup"
-msgstr "Athshocraigh airde ag am logála isteach"
+msgstr ""
 
 #: gui/kmixprefdlg.cpp:145
-#, fuzzy, kde-format
-#| msgid "Restore all volume levels and switches."
+#, kde-format
 msgid ""
 "Restore all mixer volume levels and switches to their last used settings "
 "when the desktop starts"
-msgstr "Athshocraigh gach leibhéal airde agus lasca."
+msgstr ""
 
 #: gui/kmixprefdlg.cpp:148
-#, fuzzy, kde-format
-#| msgid "Dynamic controls from Pulseaudio and MPRIS2 will not be restored."
+#, kde-format
 msgid ""
 "The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."
-msgstr "Ní athshocrófar rialtáin dinimiciúla ó Pulseaudio ná ó MPRIS2."
+msgstr ""
 
 #: gui/kmixprefdlg.cpp:166
 #, kde-format
@@ -1044,10 +1002,9 @@ msgid "Behavior"
 msgstr "Oibriú"
 
 #: gui/kmixprefdlg.cpp:228
-#, fuzzy, kde-format
-#| msgid "Volume Control"
+#, kde-format
 msgid "Volume overdrive"
-msgstr "Rialtán Airde"
+msgstr ""
 
 #: gui/kmixprefdlg.cpp:233
 #, kde-format
@@ -1058,10 +1015,9 @@ msgid ""
 msgstr ""
 
 #: gui/kmixprefdlg.cpp:236
-#, fuzzy, kde-format
-#| msgid "Volume feedback is only available for Pulseaudio."
+#, kde-format
 msgid "Volume overdrive is only available for PulseAudio."
-msgstr "Tá Aischothú Airde ar fáil le Pulseaudio amháin."
+msgstr ""
 
 #: gui/kmixprefdlg.cpp:246
 #, kde-format
@@ -1069,10 +1025,9 @@ msgid "%1 must be restarted for the volume overdrive setting to take effect."
 msgstr ""
 
 #: gui/kmixprefdlg.cpp:256
-#, fuzzy, kde-format
-#| msgid "Volume Feedback"
+#, kde-format
 msgid "Volume feedback"
-msgstr "Aischothú Airde"
+msgstr ""
 
 #: gui/kmixprefdlg.cpp:260
 #, kde-format
@@ -1096,40 +1051,34 @@ msgid ""
 msgstr ""
 
 #: gui/kmixprefdlg.cpp:293
-#, fuzzy, kde-format
-#| msgid "Volume Feedback"
+#, kde-format
 msgid "Volume step:"
-msgstr "Aischothú Airde"
+msgstr ""
 
 #: gui/kmixprefdlg.cpp:301
 #, kde-format
 msgid "Visual"
 msgstr "Radharcach"
 
-# MSG
 #: gui/kmixprefdlg.cpp:310
-#, fuzzy, kde-format
-#| msgid "Show &tickmarks"
+#, kde-format
 msgid "Show slider &tickmarks"
-msgstr "Taispeáin &ticmharcanna"
+msgstr ""
 
 #: gui/kmixprefdlg.cpp:313
-#, fuzzy, kde-format
-#| msgid "Enable/disable tickmark scales on the sliders"
+#, kde-format
 msgid "Show tick mark scales on sliders"
-msgstr "Cumasaigh/díchumasaigh scálaí ticmharcanna ar na barraí sleamhnáin"
+msgstr ""
 
 #: gui/kmixprefdlg.cpp:315
-#, fuzzy, kde-format
-#| msgid "Show &labels"
+#, kde-format
 msgid "Show control &labels"
-msgstr "Taisp&eáin lipéid"
+msgstr ""
 
 #: gui/kmixprefdlg.cpp:318
-#, fuzzy, kde-format
-#| msgid "Enables/disables description labels above the sliders"
+#, kde-format
 msgid "Show description labels for sliders"
-msgstr "Cumasaigh/díchumasaigh lipéid os cionn na mbarraí sleamhnáin"
+msgstr ""
 
 #: gui/kmixprefdlg.cpp:321
 #, kde-format
@@ -1142,34 +1091,29 @@ msgid "Show an on-screen indicator when changing the volume via hotkeys"
 msgstr ""
 
 #: gui/kmixprefdlg.cpp:333
-#, fuzzy, kde-format
-#| msgid "Slider orientation: "
+#, kde-format
 msgid "Slider orientation (main window): "
-msgstr "Treoshuíomh an bharra sleamhnáin: "
+msgstr ""
 
 #: gui/kmixprefdlg.cpp:334
-#, fuzzy, kde-format
-#| msgid "Slider orientation (System tray volume control):"
+#, kde-format
 msgid "Slider orientation (system tray popup):"
-msgstr "Treoshuíomh an tsleamhnáin (rialú airde i dtráidire an chórais):"
+msgstr ""
 
 #: gui/kmixprefdlg.cpp:335
-#, fuzzy, kde-format
-#| msgid "Slider orientation: "
+#, kde-format
 msgid "Set the orientation of the main window control sliders"
-msgstr "Treoshuíomh an bharra sleamhnáin: "
+msgstr ""
 
 #: gui/kmixprefdlg.cpp:336
-#, fuzzy, kde-format
-#| msgid "Enable system tray &volume control"
+#, kde-format
 msgid "Set the orientation of the system tray volume control sliders"
-msgstr "Cumasaigh &rialú na hairde i dtráidire an chórais"
+msgstr ""
 
 #: gui/kmixprefdlg.cpp:348
-#, fuzzy, kde-format
-#| msgid "&Dock in system tray"
+#, kde-format
 msgid "Dock in system tray"
-msgstr "Cuir i n&duga i dtráidire an chórais"
+msgstr ""
 
 #: gui/kmixprefdlg.cpp:351
 #, kde-format
@@ -1195,16 +1139,14 @@ msgid ""
 msgstr ""
 
 #: gui/kmixtoolbox.cpp:96
-#, fuzzy, kde-format
-#| msgid "No sound card is installed or currently plugged in."
+#, kde-format
 msgid "No sound devices are installed or are currently available."
-msgstr "Níl aon chárta fuaime suiteáilte nó níl sé plugáilte isteach."
+msgstr ""
 
 #: gui/mdwslider.cpp:95
-#, fuzzy, kde-format
-#| msgid "&Split Channels"
+#, kde-format
 msgid "Split Channels"
-msgstr "&Roinn Cainéil"
+msgstr ""
 
 #: gui/mdwslider.cpp:107 gui/mdwslider.cpp:626
 #, kde-format
@@ -1212,10 +1154,9 @@ msgid "Capture"
 msgstr "Gabháil"
 
 #: gui/mdwslider.cpp:112
-#, fuzzy, kde-format
-#| msgid "Capture Devices"
+#, kde-format
 msgid "Use Device"
-msgstr "Gléasanna Gabhála"
+msgstr ""
 
 #: gui/mdwslider.cpp:157
 #, kde-format
@@ -1224,32 +1165,28 @@ msgid "Mute %2 on %1"
 msgstr ""
 
 #: gui/mdwslider.cpp:169
-#, fuzzy, kde-format
-#| msgid "Increase Volume of Master Channel"
+#, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Increase volume of %2 on %1"
-msgstr "Méadaigh Airde an Mháistirchainéil"
+msgstr ""
 
 #: gui/mdwslider.cpp:177
-#, fuzzy, kde-format
-#| msgid "Decrease Volume of Master Channel"
+#, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Decrease volume of %2 on %1"
-msgstr "Laghdaigh Airde an Mháistirchainéil"
+msgstr ""
 
 #: gui/mdwslider.cpp:327
-#, fuzzy, kde-format
-#| msgid "Capture/Uncapture %1"
+#, kde-format
 msgctxt "%1=channel"
 msgid "Capture/Uncapture %1"
-msgstr "Gabháil/Díghabháil %1"
+msgstr ""
 
 #: gui/mdwslider.cpp:328
-#, fuzzy, kde-format
-#| msgid "Mute/Unmute %1"
+#, kde-format
 msgctxt "%1=channel"
 msgid "Mute/Unmute %1"
-msgstr "Gan fuaim/Le fuaim: %1"
+msgstr ""
 
 #: gui/mdwslider.cpp:332 gui/mdwslider.cpp:333 gui/mdwslider.cpp:334
 #, kde-format
@@ -1265,28 +1202,24 @@ msgid "%1 (capture)"
 msgstr "%1 (gabháil)"
 
 #: gui/mdwslider.cpp:1101
-#, fuzzy, kde-format
-#| msgid "Automatic According to Category"
+#, kde-format
 msgid "Automatic (according to category)"
-msgstr "Uathoibríoch de réir Catagóir"
+msgstr ""
 
 #: gui/mixdevicewidget.cpp:65
-#, fuzzy, kde-format
-#| msgid "C&onfigure Shortcuts..."
+#, kde-format
 msgid "Channel Shortcuts..."
-msgstr "C&umraigh Aicearraí..."
+msgstr ""
 
 #: gui/viewbase.cpp:88
-#, fuzzy, kde-format
-#| msgid "Configure Channels"
+#, kde-format
 msgid "Configure this view"
-msgstr "Cumraigh Cainéil"
+msgstr ""
 
 #: gui/viewdockareapopup.cpp:483
-#, fuzzy, kde-format
-#| msgid "Show Mixer Window"
+#, kde-format
 msgid "Show the full mixer window"
-msgstr "Taispeáin Fuinneog an Mheascthóra"
+msgstr ""
 
 #: gui/viewdockareapopup.cpp:515
 #, kde-format
@@ -1304,248 +1237,11 @@ msgid "Nothing is capturing audio."
 msgstr "Níl aon rud ag gabháil fuaime."
 
 #: gui/viewsliders.cpp:185
-#, fuzzy, kde-format
-#| msgid "No capture devices."
+#, kde-format
 msgid "There are no capture devices."
-msgstr "Gan gléasanna gabhála."
+msgstr ""
 
 #: gui/viewsliders.cpp:186
-#, fuzzy, kde-format
-#| msgid "No playback devices."
+#, kde-format
 msgid "There are no playback devices."
-msgstr "Gan gléasanna athsheinnte."
-
-#, fuzzy
-#~| msgid "Configure &Channels..."
-#~ msgid "Configure Channels..."
-#~ msgstr "Cumraigh &Cainéil..."
-
-#~ msgid "Device Settings"
-#~ msgstr "Socruithe Gléis"
-
-#~ msgid "The last soundcard was unplugged."
-#~ msgstr "Díphlugáladh an cárta fuaime is déanaí."
-
-#~ msgid "&Hide"
-#~ msgstr "Folaig&h"
-
-#~ msgid "C&onfigure Shortcuts..."
-#~ msgstr "C&umraigh Aicearraí..."
-
-#~ msgid "Toggle Mute"
-#~ msgstr "Scoránaigh Fuaim"
-
-#~ msgid "Hardware &Information"
-#~ msgstr "Eolas Fao&i na Crua-Earraí"
-
-#~ msgid "Mixer Hardware Information"
-#~ msgstr "Eolas Faoi na Crua-Earraí Meascthóra"
-
-#~ msgid "Sound drivers supported:"
-#~ msgstr "Tiománaithe fuaime a dtacaítear leo:"
-
-#~ msgid "&Muted"
-#~ msgstr "&Gan fuaim"
-
-#, fuzzy
-#~| msgid "Capture"
-#~ msgid "Captu&re"
-#~ msgstr "Gabháil"
-
-#~ msgid "Mo&ve"
-#~ msgstr "B&og"
-
-#~ msgid "Set &Record Source"
-#~ msgstr "Socraigh Foinse &Taifeadta"
-
-#~ msgid "capture"
-#~ msgstr "gabháil"
-
-#~ msgid "&Channels"
-#~ msgstr "&Cainéil"
-
-#~ msgid "Mixer cannot be found"
-#~ msgstr "Meascthóir gan aimsiú"
-
-#~ msgid " (Muted)"
-#~ msgstr " (Gan fuaim)"
-
-#~ msgid "Select the Mixers to display in the sound menu"
-#~ msgstr "Roghnaigh na meascthóirí le taispeáint sa roghchlár fuaime"
-
-#, fuzzy
-#~| msgid "Startup"
-#~ msgid "Start"
-#~ msgstr "Tosú"
-
-#~ msgid "Autostart"
-#~ msgstr "Tosú uathoibríoch"
-
-#~ msgid "Enables the KMix autostart service (kmix_autostart.desktop)"
-#~ msgstr ""
-#~ "Cumasaíonn sé seo an tseirbhís uath-thosaithe KMix (kmix_autostart."
-#~ "desktop)"
-
-#~ msgid "Docks the mixer into the KDE system tray"
-#~ msgstr "Cuireann sé seo an meascthóir i nduga i dtráidire an chórais KDE"
-
-#~ msgid "&Use custom colors"
-#~ msgstr "Úsáid dathanna &saincheaptha"
-
-#~ msgid "Active"
-#~ msgstr "Gníomhach"
-
-#~ msgid "&Silent:"
-#~ msgstr "To&st:"
-
-#~ msgid "&Loud:"
-#~ msgstr "&Ard:"
-
-#~ msgid "&Background:"
-#~ msgstr "&Cúlra:"
-
-#~ msgid "Muted"
-#~ msgstr "Gan fuaim"
-
-#~ msgid "Lou&d:"
-#~ msgstr "Ar&d:"
-
-#~ msgid "Backgrou&nd:"
-#~ msgstr "Cúl&ra:"
-
-#~ msgid "Silen&t:"
-#~ msgstr "&Tost:"
-
-#~ msgid "&File"
-#~ msgstr "&Comhad"
-
-#~ msgid "&Help"
-#~ msgstr "Cab&hair"
-
-#~ msgid "View already exists. Cannot add View."
-#~ msgstr "Tá an tAmharc ann cheana. Ní féidir é a chur leis."
-
-#~ msgid "KDE Mixer"
-#~ msgstr "Meascthóir KDE"
-
-#~ msgid "Allows to control the volume from the system tray"
-#~ msgstr "Ceadaíonn sé seo duit an airde a rialú ó thráidire an chórais"
-
-#~ msgid "Media player '%1' is not compatible with KMix. Integration skipped."
-#~ msgstr ""
-#~ "Níl seinnteoir meán '%1' comhoiriúnach le KMix. Ní dhéanfar comhtháthú."
-
-#~ msgid "Invalid mixer"
-#~ msgstr "Meascthóir neamhbhailí"
-
-#~ msgid ""
-#~ "(c) 1996-2007 Christian Esken\n"
-#~ "(c) 2000-2003 Stefan Schimanski\n"
-#~ "(c) 2002-2005 Helio Chissini de Castro"
-#~ msgstr ""
-#~ "© 1996-2007 Christian Esken\n"
-#~ "© 2000-2003 Stefan Schimanski\n"
-#~ "© 2002-2005 Helio Chissini de Castro"
-
-#~ msgid "Co-maintainer, Alsa 0.9x port"
-#~ msgstr "Comhchothaitheoir, Leagan Alsa 0.9x"
-
-#~ msgid "Nick Lopez"
-#~ msgstr "Nick Lopez"
-
-#~ msgid "Toggle Switch"
-#~ msgstr "Scoránú"
-
-#~ msgid "On"
-#~ msgstr "Ann"
-
-#~ msgid "Off"
-#~ msgstr "As"
-
-#~ msgid "Configure - Mixer Applet"
-#~ msgstr "Cumraíocht - Feidhmchláirín Meascthóra"
-
-#~ msgid "KMix Panel Applet"
-#~ msgstr "Feidhmchláirín Painéil KMix"
-
-#~ msgid "Mini Sound Mixer Applet"
-#~ msgstr "Feidhmchláirín Beag Meascthóra"
-
-#~ msgid ""
-#~ "(c) 1996-2000 Christian Esken\n"
-#~ "(c) 2000-2003 Christian Esken, Stefan Schimanski"
-#~ msgstr ""
-#~ "© 1996-2000 Christian Esken\n"
-#~ "© 2000-2003 Christian Esken, Stefan Schimanski"
-
-#~ msgid ""
-#~ "For detailed credits, please refer to the About information of the KMix "
-#~ "program"
-#~ msgstr ""
-#~ "Le haghaidh na n-admhálacha ar fad, féach ar an gcabhair sa roghchlár KMix"
-
-#~ msgid "Mixers"
-#~ msgstr "Meascthóirí"
-
-#~ msgid "Available mixers:"
-#~ msgstr "Meascthóirí le fáil:"
-
-#~ msgid "Invalid mixer entered."
-#~ msgstr "Iontráladh meascthóir neamhbhailí."
-
-#~ msgid "Show/Hide"
-#~ msgstr "Taispeáin/Folaigh"
-
-#~ msgid "Split"
-#~ msgstr "Roinn"
-
-#~ msgid "Current Mixer"
-#~ msgstr "Meascthóir Reatha"
-
-#~ msgid "Next Value"
-#~ msgstr "An Chéad Luach Eile"
-
-#~ msgid "Left/Right balancing"
-#~ msgstr "Cothromú Deas/Clé"
-
-#~ msgid "Record"
-#~ msgstr "Taifead"
-
-#~ msgid "Configure &Global Shortcuts..."
-#~ msgstr "Cumrai&gh Aicearraí Comhchoiteanna..."
-
-#~ msgid "Output"
-#~ msgstr "Aschur"
-
-#~ msgid "Input"
-#~ msgstr "Ionchur"
-
-#~ msgid "Switches"
-#~ msgstr "Lasca"
-
-#~ msgid "Grid"
-#~ msgstr "Greille"
-
-#~ msgid "Numbers"
-#~ msgstr "Uimhreacha"
-
-#~ msgid "A&bsolute"
-#~ msgstr "&Dearbhluach"
-
-#~ msgid "&Relative"
-#~ msgstr "&Coibhneasta"
-
-#~ msgid "SGI Port"
-#~ msgstr "Leagan SGI"
-
-#~ msgid "HP/UX port"
-#~ msgstr "Leagan HP/UX"
-
-#~ msgid "NAS port"
-#~ msgstr "Leagan NAS"
-
-#~ msgid "C&onfigure Global Shortcuts..."
-#~ msgstr "C&umraigh Aicearraí Comhchoiteanna..."
-
-#~ msgid "kmix: Not enough memory."
-#~ msgstr "kmix: Cuimhne ídithe."
+msgstr ""
