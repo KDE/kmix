@@ -1297,9 +1297,3 @@ msgstr "No hi ha dispositius de captura."
 #, kde-format
 msgid "There are no playback devices."
 msgstr "No hi ha dispositius de reproducció."
-
-#~ msgid "Configure Channels..."
-#~ msgstr "Configuració dels canals..."
-
-#~ msgid "Device Settings"
-#~ msgstr "Paràmetres del dispositiu"
