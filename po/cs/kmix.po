@@ -2,7 +2,7 @@
 # This file is distributed under the same license as the PACKAGE package.
 # Lukáš Tinkl <ltinkl@redhat.com>, 2010.
 # Jan Holíček <jan.holicek@gmail.com>, 2010.
-# SPDX-FileCopyrightText: 2010, 2011, 2012, 2013, 2014, 2015, 2017, 2018, 2019, 2020, 2025 Vít Pelčák <vit@pelcak.org>
+# SPDX-FileCopyrightText: 2010, 2011, 2012, 2013, 2014, 2015, 2017, 2018, 2019, 2020, 2025, 2026 Vít Pelčák <vit@pelcak.org>
 # Tomáš Chvátal <tomas.chvatal@gmail.com>, 2012.
 # Vit Pelcak <vit@pelcak.org>, 2021, 2023.
 #
@@ -11,27 +11,27 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2025-11-17 11:51+0000\n"
-"PO-Revision-Date: 2025-12-01 14:24+0100\n"
-"Last-Translator: Vit Pelcak <vit@pelcak.org>\n"
+"PO-Revision-Date: 2026-03-16 11:58+0100\n"
+"Last-Translator:  Vít Pelčák <vit@pelcak.org>\n"
 "Language-Team: Czech <kde-i18n-doc@kde.org>\n"
 "Language: cs\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
-"X-Generator: Lokalize 25.08.3\n"
+"X-Generator: Lokalize 25.12.3\n"
 "X-Language: cs_CZ\n"
 "X-Source-Language: en_US\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
-msgstr "Martin Vlk, Jakub Friedl, Vít Pelčák"
+msgstr "Martin Vlk, Jakub Friedl,Vít Pelčák,Libor Filípek"
 
 #, kde-format
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
-msgstr "oro@poetic.com,jfriedl@suse.cz,vit@pelcak.org"
+msgstr "oro@poetic.com,jfriedl@suse.cz,vit@pelcak.org,libor.filipek@gmail.com"
 
 #: apps/kmixctrl.cpp:40
 #, kde-format
@@ -131,6 +131,8 @@ msgstr "Jonathan Marten"
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
 msgstr ""
+"KF5 hotplugging, zpětná vazba hlasitosti ALSA/OSS, vylepšení grafického "
+"rozhraní, port KF6"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -215,7 +217,7 @@ msgstr "ALSA (Advanced Linux Sound Architecture)"
 #: apps/kmixmain.cpp:101
 #, kde-format
 msgid "OSS 3"
-msgstr ""
+msgstr "OSS 3"
 
 #: apps/kmixmain.cpp:102 apps/kmixmain.cpp:107
 #, kde-format
@@ -225,7 +227,7 @@ msgstr "OSS (Open Sound System)"
 #: apps/kmixmain.cpp:106
 #, kde-format
 msgid "OSS 4"
-msgstr ""
+msgstr "OSS 4"
 
 #: apps/kmixmain.cpp:122
 #, kde-format
@@ -240,7 +242,7 @@ msgstr "Spustit KMix v bezpečném režimu."
 #: apps/kmixmain.cpp:124
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "Seznam podpůrných vrstev, které lze použít (pouze pro testování)."
 
 #: apps/kmixmain.cpp:124
 #, kde-format
@@ -368,11 +370,15 @@ msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
+"Aktuální hlavní zařízení bylo odpojeno. Změna hlavního zařízení na '%1' na "
+"zařízení '%2'."
 
 #: apps/kmixwindow.cpp:941
 #, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
 msgstr ""
+"Poslední zvukové zařízení bylo odpojeno. Nejsou k dispozici žádná zvuková "
+"zařízení."
 
 #: apps/kmixwindow.cpp:1186
 #, kde-format
@@ -611,7 +617,7 @@ msgstr "Proudy zachytávání"
 #: backends/mixer_sndio.cpp:164
 #, kde-format
 msgid "Server Devices"
-msgstr ""
+msgstr "Serverová zařízení"
 
 #: backends/mixer_sun.cpp:69
 #, kde-format
@@ -851,6 +857,11 @@ msgid ""
 "global shortcut keys, and the <interface>Mute</interface> action in the "
 "system tray popup menu.</para>"
 msgstr ""
+"<para>Zde můžete vybrat hlavní zvukové zařízení (pokud je jich více než "
+"jedno) a jeho hlavní kanál.</para><para>Hlavní kanál je ten, který je "
+"ovlivněn ovládáním hlasitosti v systémové liště, globálními klávesovými "
+"zkratkami pro zvýšení/snížení hlasitosti a ztlumení a akcí "
+"<interface>Ztlumit</interface> v rozbalovací nabídce systémové lišty.</para>"
 
 #: gui/dialogselectmaster.cpp:203
 #, kde-format
@@ -1022,17 +1033,18 @@ msgctxt "@info:tooltip"
 msgid ""
 "Allow the volume to be raised above the recommended maximum (typically to "
 "150%)"
-msgstr ""
+msgstr "Umožňuje zvýšit hlasitost nad doporučené maximum (obvykle na 150 %)"
 
 #: gui/kmixprefdlg.cpp:236
 #, kde-format
 msgid "Volume overdrive is only available for PulseAudio."
-msgstr ""
+msgstr "Nadměrné zesílení hlasitosti je k dispozici pouze pro PulseAudio."
 
 #: gui/kmixprefdlg.cpp:246
 #, kde-format
 msgid "%1 must be restarted for the volume overdrive setting to take effect."
 msgstr ""
+"Aby se nastavení zesílení hlasitosti projevilo, je nutné restartovat %1."
 
 #: gui/kmixprefdlg.cpp:256
 #, kde-format
@@ -1043,12 +1055,13 @@ msgstr "Zpětná vazba hlasitosti"
 #, kde-format
 msgctxt "@info:tooltip"
 msgid "Play a sample sound when the volume changes"
-msgstr ""
+msgstr "Přehrát ukázkový zvuk při změně hlasitosti"
 
 #: gui/kmixprefdlg.cpp:264
 #, kde-format
 msgid "Volume feedback is only available when configured with Canberra."
 msgstr ""
+"Zpětná vazba hlasitosti je k dispozici pouze při konfiguraci s Canberrou."
 
 #: gui/kmixprefdlg.cpp:286
 #, kde-kuit-format
@@ -1059,6 +1072,11 @@ msgid ""
 "wheel over the system tray icon, or moving sliders by a page step.</"
 "para><para>%1 must be restarted for this change to take effect.</para>"
 msgstr ""
+"<para>Nastavte krok hlasitosti jako procento rozsahu hlasitosti.</"
+"para><para>To ovlivňuje změnu hlasitosti pomocí klávesových zkratek, "
+"kolečkem myši nad ikonou v systémové liště nebo posunutím posuvníků o jeden "
+"krok.</para><para>Aby se tato změna projevila, je nutné restartovat %1.</"
+"para>"
 
 #: gui/kmixprefdlg.cpp:293
 #, kde-format
@@ -1073,12 +1091,12 @@ msgstr "Vzhled"
 #: gui/kmixprefdlg.cpp:310
 #, kde-format
 msgid "Show slider &tickmarks"
-msgstr ""
+msgstr "Zobrazi&t značený posuvník"
 
 #: gui/kmixprefdlg.cpp:313
 #, kde-format
 msgid "Show tick mark scales on sliders"
-msgstr ""
+msgstr "Zobrazit stupnici se značkami na posuvnících"
 
 #: gui/kmixprefdlg.cpp:315
 #, kde-format
@@ -1088,7 +1106,7 @@ msgstr "Zobrazit popisky ov&ládání"
 #: gui/kmixprefdlg.cpp:318
 #, kde-format
 msgid "Show description labels for sliders"
-msgstr ""
+msgstr "Zobrazit popisky posuvníků"
 
 #: gui/kmixprefdlg.cpp:321
 #, kde-format
@@ -1099,6 +1117,8 @@ msgstr "Zobrazit On Screen Display (&OSD)"
 #, kde-format
 msgid "Show an on-screen indicator when changing the volume via hotkeys"
 msgstr ""
+"Při změně hlasitosti pomocí klávesových zkratek zobrazit indikátor na "
+"obrazovce"
 
 #: gui/kmixprefdlg.cpp:333
 #, kde-format
@@ -1113,12 +1133,13 @@ msgstr "Orientace posuvníku (vyskakovací okno ze systémového panelu):"
 #: gui/kmixprefdlg.cpp:335
 #, kde-format
 msgid "Set the orientation of the main window control sliders"
-msgstr ""
+msgstr "Nastavení orientace posuvníků ovládacích prvků hlavního okna"
 
 #: gui/kmixprefdlg.cpp:336
 #, kde-format
 msgid "Set the orientation of the system tray volume control sliders"
 msgstr ""
+"Nastavení orientace posuvníků pro ovládání hlasitosti v systémové liště."
 
 #: gui/kmixprefdlg.cpp:348
 #, kde-format
@@ -1131,11 +1152,13 @@ msgid ""
 "Dock the mixer into the system tray. Click on it to open the popup volume "
 "control."
 msgstr ""
+"Připojit mixér do systémové lišty. Kliknutím na něj se otevře vyskakovací "
+"ovládání hlasitosti."
 
 #: gui/kmixprefdlg.cpp:355
 #, kde-format
 msgid "Mixers to show in the popup volume control:"
-msgstr ""
+msgstr "Mixéry, které se zobrazí v rozbalovacím ovládání hlasitosti:"
 
 #: gui/kmixprefdlg.cpp:365
 #, kde-format
@@ -1147,6 +1170,8 @@ msgstr "Vyberte mixery"
 msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
 msgstr ""
+"Mixéry, které jsou zde zaškrtnuty, se zobrazí v rozbalovacím ovládání "
+"hlasitosti."
 
 #: gui/kmixtoolbox.cpp:96
 #, kde-format
