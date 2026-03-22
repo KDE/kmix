@@ -13,10 +13,6 @@ project(kmix VERSION ${KMIX_VERSION})
 ########### options ################################################################################
 ####################################################################################################
 
-# Plasma dataengines are deprecated, needs at least porting to Plasma5Support as an intermediate
-# step, or should be removed
-#option(BUILD_DATAENGINE "Build the Plasma dataengine" OFF)
-
 # For testing OSS4 build on Linux with 4Front OSS4 installed
 #
 # The OSS4_INCLUDES variable must point to the prototype/usr/lib/oss/include
@@ -78,14 +74,6 @@ find_package(KF6 ${KF_MIN_VERSION} REQUIRED COMPONENTS
     WindowSystem
     XmlGui
 )
-
-
-# Needs at least porting to Plasma5Support as an intermediate step, or should be removed
-#if (BUILD_DATAENGINE)
-#  find_package(Plasma5Support 6.0 REQUIRED)
-#  set_package_properties(Plasma5Support PROPERTIES PURPOSE "Required to build the Plasma dataengine")
-#endif ()
-
 
 ####################################################################################################
 ########### sound backend support ##################################################################
@@ -225,12 +213,6 @@ remove_definitions("-DQT_NO_CAST_FROM_BYTEARRAY")
 add_subdirectory(doc)
 add_subdirectory(pics)
 add_subdirectory(profiles)
-
-if (BUILD_DATAENGINE)
-  if (Plasma5Support_FOUND)
-    add_subdirectory(plasma)
-  endif ()
-endif ()
 
 ####################################################################################################
 ########### definitions: logging ###################################################################
