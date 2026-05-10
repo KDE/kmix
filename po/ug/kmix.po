@@ -8,25 +8,25 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2025-11-17 11:51+0000\n"
-"PO-Revision-Date: 2013-09-08 07:05+0900\n"
-"Last-Translator: Gheyret Kenji <gheyret@gmail.com>\n"
+"PO-Revision-Date: 2026-05-05 18:19-0400\n"
+"Last-Translator: Abduqadir Abliz <sahranbay@gmail.com>\n"
 "Language-Team: Uyghur Computer Science Association <UKIJ@yahoogroups.com>\n"
 "Language: ug\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-"X-Generator: Poedit 1.5.7\n"
+"X-Generator: Poedit 3.9\n"
 
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
-msgstr "ئابدۇقادىر ئابلىز, غەيرەت كەنجى"
+msgstr "ئابدۇقادىر ئابلىز، غەيرەت كەنجى"
 
 #, kde-format
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
-msgstr "sahran.ug@gmail.com,  gheyret@gmail.com"
+msgstr "sahranbay@gmail.com, gheyret@gmail.com"
 
 #: apps/kmixctrl.cpp:40
 #, kde-format
@@ -34,8 +34,7 @@ msgid "KMixCtrl"
 msgstr "KMixCtrl"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
 msgstr "kmixctrl - kmix ئاۋاز مىقدارى ساقلاش ۋە ئەسلىگە كەلتۈرۈش قورالى"
 
@@ -67,13 +66,12 @@ msgstr "KMix"
 #: apps/kmixmain.cpp:60
 #, kde-format
 msgid "KMix - KDE's full featured mini mixer"
-msgstr "KMix - KDE تولۇق ئىقتىدارلىق كىچىك بىرىكتۈرگۈچىسى"
+msgstr "KMix - KDE تولۇق ئىقتىدارلىق كىچىك ئارىلاشتۇرغۇچ"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "(c) 1996-2013  KMix يازغۇچىلىرى"
+msgstr "(c) 1996-2024 KMix يازغۇچىلىرى"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -83,7 +81,7 @@ msgstr "Christian Esken"
 #: apps/kmixmain.cpp:64
 #, kde-format
 msgid "Original author and current maintainer"
-msgstr "ئەسلى يازغۇچى ۋە نۆۋەتتىكى ئاسرىغۇچىلار"
+msgstr "ئەسلى يازغۇچى ۋە نۆۋەتتىكى ئاسرىغۇچى"
 
 #: apps/kmixmain.cpp:65
 #, kde-format
@@ -122,12 +120,14 @@ msgstr "Solaris قوللاش"
 #: apps/kmixmain.cpp:74
 #, kde-format
 msgid "Jonathan Marten"
-msgstr ""
+msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:74
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
 msgstr ""
+"KF5 قىزىق  چېتىلىشچان ئىقتىدارى، ALSA/OSS ئاۋاز قايتۇرما ئىنكاس، GUI "
+"ياخشىلاش، KF6 ئېغىز"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -137,7 +137,7 @@ msgstr "Igor Poboiko"
 #: apps/kmixmain.cpp:75
 #, kde-format
 msgid "Plasma Dataengine"
-msgstr "Plasma سانلىق مەلۇمات ماتورى"
+msgstr "Plasma سانلىق مەلۇمات موتورى"
 
 #: apps/kmixmain.cpp:76
 #, kde-format
@@ -152,7 +152,7 @@ msgstr "Sebestyen Zoltan"
 #: apps/kmixmain.cpp:77 apps/kmixmain.cpp:78
 #, kde-format
 msgid "*BSD fixes"
-msgstr "*BSD ئوڭشالدى"
+msgstr "*BSD تۈزىتىش"
 
 #: apps/kmixmain.cpp:78
 #, kde-format
@@ -167,7 +167,7 @@ msgstr "Nadeem Hasan"
 #: apps/kmixmain.cpp:79
 #, kde-format
 msgid "Mute and volume preview, other fixes"
-msgstr "ئۈنسىز ۋە ئاۋاز مىقدارىنى ئالدىن كۆرۈش ۋە باشقا ئوڭشاشلار"
+msgstr "ئۈنسىز ۋە ئاۋاز مىقدارىنى ئالدىن كۆزىتىش ۋە باشقا تۈزىتىش"
 
 #: apps/kmixmain.cpp:80
 #, kde-format
@@ -177,7 +177,7 @@ msgstr "Erwin Mascher"
 #: apps/kmixmain.cpp:80
 #, kde-format
 msgid "Improving support for emu10k1 based soundcards"
-msgstr "emu10k1 ئۈن كارتا ئاساسىدىكى قوللاشنى ياخشىلىغان"
+msgstr "emu10k1 ئۈن كارتا ئاساسىدىكى قوللاشنى ياخشىلاش"
 
 #: apps/kmixmain.cpp:81
 #, kde-format
@@ -190,98 +190,91 @@ msgid "TerraTec DMX6Fire support"
 msgstr "TerraTec DMX6Fire قوللاش"
 
 #: apps/kmixmain.cpp:89
-#, fuzzy, kde-format
-#| msgid "PulseAudio support"
+#, kde-format
 msgid "PulseAudio"
-msgstr "PulseAudio قوللاش"
+msgstr "PulseAudio"
 
 #: apps/kmixmain.cpp:90
-#, fuzzy, kde-format
-#| msgid "Sound drivers used:"
+#, kde-format
 msgid "Sound server"
-msgstr "ئىشلەتكەن ئاۋاز قوزغاتقۇلار:"
+msgstr "ئاۋاز مۇلازىمېتىرى"
 
 #: apps/kmixmain.cpp:95
 #, kde-format
 msgid "ALSA"
-msgstr ""
+msgstr "ALSA"
 
 #: apps/kmixmain.cpp:96
 #, kde-format
 msgid "Advanced Linux Sound Architecture"
-msgstr ""
+msgstr "ئالىي Linux ئاۋاز قۇرۇلۇشى"
 
 #: apps/kmixmain.cpp:101
 #, kde-format
 msgid "OSS 3"
-msgstr ""
+msgstr "OSS 3"
 
 #: apps/kmixmain.cpp:102 apps/kmixmain.cpp:107
-#, fuzzy, kde-format
-#| msgid "Event Sounds"
+#, kde-format
 msgid "Open Sound System"
-msgstr "ھادىسە ئاۋازى"
+msgstr "ئوچۇق ئاۋاز سىستېمىسى"
 
 #: apps/kmixmain.cpp:106
 #, kde-format
 msgid "OSS 4"
-msgstr ""
+msgstr "OSS 4"
 
 #: apps/kmixmain.cpp:122
-#, fuzzy, kde-format
-#| msgid ""
-#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+#, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
 msgstr ""
-"ئەگەر KMix ئىجرا قىلىنىۋاتقان بولسا ئۇنىڭ ئاساسىي كۆزنىكىنى يوشۇرغىلى "
-"بولمايدۇ."
+"ئەگەر KMix ئىجرا قىلىنىۋاتقان بولسا KMix نىڭ ئاساسىي كۆزنىكىنى كۆرسىتىشنى "
+"توسىدۇ."
 
 #: apps/kmixmain.cpp:123
 #, kde-format
 msgid "Start KMix in failsafe mode."
-msgstr ""
+msgstr "KMix نى بىخەتەر ھالەتتە قوزغىتىدۇ."
 
 #: apps/kmixmain.cpp:124
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "ئىشلىتىدىغان ئارقا ئۇچ تىزىمى (سىناق ئۈچۈنلا)."
 
 #: apps/kmixmain.cpp:124
 #, kde-format
 msgid "name[,name...]"
-msgstr ""
+msgstr "ئات[،ئات…]"
 
 #: apps/kmixmain.cpp:125
 #, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr ""
+msgstr "تەجرىبە خاراكتېرلىك كۆپ قوزغاتقۇ ھالىتىنى قوزغىتىدۇ."
 
 #: apps/kmixmain.cpp:126
-#, fuzzy, kde-format
-#| msgid "Enable system tray &volume control"
+#, kde-format
 msgid "Do not show the system tray volume control."
-msgstr "سىستېما قونداقتا ئاۋاز تىزگىنىنى قوزغات(&V)"
+msgstr "سىستېما قونداقتا ئاۋاز مىقدارى تىزگىنىنى كۆرسەتمەيدۇ."
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
 msgid "Hide Mixer Window"
-msgstr "بىرىكتۈرگۈچ كۆزنەكنى يوشۇر"
+msgstr "ئارىلاشتۇرغۇچ كۆزنەكنى يوشۇر"
 
 #: apps/kmixwindow.cpp:176
-#, fuzzy, kde-format
-#| msgid "Audio Setup"
+#, kde-format
 msgid "Audio Setup..."
-msgstr "ئۈن تەڭشەك"
+msgstr "ئۈن تەڭشەك…"
 
 #: apps/kmixwindow.cpp:181
 #, kde-format
 msgid "Configure &Channels..."
-msgstr "قاناللار سەپلىمىسى(&C)…"
+msgstr "قانال سەپلىمىسى(&C)…"
 
 #: apps/kmixwindow.cpp:186
 #, kde-format
 msgid "Select Master Channel..."
-msgstr "ئاساسىي قانالنى تاللاڭ…"
+msgstr "ئاساسىي قانالنى تاللىنىدۇ…"
 
 #: apps/kmixwindow.cpp:192
 #, kde-format
@@ -326,12 +319,12 @@ msgstr "ئاۋاز سەپلىمە ھۆججەت 4 نى يۈكلە"
 #: apps/kmixwindow.cpp:238
 #, kde-format
 msgid "Increase Volume"
-msgstr "ئاۋازنى چوڭايتىش"
+msgstr "ئاۋازنى يۇقىرىلات"
 
 #: apps/kmixwindow.cpp:245
 #, kde-format
 msgid "Decrease Volume"
-msgstr "ئاۋازنى كىچىكلىتىش"
+msgstr "ئاۋازنى تۆۋەنلەت"
 
 #: apps/kmixwindow.cpp:250 gui/mdwslider.cpp:101
 #, kde-format
@@ -339,10 +332,9 @@ msgid "Mute"
 msgstr "ئۈنسىز"
 
 #: apps/kmixwindow.cpp:264
-#, fuzzy, kde-format
-#| msgid "Add View"
+#, kde-format
 msgid "Add new view"
-msgstr "كۆرۈنۈش قوش"
+msgstr "يېڭى كۆرۈنۈش قوش"
 
 #: apps/kmixwindow.cpp:781
 #, kde-format
@@ -355,53 +347,51 @@ msgid "Error"
 msgstr "خاتالىق"
 
 #: apps/kmixwindow.cpp:788
-#, fuzzy, kde-format
-#| msgid "Cannot add view - GUIProfile is invalid."
+#, kde-format
 msgid "Cannot add view - View already exists."
-msgstr "كۆرۈنۈش قوشالمايدۇ - GUI سەپلىمە ھۆججەت ئىناۋەتسىز."
+msgstr "كۆرۈنۈش قوشالمايدۇ - كۆرۈنۈش مەۋجۇت."
 
 #: apps/kmixwindow.cpp:856
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr ""
+msgstr "«%1» ئاۋاز ئۈسكۈنىسى باغلانغان."
 
 #: apps/kmixwindow.cpp:909
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr ""
+msgstr "«%1» ئاۋاز ئۈسكۈنىسى ئۈزۈلگەن."
 
 #: apps/kmixwindow.cpp:934
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
-"ئاساسىي ئۈسكۈنىنى ئۆز ئىچىگە ئالغان ئۈن كارتا قىستۇرۇلمىغان. %2 ئۈن "
-"كارتىدىكى %1 تىزگىنگە ئۆزگەردى."
+"نۆۋەتتىكى ئاساسىي ئۈسكۈنە ئۈزۈلگەن. ئاساسىي ئۈسكۈنە «%2» ئۈسكۈنىدىكى «%1» غا "
+"ئالمىشىدۇ."
 
 #: apps/kmixwindow.cpp:941
-#, fuzzy, kde-format
-#| msgid "No sound card is installed or currently plugged in."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
-msgstr "ئۈن كارتا ئورنىتىلمىغان ياكى نۆۋەتتە قىستۇرۇلمىغان."
+msgstr ""
+"ئاخىرقى ئاۋاز ئۈسكۈنە ئۈزۈلگەن. ھېچقانداق ئاۋاز ئۈسكۈنىسىنى ئىشلەتكىلى "
+"بولمايدۇ."
 
 #: apps/kmixwindow.cpp:1186
-#, fuzzy, kde-format
-#| msgid "The helper application is either not installed or not working."
+#, kde-format
 msgid ""
 "The helper application is either not installed or not working.\n"
 "\n"
 "%1"
-msgstr "قوشۇمچە قوللىنىشچان پروگرامما ئورنىتىلمىغان ياكى خىزمەت قىلمايۋاتىدۇ."
+msgstr ""
+"ياردەمچى قوللىنىشچان پىروگرامما ئورنىتىلمىغان ياكى خىزمەت قىلمايۋاتىدۇ.\n"
+"\n"
+"%1"
 
 #: apps/kmixwindow.cpp:1236
-#, fuzzy, kde-format
-#| msgid "Mixer"
+#, kde-format
 msgid "Mixer (%1)"
-msgstr "بىرىكتۈرگۈچ"
+msgstr "ئارىلاشتۇرغۇچ (%1)"
 
 #: apps/volumefeedback.cpp:280
 #, kde-format
@@ -414,8 +404,8 @@ msgid ""
 "You do not have permission to access the alsa mixer device.\n"
 "Please verify if all alsa devices are properly created."
 msgstr ""
-"alsa بىرىكتۈرگۈچ ئۈسكۈنە زىيارەت ھوقۇقىڭىز يوق.\n"
-"ھەممە alsa ئۈسكۈنىلەرنى توغرا قۇرغانلىقىڭىزنى دەلىللەڭ."
+"alsa ئارىلاشتۇرغۇچ ئۈسكۈنىنى زىيارەت ئىجازىتىڭىز يوق.\n"
+"ھەممە alsa ئۈسكۈنىنى توغرا قۇرغانلىقىڭىزنى دەلىللەڭ."
 
 #: backends/mixer_alsa9.cpp:968
 #, kde-format
@@ -424,13 +414,13 @@ msgid ""
 "Please check that the soundcard is installed and the\n"
 "soundcard driver is loaded.\n"
 msgstr ""
-"alsa بىرىكتۈرگۈچ ئۈسكۈنە تېپىلمىدى.\n"
+"alsa ئارىلاشتۇرغۇچ ئۈسكۈنە تېپىلمىدى.\n"
 "ئۈن كارتا ئورنىتىپ قوزغاتقۇسىنى يۈكلىگەنلىكىڭىزنى تەكشۈرۈڭ.\n"
 
 #: backends/mixer_mpris2.cpp:53
 #, kde-format
 msgid "Application Streams"
-msgstr ""
+msgstr "پىروگرامما ئېقىمى"
 
 #: backends/mixer_oss.cpp:73
 msgid "Volume"
@@ -438,7 +428,7 @@ msgstr "ئاۋاز مىقدارى"
 
 #: backends/mixer_oss.cpp:73
 msgid "Bass"
-msgstr "Bass مۇزىكىسى"
+msgstr "تۆۋەن ئاۋاز"
 
 #: backends/mixer_oss.cpp:73
 msgid "Treble"
@@ -446,7 +436,7 @@ msgstr "يۇقىرى ئاۋاز"
 
 #: backends/mixer_oss.cpp:74
 msgid "Synth"
-msgstr "بىرىكتۈرگۈ"
+msgstr "بىرىكتۈرگۈچ"
 
 #: backends/mixer_oss.cpp:74
 msgid "Pcm"
@@ -468,11 +458,11 @@ msgstr "CD"
 
 #: backends/mixer_oss.cpp:75
 msgid "Line"
-msgstr "قۇر"
+msgstr "سىزىق"
 
 #: backends/mixer_oss.cpp:76
 msgid "Mix"
-msgstr "كىرىشتۈرۈش"
+msgstr "كىرىشتۈر"
 
 #: backends/mixer_oss.cpp:76
 msgid "Pcm2"
@@ -484,11 +474,11 @@ msgstr "ئاۋاز نازارىتى"
 
 #: backends/mixer_oss.cpp:77
 msgid "IGain"
-msgstr "IGain"
+msgstr "كىرگۈزۈش ئارتىش"
 
 #: backends/mixer_oss.cpp:77
 msgid "OGain"
-msgstr "OGain"
+msgstr "چىقىرىش ئارتىش"
 
 #: backends/mixer_oss.cpp:77
 msgid "Line1"
@@ -528,7 +518,7 @@ msgstr "سىن"
 
 #: backends/mixer_oss.cpp:80
 msgid "Radio"
-msgstr "رادىئو"
+msgstr "رادىيو"
 
 #: backends/mixer_oss.cpp:81
 msgid "Monitor"
@@ -545,11 +535,11 @@ msgstr "3D مەركىزى"
 #: backends/mixer_oss.cpp:85 backends/mixer_oss.cpp:86 core/mixdevice.cpp:124
 #, kde-format
 msgid "unknown"
-msgstr "نامەلۇم"
+msgstr "يوچۇن"
 
 #: backends/mixer_oss.cpp:86
 msgid "unused"
-msgstr "ئىشلىتىلمىگىنى‏"
+msgstr "%1 مىنۇت"
 
 #: backends/mixer_oss.cpp:240 backends/mixer_oss4.cpp:526
 #, kde-format
@@ -557,9 +547,9 @@ msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
 "Login as root and do a 'chmod a+rw /dev/mixer*' to allow the access."
 msgstr ""
-"kmix: بىرىكتۈرگۈچ ئۈسكۈنە زىيارەت ھوقۇقىڭىز يوق.\n"
-" ئالىي ئىشلەتكۈچى سالاھىيىتىدە تىزىمغا كىرىپ 'chmod a+rw /dev/mixer*' "
-"بۇيرۇقىنى ئىجرا قىلىپ زىيارەت ھوقۇقىنى ئېچىڭ."
+"kmix: ئارىلاشتۇرغۇچ ئۈسكۈنە زىيارەت ئىجازىتىڭىز يوق.\n"
+" ئالىي ئىشلەتكۈچى يەنى root سالاھىيىتىدە تىزىمغا كىرىپ «chmod a+rw /dev/"
+"mixer*» بۇيرۇقىنى ئىجرا قىلىپ زىيارەت ئىجازىتىنى ئېچىڭ."
 
 #: backends/mixer_oss.cpp:244
 #, kde-format
@@ -570,10 +560,10 @@ msgid ""
 "On Linux you might need to use 'insmod' to load the driver.\n"
 "Use 'soundon' when using commercial OSS."
 msgstr ""
-"kmix: بىرىكتۈرگۈچ ئۈسكۈنە تېپىلمىدى.\n"
+"kmix: ئارىلاشتۇرغۇچ ئۈسكۈنە تېپىلمىدى.\n"
 "ئۈن كارتا ئورنىتىپ قوزغاتقۇسىنى يۈكلىگەنلىكىڭىزنى تەكشۈرۈڭ.\n"
-"لىنۇكىستا 'insmod' نى ئىشلىتىپ قوزغاتقۇنى يۈكلەيسىز.\n"
-"ئەگەر سودا OSS نى ئىشلەتسىڭىز ئۇنداقتا 'soundon' نى ئىشلىتىڭ."
+"Linux تا «insmod» نى ئىشلىتىپ قوزغاتقۇنى يۈكلەيسىز.\n"
+"ئەگەر سودا OSS نى ئىشلەتسىڭىز ئۇنداقتا «soundon» نى ئىشلىتىڭ."
 
 #: backends/mixer_oss4.cpp:530
 #, kde-format
@@ -584,15 +574,15 @@ msgid ""
 "On Linux you might need to use 'insmod' to load the driver.\n"
 "Use 'soundon' when using OSS4 from 4front."
 msgstr ""
-"kmix: بىرىكتۈرگۈچ ئۈسكۈنە تېپىلمىدى.\n"
+"kmix: ئارىلاشتۇرغۇچ ئۈسكۈنە تېپىلمىدى.\n"
 "ئۈن كارتا ئورنىتىپ قوزغاتقۇسىنى يۈكلىگەنلىكىڭىزنى تەكشۈرۈڭ.\n"
-"لىنۇكىستا 'insmod' نى ئىشلىتىپ قوزغاتقۇنى يۈكلەيسىز.\n"
-"ئەگەر 4front نىڭ OSS4 نى ئىشلەتسىڭىز ئۇنداقتا 'soundon' نى ئىشلىتىڭ."
+"Linux تا «insmod» نى ئىشلىتىپ قوزغاتقۇنى يۈكلەيسىز.\n"
+"ئەگەر 4front نىڭ OSS4 نى ئىشلەتسىڭىز ئۇنداقتا «soundon» نى ئىشلىتىڭ."
 
 #: backends/mixer_pulse.cpp:352 backends/mixer_pulse.cpp:409
 #, kde-format
 msgid "Unknown Application"
-msgstr "نامەلۇم پروگرامما"
+msgstr "نامەلۇم پىروگرامما"
 
 #: backends/mixer_pulse.cpp:455
 #, kde-format
@@ -602,28 +592,27 @@ msgstr "ھادىسە ئاۋازى"
 #: backends/mixer_pulse.cpp:1086 backends/mixer_sndio.cpp:171
 #, kde-format
 msgid "Playback Devices"
-msgstr "قايتا قويۇش ئۈسكۈنىلىرى"
+msgstr "ياڭرىتىش ئۈسكۈنىسى"
 
 #: backends/mixer_pulse.cpp:1094 backends/mixer_sndio.cpp:178
 #, kde-format
 msgid "Capture Devices"
-msgstr "تۇتۇش ئۈسكۈنىلىرى"
+msgstr "تۇتۇش ئۈسكۈنىسى"
 
 #: backends/mixer_pulse.cpp:1102 backends/mixer_sndio.cpp:185
 #, kde-format
 msgid "Playback Streams"
-msgstr "قايتا قويۇش ئېقىملىرى"
+msgstr "ياڭرىتىش ئېقىمى"
 
 #: backends/mixer_pulse.cpp:1113
 #, kde-format
 msgid "Capture Streams"
-msgstr "تۇتۇش ئېقىملىرى"
+msgstr "تۇتۇش ئېقىمى"
 
 #: backends/mixer_sndio.cpp:164
-#, fuzzy, kde-format
-#| msgid "Capture Devices"
+#, kde-format
 msgid "Server Devices"
-msgstr "تۇتۇش ئۈسكۈنىلىرى"
+msgstr "مۇلازىمېتىر ئۈسكۈنىسى"
 
 #: backends/mixer_sun.cpp:69
 #, kde-format
@@ -643,7 +632,7 @@ msgstr "قۇلاقلىق"
 #: backends/mixer_sun.cpp:72
 #, kde-format
 msgid "Line Out"
-msgstr "لىنىيىدىن چىقىرىش"
+msgstr "سىملىق چىقىرىش"
 
 #: backends/mixer_sun.cpp:73
 #, kde-format
@@ -653,7 +642,7 @@ msgstr "ئۈنئالغۇ كۆزەتكۈچ"
 #: backends/mixer_sun.cpp:75
 #, kde-format
 msgid "Line In"
-msgstr "لىنىيىدىن كىرگۈزۈش"
+msgstr "سىملىق كىرگۈزۈش"
 
 #: backends/mixer_sun.cpp:241
 #, kde-format
@@ -661,7 +650,7 @@ msgid ""
 "kmix: You do not have permission to access the mixer device.\n"
 "Ask your system administrator to fix /dev/audioctl to allow access."
 msgstr ""
-"kmix: بىرىكتۈرگۈچ ئۈسكۈنە زىيارەت ھوقۇقىڭىز يوق.\n"
+"kmix: ئارىلاشتۇرغۇچ ئۈسكۈنە زىيارەت ئىجازىتىڭىز يوق.\n"
 "سىستېما باشقۇرغۇچىڭىز بىلەن ئالاقە قىلىپ /dev/audioctl ئۆزگەرتىشىنى سوراپ "
 "ئاندىن زىيارەت قىلىڭ."
 
@@ -671,18 +660,18 @@ msgid ""
 "kmix:You do not have permission to access the mixer device.\n"
 "Please check your operating systems manual to allow the access."
 msgstr ""
-"kmix: بىرىكتۈرگۈچ ئۈسكۈنە زىيارەت ھوقۇقىڭىز يوق.\n"
+"kmix: ئارىلاشتۇرغۇچ ئۈسكۈنە زىيارەت ئىجازىتىڭىز يوق.\n"
 "مەشغۇلات سىستېما قوللانمىسىنى كۆرۈپ زىيارەت ھوقۇقىنى ئېچىش ئۇسۇلىنى چۈشىنىڭ."
 
 #: backends/mixerbackend.cpp:328
 #, kde-format
 msgid "kmix: Could not write to mixer."
-msgstr "kmix:بىرىكتۈرگۈچكە يازالمىدى."
+msgstr "kmix:ئارىلاشتۇرغۇچقا يازالمىدى."
 
 #: backends/mixerbackend.cpp:331
 #, kde-format
 msgid "kmix: Could not read from mixer."
-msgstr "kmix: بىرىكتۈرگۈچتىن ئۇقۇيالمىدى."
+msgstr "kmix: ئارىلاشتۇرغۇچتىن ئۇقۇيالمىدى."
 
 #: backends/mixerbackend.cpp:334
 #, kde-format
@@ -691,7 +680,7 @@ msgid ""
 "Please check that the soundcard is installed and that\n"
 "the soundcard driver is loaded.\n"
 msgstr ""
-"kmix: بىرىكتۈرگۈچ تېپىلمىدى.\n"
+"kmix: ئارىلاشتۇرغۇچ تېپىلمىدى.\n"
 "ئۈن كارتا ئورنىتىپ قوزغاتقۇسىنى يۈكلىگەنلىكىڭىزنى تەكشۈرۈڭ.\n"
 
 #: backends/mixerbackend.cpp:339
@@ -726,8 +715,8 @@ msgid ""
 "the Master or Headphone channels."
 msgstr ""
 "كۆپ قىسىم كۆپ ۋاسىتە مەسىلەن MP3 ياكى سىن قاتارلىقلارنىڭ ھەممىسى PCM قانالدا "
-"ئۈن چالىدۇ. شۇڭلاشقا بۇ ۋاستىلارنى چالغاندا ئاۋازنى قانال ۋە ئاساسىي قانال/"
-"قۇلاقلىق قانال تىزگىنى بىرلا ۋاقىتتا باشقۇرىدۇ."
+"ئۈن ياڭرىتىدۇ. شۇڭلاشقا بۇ ۋاسىتىلەرنى ياڭراتقاندا ئاۋاز قانال ۋە ئاساسىي "
+"قانال/قۇلاقلىق قانال تىزگىنى بىرلا ۋاقىتتا باشقۇرىدۇ."
 
 #: backends/mixerbackend.cpp:354
 #, kde-format
@@ -747,78 +736,76 @@ msgstr "---"
 #, kde-format
 msgctxt "Channel name"
 msgid "Left"
-msgstr ""
+msgstr "سول"
 
 #: core/volume.cpp:59
 #, kde-format
 msgctxt "Channel name"
 msgid "Right"
-msgstr ""
+msgstr "ئوڭ"
 
 #: core/volume.cpp:60
-#, fuzzy, kde-format
-#| msgid "3D-center"
+#, kde-format
 msgctxt "Channel name"
 msgid "Center"
-msgstr "3D مەركىزى"
+msgstr "ئوتتۇرا"
 
 #: core/volume.cpp:61
 #, kde-format
 msgctxt "Channel name"
 msgid "Subwoofer"
-msgstr ""
+msgstr "ئۇلترا تۆۋەن ئاۋاز"
 
 #: core/volume.cpp:62
 #, kde-format
 msgctxt "Channel name"
 msgid "Surround Left"
-msgstr ""
+msgstr "ئەتراپ سول"
 
 #: core/volume.cpp:63
 #, kde-format
 msgctxt "Channel name"
 msgid "Surround Right"
-msgstr ""
+msgstr "ئەتراپ ئوڭ"
 
 #: core/volume.cpp:64
 #, kde-format
 msgctxt "Channel name"
 msgid "Side Left"
-msgstr ""
+msgstr "يان سول"
 
 #: core/volume.cpp:65
 #, kde-format
 msgctxt "Channel name"
 msgid "Side Right"
-msgstr ""
+msgstr "يان ئوڭ"
 
 #: core/volume.cpp:66
 #, kde-format
 msgctxt "Channel name"
 msgid "Rear Center"
-msgstr ""
+msgstr "ئارقا ئوتتۇرا"
 
 #: core/volume.cpp:68
-#, fuzzy, kde-format
-#| msgid "unknown"
+#, kde-format
 msgctxt "Channel name"
 msgid "Unknown"
-msgstr "نامەلۇم"
+msgstr "يوچۇن"
 
 #: gui/dialogaddview.cpp:51
 #, kde-format
 msgid "All controls"
-msgstr "ھەممە تىزگىنلەر"
+msgstr "ھەممە تىزگىن"
 
 #: gui/dialogaddview.cpp:52
 #, kde-format
 msgid "Only playback controls"
-msgstr "چېلىش تىزگىنلىرىلا"
+msgstr "ياڭرىتىش تىزگىنىلا"
 
 #: gui/dialogaddview.cpp:53
 #, kde-format
 msgid "Only capture controls"
-msgstr "تۇتۇش تىزگىنلىرىلا"
+msgstr "تۇتۇش تىزگىنىلا"
 
 #: gui/dialogaddview.cpp:60
 #, kde-format
@@ -828,34 +815,33 @@ msgstr "كۆرۈنۈش قوش"
 #: gui/dialogaddview.cpp:89
 #, kde-format
 msgid "Select mixer:"
-msgstr "بىرىكتۈرگۈچ تاللاش:"
+msgstr "ئارىلاشتۇرغۇچ تاللىنىدۇ:"
 
 #: gui/dialogaddview.cpp:96
 #, kde-format
 msgid "Current mixer"
-msgstr "نۆۋەتتىكى بىرىكتۈرگۈچ"
+msgstr "نۆۋەتتىكى ئارىلاشتۇرغۇچ"
 
 #: gui/dialogaddview.cpp:116
 #, kde-format
 msgid "Select the design for the new view:"
-msgstr "يېڭى كۆرۈنۈش لايىھىسىنى تاللاڭ:"
+msgstr "يېڭى كۆرۈنۈش لايىھەسى تاللىنىدۇ:"
 
 #: gui/dialogselectmaster.cpp:44 gui/dialogselectmaster.cpp:140
 #, kde-format
 msgid "Select Master Channel"
-msgstr "Select Master Channel"
+msgstr "ئاساسىي قانال تاللىنىدۇ"
 
 #: gui/dialogselectmaster.cpp:74
 #, kde-format
 msgid "Current mixer:"
-msgstr "نۆۋەتتىكى بىرىكتۈرگۈچ:"
+msgstr "نۆۋەتتىكى ئارىلاشتۇرغۇچ:"
 
 #: gui/dialogselectmaster.cpp:124
-#, fuzzy, kde-kuit-format
-#| msgid "Select the channel representing the master volume:"
+#, kde-kuit-format
 msgctxt "@info"
 msgid "Select the <link url=\"i\">master volume</link> channel:"
-msgstr "ئاساسىي ئاۋازغا ۋەكىللىك قىلىدىغان قانالنى تاللاڭ:"
+msgstr "<link url=\"i\">ئاساسىي ئاۋاز مىقدارى</link> قانىلى تاللىنىدۇ:"
 
 #: gui/dialogselectmaster.cpp:132
 #, kde-kuit-format
@@ -867,11 +853,16 @@ msgid ""
 "global shortcut keys, and the <interface>Mute</interface> action in the "
 "system tray popup menu.</para>"
 msgstr ""
+"<para>بۇ جايدا ئاساسىي ئاۋاز ئۈسكۈنىسى (ئەگەر بىردىن كۆپ ئۈسكۈنە بولسا)  ۋە "
+"ئۇنىڭ ئاساسىي ئاۋاز قانىلىنى تاللىيالايسىز.</para><para>ئاساسىي ئاۋاز قانىلى "
+"سىستېما قونداقتىكى ئاۋاز تىزگىن بۆلىكى، ئاۋازنى يۇقىرىلىتىش/تۆۋەنلىتىش "
+"ئومۇمىيەت تېزلەتمىسى ۋە سىستېما قونداق قاڭقىش كۆزنىكىنىڭ <interface>ئۈنسىز</"
+"interface> مەشغۇلاتىنى تىزگىنلەيدۇ.</para>"
 
 #: gui/dialogselectmaster.cpp:203
 #, kde-format
 msgid "Automatic (%1 recommendation)"
-msgstr ""
+msgstr "ئاپتوماتىك (%1 تەۋسىيە)"
 
 #: gui/dialogviewconfiguration.cpp:132
 #, kde-format
@@ -879,33 +870,30 @@ msgid "Configure Channels"
 msgstr "قانال سەپلىمە"
 
 #: gui/dialogviewconfiguration.cpp:143
-#, fuzzy, kde-format
-#| msgid "Configuration of the channels. Drag icon to update."
+#, kde-format
 msgid "Configure the visible channels. Drag icons between the lists to update."
-msgstr "قاناللارنى سەپلەيدۇ. سىنبەلگە سۆرەلسە يېڭىلايدۇ."
+msgstr ""
+"كۆرۈنۈشچان قانالنى سەپلەيدۇ. يېڭىلايدىغان تىزىم ئارىسىدا سىنبەلگە سۆرىلىدۇ."
 
 #: gui/dialogviewconfiguration.cpp:213
-#, fuzzy, kde-format
-#| msgid "Visible channels"
+#, kde-format
 msgid "Visible channels:"
-msgstr "كۆرۈنۈشچان قاناللار"
+msgstr "كۆرۈنۈشچان قانال:"
 
 #: gui/dialogviewconfiguration.cpp:216
-#, fuzzy, kde-format
-#| msgid "Available channels"
+#, kde-format
 msgid "Available channels:"
-msgstr "ئىشلىتىلىشچان قاناللار"
+msgstr "ئىشلىتىلىشچان قانال:"
 
 #: gui/dialogviewconfiguration.cpp:230
-#, fuzzy, kde-format
-#| msgid "Hide the selected channel"
+#, kde-format
 msgid "Move the selected channel to the visible list"
-msgstr "تاللانغان قانالنى يوشۇر"
+msgstr "تاللانغان قانالنى كۆرۈنۈشچان تىزىمغا يۆتكەيدۇ"
 
 #: gui/dialogviewconfiguration.cpp:238
 #, kde-format
 msgid "Move the selected channel to the available (hidden) list"
-msgstr ""
+msgstr "تاللانغان قانالنى ئىشلىتىلىشچان (يوشۇرۇن) تىزىمغا يۆتكەيدۇ"
 
 #: gui/dialogviewconfiguration.cpp:278
 #, kde-format
@@ -920,12 +908,12 @@ msgstr "تاللانغان قانالنى يوشۇر"
 #: gui/dialogviewconfiguration.cpp:280
 #, kde-format
 msgid "Visible channels"
-msgstr "كۆرۈنۈشچان قاناللار"
+msgstr "كۆرۈنۈشچان قانال"
 
 #: gui/dialogviewconfiguration.cpp:281
 #, kde-format
 msgid "Available channels"
-msgstr "ئىشلىتىلىشچان قاناللار"
+msgstr "ئىشلىتىلىشچان قانال"
 
 #: gui/kmixdockwidget.cpp:64 gui/kmixprefdlg.cpp:87
 #, kde-format
@@ -938,21 +926,19 @@ msgid "M&ute"
 msgstr "ئۈنسىز(&U)"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
-msgstr "بىرىكتۈرگۈچ كۆزنەكنى يوشۇر"
+msgstr "ئارىلاشتۇرغۇچ كۆزنەكنى كۆرسەت"
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
 msgid "No mixer devices available"
-msgstr ""
+msgstr "ھېچقانداق ئارىلاشتۇرغۇچ ئۈسكۈنە يوق"
 
 #: gui/kmixdockwidget.cpp:230
-#, fuzzy, kde-format
-#| msgid "Volume Feedback"
+#, kde-format
 msgid "Volume muted"
-msgstr "ئاۋاز قايتۇرما ئىنكاسى"
+msgstr "ئاۋاز ئۈنسىزلەندى"
 
 #: gui/kmixdockwidget.cpp:231
 #, kde-format
@@ -962,7 +948,7 @@ msgstr "%1% دىكى ئاۋاز"
 #: gui/kmixdockwidget.cpp:233
 #, kde-format
 msgid "%1 - %2"
-msgstr ""
+msgstr "%1 - %2"
 
 #: gui/kmixprefdlg.cpp:53
 #, kde-format
@@ -972,7 +958,7 @@ msgstr "سەپلە"
 #: gui/kmixprefdlg.cpp:85
 #, kde-format
 msgid "General"
-msgstr ""
+msgstr "ئادەتتىكى"
 
 #: gui/kmixprefdlg.cpp:86
 #, kde-format
@@ -982,45 +968,43 @@ msgstr "قوزغىلىش"
 #: gui/kmixprefdlg.cpp:124
 #, kde-format
 msgid "Start KMix on desktop startup"
-msgstr ""
+msgstr "ئۈستەلئۈستى قوزغالغاندا KMix نى قوزغىتىدۇ"
 
 #: gui/kmixprefdlg.cpp:128
 #, kde-format
 msgid "Start KMix automatically when the desktop starts"
-msgstr ""
+msgstr "ئۈستەلئۈستى قوزغالغاندا KMix نى ئۆزلۈكىدىن قوزغىتىدۇ"
 
 #: gui/kmixprefdlg.cpp:131
-#, fuzzy, kde-format
-#| msgid ""
-#| "Autostart can not be enabled, as the autostart file kmix_autostart."
-#| "desktop is not installed."
+#, kde-format
 msgid ""
 "Autostart will not work, because the autostart file kmix_autostart.desktop "
 "is missing. Check that KMix is installed correctly."
 msgstr ""
-"ئۆزلۈكىدىن قوزغىتىشنى قوزغىتالمىدى ئاپتوماتىك قوزغىتىش ھۆججىتى "
-"kmix_autostart.desktop ئورنىتىلمىغان."
+"ئۆزلۈكىدىن قوزغىتىش ئىشلىمىدى چۈنكى ئۆزلۈكىدىن قوزغىتىش ھۆججىتى "
+"kmix_autostart.desktop يوقالغان. KMix نىڭ توغرا ئورنىتىلغانلىقىنى تەكشۈرۈڭ."
 
 #: gui/kmixprefdlg.cpp:141
-#, fuzzy, kde-format
-#| msgid "Restore volumes on login"
+#, kde-format
 msgid "Restore previous volume settings on desktop startup"
-msgstr "تىزىمغا كىرگەندە ئاۋاز مىقدارىنى ئەسلىگە كەلتۈر"
+msgstr ""
+"ئۈستەلئۈستى قوزغالغاندا ئالدىنقى ئاۋاز مىقدارى تەڭشەكنى ئەسلىگە قايتۇرىدۇ"
 
 #: gui/kmixprefdlg.cpp:145
-#, fuzzy, kde-format
-#| msgid "Restore all volume levels and switches."
+#, kde-format
 msgid ""
 "Restore all mixer volume levels and switches to their last used settings "
 "when the desktop starts"
-msgstr "ھەممە ئاۋاز دەرىجىسى ۋە ئۈزچاتلارنى ئەسلىگە قايتۇرىدۇ."
+msgstr ""
+"ئۈستەلئۈستى قوزغالغاندا ئالدىنقى ئاۋاز مىقدارى تەڭشەكنى ئەسلىگە قايتۇرىدۇ"
 
 #: gui/kmixprefdlg.cpp:148
-#, fuzzy, kde-format
-#| msgid "Dynamic controls from Pulseaudio and MPRIS2 will not be restored."
+#, kde-format
 msgid ""
 "The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."
-msgstr "Pulseaudio نىڭ ھەرىكەتچان تىزگىنى ۋە MPRIS2 نى قوللىمايدۇ."
+msgstr ""
+"PulseAudio ئاۋازى ياكى MPRIS2 ھەرىكەتچان  تىزگىنلەيدىغان ئاۋازى ئەسلىگە "
+"قايتۇرۇلمايدۇ."
 
 #: gui/kmixprefdlg.cpp:166
 #, kde-format
@@ -1035,13 +1019,12 @@ msgstr "بويىغا(&V)"
 #: gui/kmixprefdlg.cpp:214
 #, kde-format
 msgid "Behavior"
-msgstr "ھەرىكەت"
+msgstr "قىلمىش"
 
 #: gui/kmixprefdlg.cpp:228
-#, fuzzy, kde-format
-#| msgid "Volume Control"
+#, kde-format
 msgid "Volume overdrive"
-msgstr "ئاۋاز تىزگىنى"
+msgstr "ئاۋازىنى ئۆتە يۇقىرىلات"
 
 #: gui/kmixprefdlg.cpp:233
 #, kde-format
@@ -1050,21 +1033,24 @@ msgid ""
 "Allow the volume to be raised above the recommended maximum (typically to "
 "150%)"
 msgstr ""
+"ئاۋاز كۈچلۈكلۈكىنىڭ تەۋسىيە قىلىنغان ئەڭ يۇقىرى قىممەتتىن ئېشىشىغا يول "
+"قويىدۇ (ئادەتتە 150%)"
 
 #: gui/kmixprefdlg.cpp:236
-#, fuzzy, kde-format
-#| msgid "Volume feedback is only available for Pulseaudio."
+#, kde-format
 msgid "Volume overdrive is only available for PulseAudio."
-msgstr "ئاۋاز قايتۇرما ئىنكاسى پەقەت Pulseaudio دىلا ئىشلەيدۇ."
+msgstr ""
+"ئاۋازىنى ئۆتە يۇقىرىلات ئىقتىدارىنى پەقەت PulseAudio دىلا ئىشلەتكىلى بولىدۇ."
 
 #: gui/kmixprefdlg.cpp:246
 #, kde-format
 msgid "%1 must be restarted for the volume overdrive setting to take effect."
 msgstr ""
+"چوقۇم %1 نى قايتا قوزغاتقاندىلا ئاندىن ئاۋازىنى  ئۆتە يۇقىرىلات تەڭشىكى "
+"كۈچكە ئىگە بولىدۇ."
 
 #: gui/kmixprefdlg.cpp:256
-#, fuzzy, kde-format
-#| msgid "Volume Feedback"
+#, kde-format
 msgid "Volume feedback"
 msgstr "ئاۋاز قايتۇرما ئىنكاسى"
 
@@ -1072,12 +1058,12 @@ msgstr "ئاۋاز قايتۇرما ئىنكاسى"
 #, kde-format
 msgctxt "@info:tooltip"
 msgid "Play a sample sound when the volume changes"
-msgstr ""
+msgstr "ئاۋاز ئۆزگەرگەندە ئۈلگە ئاۋازنى ياڭرىتىدۇ"
 
 #: gui/kmixprefdlg.cpp:264
 #, kde-format
 msgid "Volume feedback is only available when configured with Canberra."
-msgstr ""
+msgstr "ئاۋاز قايتۇرما ئىنكاسى پەقەت Canberra دا سەپلىگەندىلا ئىشلەيدۇ."
 
 #: gui/kmixprefdlg.cpp:286
 #, kde-kuit-format
@@ -1088,12 +1074,17 @@ msgid ""
 "wheel over the system tray icon, or moving sliders by a page step.</"
 "para><para>%1 must be restarted for this change to take effect.</para>"
 msgstr ""
+"<para>ئاۋاز دائىرىسىنىڭ پىرسەنتى بويىچە ئاۋاز كۈچلۈكلۈكىنىڭ تەڭشەش "
+"ئىلگىرىلىشىنى تەڭشەيدۇ.</para><para>بۇ تەڭشەك تۆۋەندىكى ئاۋاز تەڭشىكىنىڭ "
+"يەككە قەدىمىگە تەسىر كۆرسىتىدۇ: تېزلەتمە كۇنۇپكىسى، سىستېما قونداقتا "
+"چاشقىنەك غالتىكى ياكى ئاۋاز سىيرىغۇچ بالداقتا بەت ئۆرۈش كۇنۇپكىسى ئارقىلىق "
+"ئاۋاز كۈچلۈكلۈكى تەڭشىلىدۇ.</para><para>چوقۇم %1 قايتا قوزغىتىلغاندىلا "
+"ئاندىن كۈچكە ئىگە بولىدۇ.</para>"
 
 #: gui/kmixprefdlg.cpp:293
-#, fuzzy, kde-format
-#| msgid "Volume Feedback"
+#, kde-format
 msgid "Volume step:"
-msgstr "ئاۋاز قايتۇرما ئىنكاسى"
+msgstr "ئاۋاز قەدىمى:"
 
 #: gui/kmixprefdlg.cpp:301
 #, kde-format
@@ -1101,68 +1092,61 @@ msgid "Visual"
 msgstr "كۆرۈنۈشچان"
 
 #: gui/kmixprefdlg.cpp:310
-#, fuzzy, kde-format
-#| msgid "Show &tickmarks"
+#, kde-format
 msgid "Show slider &tickmarks"
-msgstr "شكالا كۆرسەت(&T)"
+msgstr "سىيرىغۇچ شكالىسىنى كۆرسەت(&T)"
 
 #: gui/kmixprefdlg.cpp:313
-#, fuzzy, kde-format
-#| msgid "Enable/disable tickmark scales on the sliders"
+#, kde-format
 msgid "Show tick mark scales on sliders"
-msgstr "سىرىغۇچدا شكالا قىممىتىنى قوزغاتىدۇ/چەكلەيدۇ"
+msgstr "سىيرىغۇچتا شكالا گەزنى كۆرسەت"
 
 #: gui/kmixprefdlg.cpp:315
-#, fuzzy, kde-format
-#| msgid "Show &labels"
+#, kde-format
 msgid "Show control &labels"
-msgstr "ئەنلەرنى كۆرسەت(&L)"
+msgstr "تىزگىن بەلگىسىنى كۆرسەت(&L)"
 
 #: gui/kmixprefdlg.cpp:318
-#, fuzzy, kde-format
-#| msgid "Enables/disables description labels above the sliders"
+#, kde-format
 msgid "Show description labels for sliders"
-msgstr "سىرىغۇچتىكى چۈشەندۈرۈش بەلگىسىنى قوزغاتىدۇ/چەكلەيدۇ"
+msgstr "سىيرىغۇچتا چۈشەندۈرۈش بەلگىسىنى كۆرسەت"
 
 #: gui/kmixprefdlg.cpp:321
 #, kde-format
 msgid "Show On Screen Display (&OSD)"
-msgstr "كۆرسىتىش ئېكرانىدا كۆرسەت(&OSD)"
+msgstr "كۆرسەتكۈچ ئېكرانىدا كۆرسەت(&OSD)"
 
 #: gui/kmixprefdlg.cpp:324
 #, kde-format
 msgid "Show an on-screen indicator when changing the volume via hotkeys"
 msgstr ""
+"تېزلەتمە كۇنۇپكىدا ئاۋاز كۈچلۈكلۈكىنى ئۆزگەرتكەندە ئېكراندىكى كۆرسەتكۈچتە "
+"ئەسكەرتىش كۆرسىتىدۇ"
 
 #: gui/kmixprefdlg.cpp:333
-#, fuzzy, kde-format
-#| msgid "Slider orientation: "
+#, kde-format
 msgid "Slider orientation (main window): "
-msgstr "سىيرىغۇچ يۆنىلىشى: "
+msgstr "سىيرىغۇچ يۆنىلىشى (ئاساسىي كۆزنەك): "
 
 #: gui/kmixprefdlg.cpp:334
-#, fuzzy, kde-format
-#| msgid "Slider orientation (System tray volume control):"
+#, kde-format
 msgid "Slider orientation (system tray popup):"
-msgstr "سۈرگۈچ يۆنىلىشى (سىستېما قونداق ئاۋاز تىزگىنى):"
+msgstr "سىيرىغۇچ يۆنىلىشى (سىستېما قونداق قاڭقىش كۆزنىكى):"
 
 #: gui/kmixprefdlg.cpp:335
-#, fuzzy, kde-format
-#| msgid "Slider orientation: "
+#, kde-format
 msgid "Set the orientation of the main window control sliders"
-msgstr "سىيرىغۇچ يۆنىلىشى: "
+msgstr "ئاساسىي كۆزنەكتىكى سىيرىغۇچ تىزگىنىنىڭ يۆنىلىشىنى تەڭشەيدۇ"
 
 #: gui/kmixprefdlg.cpp:336
-#, fuzzy, kde-format
-#| msgid "Enable system tray &volume control"
+#, kde-format
 msgid "Set the orientation of the system tray volume control sliders"
-msgstr "سىستېما قونداقتا ئاۋاز تىزگىنىنى قوزغات(&V)"
+msgstr "سىستېما قونداقتىكى ئاۋاز تىزگىنى سىيرىغۇچ يۆنىلىشىنى تەڭشەيدۇ"
 
 #: gui/kmixprefdlg.cpp:348
-#, fuzzy, kde-format
-#| msgid "&Dock in system tray"
+#, kde-format
 msgid "Dock in system tray"
-msgstr "سىستېما قونداقتا توختات(&D)"
+msgstr "سىستېما قونداقتا توختات"
 
 #: gui/kmixprefdlg.cpp:351
 #, kde-format
@@ -1170,34 +1154,37 @@ msgid ""
 "Dock the mixer into the system tray. Click on it to open the popup volume "
 "control."
 msgstr ""
+"ئارىلاشتۇرغۇچنى سىستېما قونداقتا توختىتىدۇ. چېكىلسە ئاۋاز مىقدارى تىزگىنى "
+"قاڭقىش كۆزنىكىنى ئاچىدۇ."
 
 #: gui/kmixprefdlg.cpp:355
 #, kde-format
 msgid "Mixers to show in the popup volume control:"
-msgstr ""
+msgstr "ئاۋاز مىقدارى تىزگىنى قاڭقىش كۆزنىكىدە كۆرسىتىدىغان ئارىلاشتۇرغۇچ:"
 
 #: gui/kmixprefdlg.cpp:365
 #, kde-format
 msgid "Select Mixers"
-msgstr "ئارىلاشتۇرغۇچ تاللاڭ"
+msgstr "ئارىلاشتۇرغۇچ تاللىنىدۇ"
 
 #: gui/kmixprefdlg.cpp:367
 #, kde-format
 msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
 msgstr ""
+"بۇ جايدا تاللانغان ئارىلاشتۇرغۇچ ئاۋاز مىقدارى تىزگىنى قاڭقىش كۆزنىكىدە "
+"كۆرۈنىدۇ."
 
 #: gui/kmixtoolbox.cpp:96
-#, fuzzy, kde-format
-#| msgid "No sound card is installed or currently plugged in."
+#, kde-format
 msgid "No sound devices are installed or are currently available."
-msgstr "ئۈن كارتا ئورنىتىلمىغان ياكى نۆۋەتتە قىستۇرۇلمىغان."
+msgstr ""
+"ھېچقانداق ئاۋاز ئۈسكۈنىسى ئورنىتىلمىغان ياكى نۆۋەتتە ئىشلەتكىلى بولمايدۇ."
 
 #: gui/mdwslider.cpp:95
-#, fuzzy, kde-format
-#| msgid "&Split Channels"
+#, kde-format
 msgid "Split Channels"
-msgstr "قاناللارنى پارچىلا(&S)"
+msgstr "قانالنى بۆل"
 
 #: gui/mdwslider.cpp:107 gui/mdwslider.cpp:626
 #, kde-format
@@ -1205,41 +1192,36 @@ msgid "Capture"
 msgstr "تۇت"
 
 #: gui/mdwslider.cpp:112
-#, fuzzy, kde-format
-#| msgid "Capture Devices"
+#, kde-format
 msgid "Use Device"
-msgstr "تۇتۇش ئۈسكۈنىلىرى"
+msgstr "ئۈسكۈنىنى ئىشلەت"
 
 #: gui/mdwslider.cpp:157
 #, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Mute %2 on %1"
-msgstr ""
+msgstr "%1 دىكى %2 نى ئۈنسىزلە"
 
 #: gui/mdwslider.cpp:169
-#, fuzzy, kde-format
-#| msgid "Increase Volume"
+#, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Increase volume of %2 on %1"
-msgstr "ئاۋازنى چوڭايتىش"
+msgstr "%1 دىكى %2 نىڭ ئاۋازىنى يۇقىرىلات"
 
 #: gui/mdwslider.cpp:177
-#, fuzzy, kde-format
-#| msgid "Decrease Volume"
+#, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Decrease volume of %2 on %1"
-msgstr "ئاۋازنى كىچىكلىتىش"
+msgstr "%1 دىكى %2 نىڭ ئاۋازىنى تۆۋەنلەت"
 
 #: gui/mdwslider.cpp:327
-#, fuzzy, kde-format
-#| msgid "Capture/Uncapture %1"
+#, kde-format
 msgctxt "%1=channel"
 msgid "Capture/Uncapture %1"
-msgstr "تۇت/تۇتما %1"
+msgstr "%1 تۇت/تۇتما"
 
 #: gui/mdwslider.cpp:328
-#, fuzzy, kde-format
-#| msgid "Mute/Unmute %1"
+#, kde-format
 msgctxt "%1=channel"
 msgid "Mute/Unmute %1"
 msgstr "ئۈنلۈك/ئۈنسىز %1"
@@ -1251,6 +1233,8 @@ msgid ""
 "%1\n"
 "%2"
 msgstr ""
+"%1\n"
+"%2"
 
 #: gui/mdwslider.cpp:678
 #, kde-format
@@ -1258,27 +1242,24 @@ msgid "%1 (capture)"
 msgstr "%1 (تۇت)"
 
 #: gui/mdwslider.cpp:1101
-#, fuzzy, kde-format
-#| msgid "Automatic According to Category"
+#, kde-format
 msgid "Automatic (according to category)"
-msgstr "تۈرگە ئاساسەن ئۆزلۈكىدىن تاللا"
+msgstr "ئاپتوماتىك (سەھىپىگە ئاساسەن)"
 
 #: gui/mixdevicewidget.cpp:65
-#, fuzzy, kde-format
-#| msgid "C&onfigure Shortcuts..."
+#, kde-format
 msgid "Channel Shortcuts..."
-msgstr "تېزلەتمە سەپلە(&O)…"
+msgstr "قانال تېزلەتمە…"
 
 #: gui/viewbase.cpp:88
-#, fuzzy, kde-format
-#| msgid "Configure Channels"
+#, kde-format
 msgid "Configure this view"
-msgstr "قانال سەپلىمە"
+msgstr "كۆرۈنۈش سەپلىمە"
 
 #: gui/viewdockareapopup.cpp:483
 #, kde-format
 msgid "Show the full mixer window"
-msgstr ""
+msgstr "تولۇق ئارىلاشتۇرغۇچ كۆزنەكنى كۆرسەت"
 
 #: gui/viewdockareapopup.cpp:515
 #, kde-format
@@ -1288,7 +1269,7 @@ msgstr "ئاۋاز سەپلىمە ھۆججىتى %1 نى يۈكلە"
 #: gui/viewsliders.cpp:181
 #, kde-format
 msgid "Nothing is playing audio."
-msgstr "ھېچقانداق ئاۋازنى چالالمىدى."
+msgstr "ھېچقانداق ئاۋازنى ياڭرىتالمىدى."
 
 #: gui/viewsliders.cpp:184
 #, kde-format
@@ -1296,18 +1277,15 @@ msgid "Nothing is capturing audio."
 msgstr "ھېچقانداق ئاۋازنى تۇتالمىدى."
 
 #: gui/viewsliders.cpp:185
-#, fuzzy, kde-format
-#| msgid "No capture devices."
+#, kde-format
 msgid "There are no capture devices."
-msgstr "تۇتىدىغان ئۈسكۈنە يوق."
+msgstr "تۇتىدىغان ھېچقانداق ئۈسكۈنە يوق."
 
 #: gui/viewsliders.cpp:186
-#, fuzzy, kde-format
-#| msgid "No playback devices."
+#, kde-format
 msgid "There are no playback devices."
-msgstr "چالىدىغان ئۈسكۈنە يوق."
+msgstr "ياڭرىتىدىغان ھېچقانداق ئۈسكۈنە يوق."
 
-#, fuzzy
 #~| msgid "Configure &Channels..."
 #~ msgid "Configure Channels..."
 #~ msgstr "قاناللار سەپلىمىسى(&C)…"
@@ -1339,7 +1317,6 @@ msgstr "چالىدىغان ئۈسكۈنە يوق."
 #~ msgid "&Muted"
 #~ msgstr "ئۈنسىز(&M)"
 
-#, fuzzy
 #~| msgid "Capture"
 #~ msgid "Captu&re"
 #~ msgstr "تۇت"
@@ -1365,7 +1342,6 @@ msgstr "چالىدىغان ئۈسكۈنە يوق."
 #~ msgid "Select the Mixers to display in the sound menu"
 #~ msgstr "ئاۋاز تىزىملىكىدە كۆرسىتىدىغان ئارىلاشتۇرغۇچنى تاللاڭ"
 
-#, fuzzy
 #~| msgid "Startup"
 #~ msgid "Start"
 #~ msgstr "قوزغىلىش"
