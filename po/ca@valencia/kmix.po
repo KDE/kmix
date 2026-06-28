@@ -41,7 +41,7 @@ msgstr "KMixCtrl"
 #: apps/kmixctrl.cpp:41
 #, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
-msgstr "kmixctrl - Utilitat per a guardar/restaurar el volum de KMix"
+msgstr "kmixctrl – Utilitat per a guardar/restaurar el volum de KMix"
 
 #: apps/kmixctrl.cpp:43
 #, kde-format
@@ -71,7 +71,7 @@ msgstr "KMix"
 #: apps/kmixmain.cpp:60
 #, kde-format
 msgid "KMix - KDE's full featured mini mixer"
-msgstr "KMix - Mini mesclador ple de funcionalitats de KDE"
+msgstr "KMix – Mini mesclador ple de funcionalitats de KDE"
 
 #: apps/kmixmain.cpp:61
 #, kde-format
@@ -959,7 +959,7 @@ msgstr "Volum al %1%"
 #: gui/kmixdockwidget.cpp:233
 #, kde-format
 msgid "%1 - %2"
-msgstr "%1 - %2"
+msgstr "%1 – %2"
 
 #: gui/kmixprefdlg.cpp:53
 #, kde-format
