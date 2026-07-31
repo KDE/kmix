@@ -190,7 +190,7 @@ soundcards.</para
 >-->
 
 <para
->Wenn sowohl ALSA als auch das Open Sound System installiert sind, benutzt &kmix; standardmäßig ALSA.</para>
+>Wenn sowohl ALSA als auch das Open Sound System installiert sind, verwendet &kmix; standardmäßig ALSA.</para>
 
 <para>
 <screenshot>
