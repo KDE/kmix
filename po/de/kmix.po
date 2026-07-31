@@ -720,7 +720,7 @@ msgid ""
 msgstr ""
 "Regelt die Lautstärke der vorderen Lautsprecher oder aller Lautsprecher "
 "(abhängig von Ihrem Soundkarten-Modell). Wenn Sie einen Digital-Ausgang "
-"verwenden, müssen Sie möglicherweise noch weitere Regler wie z. B. ADC oder "
+"verwenden, müssen Sie möglicherweise noch weitere Regler wie z. B. ADC oder "
 "DAC verwenden. Für Kopfhörer bieten die meisten Soundkarten einen Kopfhörer-"
 "Regler an."
 
