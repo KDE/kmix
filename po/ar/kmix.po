@@ -405,7 +405,7 @@ msgid ""
 "Please verify if all alsa devices are properly created."
 msgstr ""
 "ليس لديك الإذن للوصول إلى وحدة مازج alsa .\n"
-"رجاءً تأكد أن كل أجهزة alsa أنشئت إنشاءً صحيحاً"
+"رجاءً تأكد أن كل أجهزة alsa أنشئت إنشاءً صحيحًا"
 
 #: backends/mixer_alsa9.cpp:968
 #, kde-format
@@ -688,7 +688,7 @@ msgstr ""
 #: backends/mixerbackend.cpp:339
 #, kde-format
 msgid "kmix: Unknown error. Please report how you produced this error."
-msgstr "مازج.ك: خطأ غير معروف. فضلاً أرسل تقريرا بكيفية توليد هذا الخطأ."
+msgstr "مازج.ك: خطأ غير معروف. فضلًا أرسل تقريرا بكيفية توليد هذا الخطأ."
 
 #: backends/mixerbackend.cpp:351
 #, kde-format
@@ -704,8 +704,8 @@ msgid ""
 "Headphone control."
 msgstr ""
 "يتحكم بصوت السماعات الأمامية أو جميع السماعات (بحسب نوع بطاقة الصوت). إذا "
-"كنت تستخدم مخرجاً رقمياً فقد تحتاج أيضاً إلى استخدام عناصر تحكم أخرى مثل ADC أو "
-"DAC. ومن أجل سماعة الرأس غالباً ما تقدم بطاقات الصوت تحكماً خاصاً بها."
+"كنت تستخدم مخرجًا رقميًا فقد تحتاج أيضًا إلى استخدام عناصر تحكم أخرى مثل ADC أو "
+"DAC. ومن أجل سماعة الرأس غالبًا ما تقدم بطاقات الصوت تحكمًا خاصًا بها."
 
 #: backends/mixerbackend.cpp:353
 #, kde-format
@@ -723,7 +723,7 @@ msgid ""
 "Controls the headphone volume. Some soundcards include a switch that must be "
 "manually activated to enable the headphone output."
 msgstr ""
-"يتحكم بمستوى سماعة الرأس. بعض بطاقات الصوت تتضمن زراً يجب تفعيله يدوياً لتشغيل "
+"يتحكم بمستوى سماعة الرأس. بعض بطاقات الصوت تتضمن زرًا يجب تفعيله يدويًا لتشغيل "
 "مخرج سماعة الرأس."
 
 #: backends/mixerbackend.cpp:355
@@ -1228,7 +1228,7 @@ msgstr "%1 (التقاط)"
 #: gui/mdwslider.cpp:1101
 #, kde-format
 msgid "Automatic (according to category)"
-msgstr "آليّاً (وفقاً للتصنيف)"
+msgstr "آليًّا (وفقًا للتصنيف)"
 
 #: gui/mixdevicewidget.cpp:65
 #, kde-format
