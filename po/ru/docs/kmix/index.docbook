@@ -172,7 +172,7 @@ soundcards.</para
 >-->
 
 <para
->Если у вас имеются драйвера ALSA и Open Sound System, &kmix; будет использовать ALSA.</para>
+>Если у вас имеются драйверы ALSA и Open Sound System, &kmix; будет использовать ALSA.</para>
 
 <para>
 <screenshot>
@@ -455,7 +455,7 @@ soundcards.</para
 ><guimenu
 >Внешний вид</guimenu
 > <guimenuitem
->Включить отображение выполняемых действий на экране (OSD)</guimenuitem
+>Включить показ выполняемых действий на экране (OSD)</guimenuitem
 > </menuchoice
 ></term>
 <listitem
