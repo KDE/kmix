@@ -3,13 +3,14 @@
 # Toplica Tanaskovic <toptan@kde.org.yu>, 2003, 2004.
 # Slobodan Simic <slsimic@gmail.com>, 2005, 2007, 2008.
 # Dalibor Djuric <daliborddjuric@gmail.com>, 2009.
+# Nemanja Hiršl <nemhirsl@gmail.com>, 2026.
 msgid ""
 msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2025-11-17 11:51+0000\n"
-"PO-Revision-Date: 2017-09-28 17:59+0200\n"
-"Last-Translator: Chusslove Illich <caslav.ilic@gmx.net>\n"
+"PO-Revision-Date: 2026-10-05 12:49+0200\n"
+"Last-Translator: Nemanja Hiršl <nemhirsl@gmail.com>\n"
 "Language-Team: Serbian <kde-i18n-sr@kde.org>\n"
 "Language: sr@ijekavianlatin\n"
 "MIME-Version: 1.0\n"
@@ -25,13 +26,15 @@ msgstr ""
 #, kde-format
 msgctxt "NAME OF TRANSLATORS"
 msgid "Your names"
-msgstr "Zoltan Čala,Ljubiša Radivojević,Jovan Popović,Časlav Ilić"
+msgstr ""
+"Zoltan Čala,Ljubiša Radivojević,Jovan Popović,Časlav Ilić,Nemanja Hiršl"
 
 #, kde-format
 msgctxt "EMAIL OF TRANSLATORS"
 msgid "Your emails"
 msgstr ""
-"zolika@sezampro.yu,claw@claw.co.yu,jpopovic@pakom.co.yu,caslav.ilic@gmx.net"
+"zolika@sezampro.yu,claw@claw.co.yu,jpopovic@pakom.co.yu,caslav.ilic@gmx.net,"
+"nemhirsl@gmail.com"
 
 #: apps/kmixctrl.cpp:40
 #, kde-format
@@ -39,8 +42,7 @@ msgid "KMixCtrl"
 msgstr "K‑mikskontrola"
 
 #: apps/kmixctrl.cpp:41
-#, fuzzy, kde-format
-#| msgid "kmixctrl - kmix volume save/restore utility"
+#, kde-format
 msgid "kmixctrl - KMix volume save/restore utility"
 msgstr "K‑mikskontrola — upisivanje i obnavljanje jačina"
 
@@ -75,10 +77,9 @@ msgid "KMix - KDE's full featured mini mixer"
 msgstr "K‑mikseta — KDE‑ova sveobuhvatna mini mikseta"
 
 #: apps/kmixmain.cpp:61
-#, fuzzy, kde-format
-#| msgid "(c) 1996-2013 The KMix Authors"
+#, kde-format
 msgid "(c) 1996-2024 The KMix Authors"
-msgstr "© 1996–2013, autori K‑miksete"
+msgstr "© 1996–2024, autori K‑miksete"
 
 #: apps/kmixmain.cpp:64
 #, kde-format
@@ -127,12 +128,14 @@ msgstr "Podrška za Solaris"
 #: apps/kmixmain.cpp:74
 #, kde-format
 msgid "Jonathan Marten"
-msgstr ""
+msgstr "Jonathan Marten"
 
 #: apps/kmixmain.cpp:74
 #, kde-format
 msgid "KF5 hotplugging, ALSA/OSS volume feedback, GUI improvements, KF6 port"
 msgstr ""
+"Utakanje u hodu za KF5, odziv jačine za Alsu/OSS, poboljšanja sučelja, "
+"prenošenje na 6. izdanje Radnih okvira KDE‑a"
 
 #: apps/kmixmain.cpp:75
 #, kde-format
@@ -195,76 +198,69 @@ msgid "TerraTec DMX6Fire support"
 msgstr "Podrška za TerraTecov DMX 6Fire"
 
 #: apps/kmixmain.cpp:89
-#, fuzzy, kde-format
-#| msgid "PulseAudio support"
+#, kde-format
 msgid "PulseAudio"
-msgstr "Podrška za PulseAudio"
+msgstr "PulseAudio"
 
 #: apps/kmixmain.cpp:90
 #, kde-format
 msgid "Sound server"
-msgstr ""
+msgstr "Zvučni server"
 
 #: apps/kmixmain.cpp:95
 #, kde-format
 msgid "ALSA"
-msgstr ""
+msgstr "Alsa"
 
 #: apps/kmixmain.cpp:96
 #, kde-format
 msgid "Advanced Linux Sound Architecture"
-msgstr ""
+msgstr "Napredna zvučna arhitektura Linuxa"
 
 #: apps/kmixmain.cpp:101
 #, kde-format
 msgid "OSS 3"
-msgstr ""
+msgstr "OSS 3"
 
 #: apps/kmixmain.cpp:102 apps/kmixmain.cpp:107
-#, fuzzy, kde-format
-#| msgid "Event Sounds"
+#, kde-format
 msgid "Open Sound System"
-msgstr "Zvukovi događaja"
+msgstr "Open Sound System"
 
 #: apps/kmixmain.cpp:106
 #, kde-format
 msgid "OSS 4"
-msgstr ""
+msgstr "OSS 4"
 
 #: apps/kmixmain.cpp:122
-#, fuzzy, kde-format
-#| msgid ""
-#| "Inhibits the unhiding of the KMix main window, if KMix is already running."
+#, kde-format
 msgid "Inhibit showing the KMix main window, if KMix is already running."
-msgstr ""
-"Ne dozvoljava prikazivanje glavnog prozora K‑miksete, ako je K‑mikseta već u "
-"pogonu."
+msgstr "Ne prikazuj glavni prozor K‑miksete ako je K‑mikseta već u pogonu."
 
 #: apps/kmixmain.cpp:123
-#, fuzzy, kde-format
-#| msgid "Starts KMix in failsafe mode."
+#, kde-format
 msgid "Start KMix in failsafe mode."
-msgstr "Pokreće K‑mikseta u bezotkaznom režimu."
+msgstr "Pokreni K‑miksetu u bezotkaznom režimu."
 
 #: apps/kmixmain.cpp:124
 #, kde-format
 msgid "A list of backends to use (for testing only)."
-msgstr ""
+msgstr "Spisak pozadina koje treba koristiti (samo za isprobavanje)."
 
 #: apps/kmixmain.cpp:124
 #, kde-format
 msgid "name[,name...]"
-msgstr ""
+msgstr "ime[,ime...]"
 
 #: apps/kmixmain.cpp:125
 #, kde-format
 msgid "Enable the (experimental) multiple driver mode."
-msgstr ""
+msgstr "Uključi (eksperimentalni) režim višestrukih drajvera."
 
 #: apps/kmixmain.cpp:126
 #, kde-format
 msgid "Do not show the system tray volume control."
-msgstr ""
+msgstr "Ne prikazuj kontrolu jačine u sistemskoj kaseti."
 
 #: apps/kmixwindow.cpp:166
 #, kde-format
@@ -272,10 +268,9 @@ msgid "Hide Mixer Window"
 msgstr "Sakrij prozor miksete"
 
 #: apps/kmixwindow.cpp:176
-#, fuzzy, kde-format
-#| msgid "Audio Setup"
+#, kde-format
 msgid "Audio Setup..."
-msgstr "Audio postava"
+msgstr "Audio postava..."
 
 #: apps/kmixwindow.cpp:181
 #, kde-format
@@ -368,30 +363,26 @@ msgstr "Ne mogu da dodam prikaz — već postoji."
 #: apps/kmixwindow.cpp:856
 #, kde-format
 msgid "The sound device '%1' was connected."
-msgstr ""
+msgstr "Zvučni uređaj „%1“ je priključen."
 
 #: apps/kmixwindow.cpp:909
 #, kde-format
 msgid "The sound device '%1' was disconnected."
-msgstr ""
+msgstr "Zvučni uređaj „%1“ je otkačen."
 
 #: apps/kmixwindow.cpp:934
-#, fuzzy, kde-format
-#| msgid ""
-#| "The soundcard containing the master device was unplugged. Changing to "
-#| "control %1 on card %2."
+#, kde-format
 msgid ""
 "The current master device was disconnected. Changing master to '%1' on "
 "device '%2'."
 msgstr ""
-"Izvučena je zvučna kartica na kojoj je glavni uređaj. Prebacujem na kontrolu "
-"%1 kartice %2."
+"Trenutni glavni uređaj je otkačen. Prebacujem glavni kanal na „%1“ na "
+"uređaju „%2“."
 
 #: apps/kmixwindow.cpp:941
-#, fuzzy, kde-format
-#| msgid "No sound card is installed or currently plugged in."
+#, kde-format
 msgid "The last sound device was disconnected. No sound devices are available."
-msgstr "Nema nijedne instalirane niti utaknute zvučne kartice."
+msgstr "Posljednji zvučni uređaj je otkačen. Nema dostupnih zvučnih uređaja."
 
 #: apps/kmixwindow.cpp:1186
 #, kde-format
@@ -438,7 +429,7 @@ msgstr ""
 #: backends/mixer_mpris2.cpp:53
 #, kde-format
 msgid "Application Streams"
-msgstr ""
+msgstr "tokovi programa"
 
 # >> @item mixer device name
 #: backends/mixer_oss.cpp:73
@@ -666,10 +657,9 @@ msgstr "tokovi hvatanja"
 
 # >> @item mixer device name
 #: backends/mixer_sndio.cpp:164
-#, fuzzy, kde-format
-#| msgid "Capture Devices"
+#, kde-format
 msgid "Server Devices"
-msgstr "uređaji za hvatanje"
+msgstr "uređaji servera"
 
 # >> @item mixer device name
 #: backends/mixer_sun.cpp:69
@@ -822,7 +812,7 @@ msgstr "bas zvučnik"
 #, kde-format
 msgctxt "Channel name"
 msgid "Surround Left"
-msgstr "okružujući levi"
+msgstr "okružujući lijevi"
 
 #: core/volume.cpp:63
 #, kde-format
@@ -850,11 +840,10 @@ msgstr "zadnji središnji"
 
 # >> @item mixer device name
 #: core/volume.cpp:68
-#, fuzzy, kde-format
-#| msgid "unknown"
+#, kde-format
 msgctxt "Channel name"
 msgid "Unknown"
-msgstr "nepoznato"
+msgstr "nepoznat"
 
 #: gui/dialogaddview.cpp:51
 #, kde-format
@@ -907,7 +896,7 @@ msgstr "Trenutna mikseta:"
 #, kde-kuit-format
 msgctxt "@info"
 msgid "Select the <link url=\"i\">master volume</link> channel:"
-msgstr ""
+msgstr "Izaberite kanal <link url=\"i\">glavne jačine</link>:"
 
 #: gui/dialogselectmaster.cpp:132
 #, kde-kuit-format
@@ -919,6 +908,11 @@ msgid ""
 "global shortcut keys, and the <interface>Mute</interface> action in the "
 "system tray popup menu.</para>"
 msgstr ""
+"<para>Ovdje možete izabrati glavni zvučni uređaj (ako ih ima više) i njegov "
+"glavni kanal.</para><para>Glavni kanal je onaj na koji djeluju kontrola "
+"jačine u sistemskoj kaseti, globalne prečice za povećanje i smanjenje jačine "
+"i za utišavanje, i radnja <interface>Isključi zvuk</interface> u iskačućem "
+"meniju sistemske kasete.</para>"
 
 # >> @item %1 driver name
 #: gui/dialogselectmaster.cpp:203
@@ -950,12 +944,12 @@ msgstr "Dostupni kanali:"
 #: gui/dialogviewconfiguration.cpp:230
 #, kde-format
 msgid "Move the selected channel to the visible list"
-msgstr "Premesti izabrani kanal na spisak vidljivih"
+msgstr "Premjesti izabrani kanal na spisak vidljivih"
 
 #: gui/dialogviewconfiguration.cpp:238
 #, kde-format
 msgid "Move the selected channel to the available (hidden) list"
-msgstr "Premesti izabrani kanal na spisak dostupnih (skrivenih)"
+msgstr "Premjesti izabrani kanal na spisak dostupnih (skrivenih)"
 
 #: gui/dialogviewconfiguration.cpp:278
 #, kde-format
@@ -988,21 +982,19 @@ msgid "M&ute"
 msgstr "&Isključi zvuk"
 
 #: gui/kmixdockwidget.cpp:196
-#, fuzzy, kde-format
-#| msgid "Hide Mixer Window"
+#, kde-format
 msgid "Show Mixer Window"
-msgstr "Sakrij prozor miksete"
+msgstr "Prikaži prozor miksete"
 
 #: gui/kmixdockwidget.cpp:222
 #, kde-format
 msgid "No mixer devices available"
-msgstr ""
+msgstr "Nema dostupnih uređaja miksete"
 
 #: gui/kmixdockwidget.cpp:230
-#, fuzzy, kde-format
-#| msgid "Volume Feedback"
+#, kde-format
 msgid "Volume muted"
-msgstr "Odziv jačine"
+msgstr "Zvuk utišan"
 
 #: gui/kmixdockwidget.cpp:231
 #, kde-format
@@ -1012,7 +1004,7 @@ msgstr "Jačina na %1%"
 #: gui/kmixdockwidget.cpp:233
 #, kde-format
 msgid "%1 - %2"
-msgstr ""
+msgstr "%1 — %2"
 
 # >! Contexts.
 #: gui/kmixprefdlg.cpp:53
@@ -1033,46 +1025,43 @@ msgstr "Pokretanje"
 #: gui/kmixprefdlg.cpp:124
 #, kde-format
 msgid "Start KMix on desktop startup"
-msgstr ""
+msgstr "Pokreni K‑miksetu pri pokretanju površi"
 
 #: gui/kmixprefdlg.cpp:128
 #, kde-format
 msgid "Start KMix automatically when the desktop starts"
-msgstr ""
+msgstr "Automatski pokreni K‑miksetu kad se površ pokrene"
 
 # literal-segment: kmix_autostart.desktop
 #: gui/kmixprefdlg.cpp:131
-#, fuzzy, kde-format
-#| msgid ""
-#| "Autostart can not be enabled, as the autostart file kmix_autostart."
-#| "desktop is not installed."
+#, kde-format
 msgid ""
 "Autostart will not work, because the autostart file kmix_autostart.desktop "
 "is missing. Check that KMix is installed correctly."
 msgstr ""
-"Samopokretanje ne može da se uključi zato što fajl kmix_autostart.desktop "
-"nije instaliran."
+"Samopokretanje neće raditi zato što nedostaje fajl samopokretanja "
+"kmix_autostart.desktop. Provjerite da li je K‑mikseta ispravno instalirana."
 
 #: gui/kmixprefdlg.cpp:141
-#, fuzzy, kde-format
-#| msgid "Restore volumes on login"
+#, kde-format
 msgid "Restore previous volume settings on desktop startup"
-msgstr "Obnovi jačine po prijavljivanju"
+msgstr "Obnovi prethodne postavke jačine pri pokretanju površi"
 
 #: gui/kmixprefdlg.cpp:145
-#, fuzzy, kde-format
-#| msgid "Restore all volume levels and switches."
+#, kde-format
 msgid ""
 "Restore all mixer volume levels and switches to their last used settings "
 "when the desktop starts"
-msgstr "Obnovi sve jačine i prekidače zvuka."
+msgstr ""
+"Obnovi sve nivoe jačine i prekidače miksete na posljednje korišćene postavke "
+"kad se površ pokrene"
 
 #: gui/kmixprefdlg.cpp:148
-#, fuzzy, kde-format
-#| msgid "Dynamic controls from Pulseaudio and MPRIS2 will not be restored."
+#, kde-format
 msgid ""
 "The volume of PulseAudio or MPRIS2 dynamic controls will not be restored."
-msgstr "Dinamičke kontrole iz PulseAudija i MPRIS‑a 2 neće biti obnovljene."
+msgstr ""
+"Jačina dinamičkih kontrola PulseAudija ili MPRIS‑a 2 neće biti obnovljena."
 
 #: gui/kmixprefdlg.cpp:166
 #, kde-format
@@ -1091,8 +1080,7 @@ msgstr "Ponašanje"
 
 # ? Неутралисано. Нека идеја за ‘overdrive’?
 #: gui/kmixprefdlg.cpp:228
-#, fuzzy, kde-format
-#| msgid "Volume Overdrive"
+#, kde-format
 msgid "Volume overdrive"
 msgstr "Povišenje jačine"
 
@@ -1103,23 +1091,22 @@ msgid ""
 "Allow the volume to be raised above the recommended maximum (typically to "
 "150%)"
 msgstr ""
+"Dozvoli da se jačina podigne iznad preporučenog maksimuma (obično do 150%)"
 
 #: gui/kmixprefdlg.cpp:236
-#, fuzzy, kde-format
-#| msgid "Volume feedback is only available for Pulseaudio."
+#, kde-format
 msgid "Volume overdrive is only available for PulseAudio."
-msgstr "Odziv jačine je dostupan samo za PulseAudio."
+msgstr "Povišenje jačine dostupno je samo za PulseAudio."
 
 #: gui/kmixprefdlg.cpp:246
-#, fuzzy, kde-format
-#| msgid "You must restart KMix for this setting to take effect."
+#, kde-format
 msgid "%1 must be restarted for the volume overdrive setting to take effect."
 msgstr ""
-"Morate ponovo pokrenuti K‑miksetu da bi ova postavka stupila u dejstvo."
+"%1 mora ponovo da se pokrene da bi postavka povišenja jačine stupila u "
+"dejstvo."
 
 #: gui/kmixprefdlg.cpp:256
-#, fuzzy, kde-format
-#| msgid "Volume Feedback"
+#, kde-format
 msgid "Volume feedback"
 msgstr "Odziv jačine"
 
@@ -1127,12 +1114,14 @@ msgstr "Odziv jačine"
 #, kde-format
 msgctxt "@info:tooltip"
 msgid "Play a sample sound when the volume changes"
-msgstr ""
+msgstr "Pusti probni zvuk pri promjeni jačine"
 
 #: gui/kmixprefdlg.cpp:264
 #, kde-format
 msgid "Volume feedback is only available when configured with Canberra."
 msgstr ""
+"Odziv jačine je dostupan samo ako je pri izgradnji podešena podrška za "
+"Canberra."
 
 #: gui/kmixprefdlg.cpp:286
 #, kde-kuit-format
@@ -1143,12 +1132,15 @@ msgid ""
 "wheel over the system tray icon, or moving sliders by a page step.</"
 "para><para>%1 must be restarted for this change to take effect.</para>"
 msgstr ""
+"<para>Zadaje korak jačine kao procenat opsega jačine.</para><para>Ovo utiče "
+"na mijenjanje jačine prečicama, točkićem miša nad ikonicom u sistemskoj "
+"kaseti ili pomijeranjem klizača za stranicu.</para><para>%1 mora ponovo da "
+"se pokrene da bi ova izmjena stupila u dejstvo.</para>"
 
 #: gui/kmixprefdlg.cpp:293
-#, fuzzy, kde-format
-#| msgid "Volume Feedback"
+#, kde-format
 msgid "Volume step:"
-msgstr "Odziv jačine"
+msgstr "Korak jačine:"
 
 #: gui/kmixprefdlg.cpp:301
 #, kde-format
@@ -1156,28 +1148,24 @@ msgid "Visual"
 msgstr "Prikaz"
 
 #: gui/kmixprefdlg.cpp:310
-#, fuzzy, kde-format
-#| msgid "Show &tickmarks"
+#, kde-format
 msgid "Show slider &tickmarks"
-msgstr "&Podioci"
+msgstr "Prikaži &podioke na klizačima"
 
 #: gui/kmixprefdlg.cpp:313
-#, fuzzy, kde-format
-#| msgid "Enable/disable tickmark scales on the sliders"
+#, kde-format
 msgid "Show tick mark scales on sliders"
-msgstr "Uključite ili isključite podioke na klizačima."
+msgstr "Prikaži skale sa podiocima na klizačima"
 
 #: gui/kmixprefdlg.cpp:315
-#, fuzzy, kde-format
-#| msgid "Show &labels"
+#, kde-format
 msgid "Show control &labels"
-msgstr "&Etikete"
+msgstr "Prikaži &etikete kontrola"
 
 #: gui/kmixprefdlg.cpp:318
-#, fuzzy, kde-format
-#| msgid "Enables/disables description labels above the sliders"
+#, kde-format
 msgid "Show description labels for sliders"
-msgstr "Uključite ili isključite opisne etikete iznad klizača."
+msgstr "Prikaži opisne etikete za klizače"
 
 #: gui/kmixprefdlg.cpp:321
 #, kde-format
@@ -1187,36 +1175,32 @@ msgstr "Ekranski prikaz (&OSD)"
 #: gui/kmixprefdlg.cpp:324
 #, kde-format
 msgid "Show an on-screen indicator when changing the volume via hotkeys"
-msgstr ""
+msgstr "Prikaži ekranski pokazatelj pri mijenjanju jačine prečicama"
 
 #: gui/kmixprefdlg.cpp:333
-#, fuzzy, kde-format
-#| msgid "Slider orientation: "
+#, kde-format
 msgid "Slider orientation (main window): "
-msgstr "Usmerenje klizača: "
+msgstr "Usmjerenje klizača (glavni prozor): "
 
 #: gui/kmixprefdlg.cpp:334
-#, fuzzy, kde-format
-#| msgid "Slider orientation (System tray volume control):"
+#, kde-format
 msgid "Slider orientation (system tray popup):"
-msgstr "Usmerenje klizača (jačina u sistemskoj kaseti):"
+msgstr "Usmjerenje klizača (iskačući prozor sistemske kasete):"
 
 #: gui/kmixprefdlg.cpp:335
-#, fuzzy, kde-format
-#| msgid "Slider orientation: "
+#, kde-format
 msgid "Set the orientation of the main window control sliders"
-msgstr "Usmerenje klizača: "
+msgstr "Postavi usmjerenje klizača u glavnom prozoru"
 
 #: gui/kmixprefdlg.cpp:336
 #, kde-format
 msgid "Set the orientation of the system tray volume control sliders"
-msgstr ""
+msgstr "Postavi usmjerenje klizača kontrole jačine u sistemskoj kaseti"
 
 #: gui/kmixprefdlg.cpp:348
-#, fuzzy, kde-format
-#| msgid "&Dock in system tray"
+#, kde-format
 msgid "Dock in system tray"
-msgstr "&Usidri u sistemsku kasetu"
+msgstr "Usidri u sistemsku kasetu"
 
 #: gui/kmixprefdlg.cpp:351
 #, kde-format
@@ -1224,11 +1208,13 @@ msgid ""
 "Dock the mixer into the system tray. Click on it to open the popup volume "
 "control."
 msgstr ""
+"Usidri miksetu u sistemsku kasetu. Kliknite na nju da otvorite iskačuću "
+"kontrolu jačine."
 
 #: gui/kmixprefdlg.cpp:355
 #, kde-format
 msgid "Mixers to show in the popup volume control:"
-msgstr ""
+msgstr "Miksete za prikaz u iskačućoj kontroli jačine:"
 
 # >> @title:window
 #: gui/kmixprefdlg.cpp:365
@@ -1241,19 +1227,19 @@ msgstr "Izbor mikseta"
 msgid ""
 "The mixers that are checked here will be shown in the popup volume control."
 msgstr ""
+"Miksete čije su kućice ovdje popunjene biće prikazane u iskačućoj kontroli "
+"jačine."
 
 #: gui/kmixtoolbox.cpp:96
-#, fuzzy, kde-format
-#| msgid "No sound card is installed or currently plugged in."
+#, kde-format
 msgid "No sound devices are installed or are currently available."
-msgstr "Nema nijedne instalirane niti utaknute zvučne kartice."
+msgstr "Nema instaliranih niti trenutno dostupnih zvučnih uređaja."
 
 # >> @option:check
 #: gui/mdwslider.cpp:95
-#, fuzzy, kde-format
-#| msgid "&Split Channels"
+#, kde-format
 msgid "Split Channels"
-msgstr "&Razdvojeni kanali"
+msgstr "Razdvojeni kanali"
 
 #: gui/mdwslider.cpp:107 gui/mdwslider.cpp:626
 #, kde-format
@@ -1262,41 +1248,36 @@ msgstr "Hvatanje"
 
 # >> @item mixer device name
 #: gui/mdwslider.cpp:112
-#, fuzzy, kde-format
-#| msgid "Capture Devices"
+#, kde-format
 msgid "Use Device"
-msgstr "uređaji za hvatanje"
+msgstr "Koristi uređaj"
 
 #: gui/mdwslider.cpp:157
 #, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Mute %2 on %1"
-msgstr ""
+msgstr "Utišaj %2 na %1"
 
 #: gui/mdwslider.cpp:169
-#, fuzzy, kde-format
-#| msgid "Increase Volume"
+#, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Increase volume of %2 on %1"
-msgstr "Povećaj jačinu"
+msgstr "Povećaj jačinu za %2 na %1"
 
 #: gui/mdwslider.cpp:177
-#, fuzzy, kde-format
-#| msgid "Decrease Volume"
+#, kde-format
 msgctxt "1=device name, 2=control name"
 msgid "Decrease volume of %2 on %1"
-msgstr "Smanji jačinu"
+msgstr "Smanji jačinu za %2 na %1"
 
 #: gui/mdwslider.cpp:327
-#, fuzzy, kde-format
-#| msgid "Capture/Uncapture %1"
+#, kde-format
 msgctxt "%1=channel"
 msgid "Capture/Uncapture %1"
 msgstr "Uhvati/otpusti %1"
 
 #: gui/mdwslider.cpp:328
-#, fuzzy, kde-format
-#| msgid "Mute/Unmute %1"
+#, kde-format
 msgctxt "%1=channel"
 msgid "Mute/Unmute %1"
 msgstr "Isključi/uključi %1"
@@ -1308,6 +1289,8 @@ msgid ""
 "%1\n"
 "%2"
 msgstr ""
+"%1\n"
+"%2"
 
 #: gui/mdwslider.cpp:678
 #, kde-format
@@ -1315,16 +1298,14 @@ msgid "%1 (capture)"
 msgstr "%1 (hvatanje)"
 
 #: gui/mdwslider.cpp:1101
-#, fuzzy, kde-format
-#| msgid "Automatic According to Category"
+#, kde-format
 msgid "Automatic (according to category)"
-msgstr "Automatsko prema kategoriji"
+msgstr "Automatski (prema kategoriji)"
 
 #: gui/mixdevicewidget.cpp:65
-#, fuzzy, kde-format
-#| msgid "C&onfigure Shortcuts..."
+#, kde-format
 msgid "Channel Shortcuts..."
-msgstr "P&odesi prečice..."
+msgstr "Prečice kanala..."
 
 # >> @info:tooltip
 #: gui/viewbase.cpp:88
@@ -1354,37 +1335,11 @@ msgid "Nothing is capturing audio."
 msgstr "Ništa ne hvata audio."
 
 #: gui/viewsliders.cpp:185
-#, fuzzy, kde-format
-#| msgid "No capture devices."
+#, kde-format
 msgid "There are no capture devices."
 msgstr "Nema uređaja za hvatanje."
 
 #: gui/viewsliders.cpp:186
-#, fuzzy, kde-format
-#| msgid "No playback devices."
+#, kde-format
 msgid "There are no playback devices."
 msgstr "Nema uređaja za puštanje."
-
-#~ msgid "The last soundcard was unplugged."
-#~ msgstr "Izvučena je posljednja zvučna kartica."
-
-#~ msgid "Select the channel representing the master volume:"
-#~ msgstr "Kanal koji predstavlja glavnu jačinu:"
-
-# >> @option:check
-#~ msgid "&Hide"
-#~ msgstr "&Sakriveno"
-
-#~ msgid "C&onfigure Shortcuts..."
-#~ msgstr "P&odesi prečice..."
-
-#~ msgid "Toggle Mute"
-#~ msgstr "Isključeno/uključeno"
-
-#, fuzzy
-#~| msgid "Configure &Channels..."
-#~ msgid "Configure Channels..."
-#~ msgstr "Podesi &kanale..."
-
-#~ msgid "Device Settings"
-#~ msgstr "Postavke uređaja"
