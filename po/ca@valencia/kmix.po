@@ -1045,7 +1045,7 @@ msgid ""
 "150%)"
 msgstr ""
 "Permet que el volum s'eleve per damunt del màxim recomanat (normalment al "
-"150%)"
+"150 %)"
 
 #: gui/kmixprefdlg.cpp:236
 #, kde-format
