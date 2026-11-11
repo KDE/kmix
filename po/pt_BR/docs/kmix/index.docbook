@@ -459,13 +459,13 @@ soundcards.</para
 ><guimenu
 >Visual</guimenu
 > <guimenuitem
->Mostrar visualização na tela (OSD)</guimenuitem
+>Mostrar indicador na tela (OSD)</guimenuitem
 > </menuchoice
 ></term>
 <listitem
 ><para
 ><action
->Assinale esta opção para ativar a visualização na tela ao passar o mouse sobre &kmix; na área de notificação.</action
+>Assinale esta opção para ativar o indicador na tela ao passar o mouse sobre &kmix; na área de notificação.</action
 ></para
 ></listitem>
 </varlistentry>
