@@ -19,8 +19,8 @@ msgstr ""
 "Project-Id-Version: kmix\n"
 "Report-Msgid-Bugs-To: https://bugs.kde.org\n"
 "POT-Creation-Date: 2025-11-17 11:51+0000\n"
-"PO-Revision-Date: 2025-03-18 12:17+0300\n"
-"Last-Translator: Olesya Gerasimenko <translation-team@basealt.ru>\n"
+"PO-Revision-Date: 2026-11-11 23:00+0200\n"
+"Last-Translator: Alexander Yavorsky <kekcuha@gmail.com>\n"
 "Language-Team: Basealt Translation Team\n"
 "Language: ru\n"
 "MIME-Version: 1.0\n"
@@ -970,7 +970,7 @@ msgstr "Звук выключен"
 #: gui/kmixdockwidget.cpp:231
 #, kde-format
 msgid "Volume at %1%"
-msgstr "Громкость %1%"
+msgstr "Громкость %1 %"
 
 #: gui/kmixdockwidget.cpp:233
 #, kde-format
@@ -1060,7 +1060,7 @@ msgid ""
 "Allow the volume to be raised above the recommended maximum (typically to "
 "150%)"
 msgstr ""
-"Разрешить усиление громкости выше рекомендуемого максимума (обычно до 150%)"
+"Разрешить усиление громкости выше рекомендуемого максимума (обычно до 150 %)"
 
 #: gui/kmixprefdlg.cpp:236
 #, kde-format

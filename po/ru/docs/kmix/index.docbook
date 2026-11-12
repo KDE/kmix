@@ -637,12 +637,12 @@ soundcards.</para
 </para>
 
 <para
->Получение уровня громкости (0–100%): <programlisting
+>Получение уровня громкости (0–100 %): <programlisting
 >qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Get org.kde.KMix.Control volume</programlisting>
 </para>
 
 <para
->Установка уровня громкости (0–100%): <programlisting
+>Установка уровня громкости (0–100 %): <programlisting
 >qdbus org.kde.kmix /Mixers/0/Master_0 org.freedesktop.DBus.Properties.Set org.kde.KMix.Control volume 70</programlisting>
 </para>
 
